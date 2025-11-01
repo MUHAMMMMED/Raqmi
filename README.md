@@ -1,6 +1,6 @@
 # Raqmi
 
- I'm still working on
+ 
 This project digitizes and unifies educational books from multiple sources to create a structured, AI-accessible knowledge
 base. It enables teachers and AI-driven learning systems to access, analyze, and generate contextual explanations without
 relying on external references.
