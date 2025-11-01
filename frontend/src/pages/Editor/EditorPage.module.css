@@ -1,0 +1,531 @@
+.editorContainer {
+    display: flex;
+    height: 100vh;
+    background: #f8fafc;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* الشريط الجانبي */
+.sidebar {
+    width: 320px;
+    background: white;
+    border-right: 1px solid #e2e8f0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.sidebarHeader {
+    padding: 20px;
+    border-bottom: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.headerInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.headerIcon {
+    font-size: 24px;
+    opacity: 0.9;
+}
+
+.headerInfo h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.slidesCount {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.createButton {
+    width: 100%;
+    padding: 12px 16px;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    backdrop-filter: blur(10px);
+}
+
+.createButton:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateY(-1px);
+}
+
+.slidesContainer {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    gap: 12px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* تصميم شرائح المصغرة */
+.slideThumbnail {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.slideThumbnail:hover {
+    border-color: #cbd5e0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.slideThumbnail.selected {
+    border-color: #4299e1;
+    background: #f0f9ff;
+}
+
+.slideThumbnail.dragOver {
+    border-color: #4299e1;
+    background: #ebf8ff;
+    transform: scale(1.02);
+}
+
+.thumbnailHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.dragHandle {
+    color: #a0aec0;
+    cursor: grab;
+    padding: 4px;
+    border-radius: 4px;
+    transition: color 0.2s;
+}
+
+.dragHandle:hover {
+    color: #718096;
+    background: #f7fafc;
+}
+
+.slideNumber {
+    background: #4299e1;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.thumbnailActions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.slideThumbnail:hover .thumbnailActions {
+    opacity: 1;
+}
+
+.iconButton {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: #f7fafc;
+    border-radius: 4px;
+    color: #718096;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.iconButton:hover {
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+.iconButton.danger:hover {
+    background: #fed7d7;
+    color: #e53e3e;
+}
+
+.thumbnailPreview {
+    height: 120px;
+    background: #f7fafc;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+.thumbnailBlock {
+    position: absolute;
+    border-radius: 2px;
+    opacity: 0.8;
+    transition: all 0.2s;
+}
+
+.thumbnailFooter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.slideTitle {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2d3748;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.elementsCount {
+    font-size: 11px;
+    color: #718096;
+    background: #f7fafc;
+    padding: 2px 6px;
+    border-radius: 8px;
+}
+
+/* حالة عدم وجود شرائح */
+.emptyState {
+    text-align: center;
+    padding: 40px 20px;
+    color: #718096;
+}
+
+.emptyIcon {
+    font-size: 48px;
+    margin-bottom: 16px;
+    opacity: 0.5;
+}
+
+.emptyState h3 {
+    margin: 0 0 8px 0;
+    color: #4a5568;
+}
+
+.emptyState p {
+    margin: 0 0 20px 0;
+    font-size: 14px;
+}
+
+/* المحتوى الرئيسي */
+.mainContent {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: #f8fafc;
+}
+
+/* شاشة الترحيب */
+.welcomeScreen {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.welcomeContent {
+    text-align: center;
+    color: white;
+    max-width: 400px;
+    padding: 40px;
+}
+
+.welcomeIcon {
+    font-size: 64px;
+    margin-bottom: 24px;
+    opacity: 0.9;
+}
+
+.welcomeContent h1 {
+    font-size: 28px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.welcomeContent p {
+    font-size: 16px;
+    margin-bottom: 32px;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.welcomeActions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+}
+
+/* عارض الشرائح */
+.slideViewer {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 24px;
+    gap: 24px;
+}
+
+.viewerHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background: white;
+    padding: 24px;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.slideInfo h1 {
+    margin: 0 0 8px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+.slideMeta {
+    display: flex;
+    gap: 16px;
+}
+
+.metaItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 14px;
+    color: #718096;
+}
+
+.viewerActions {
+    display: flex;
+    gap: 12px;
+}
+
+.primaryButton {
+    padding: 10px 20px;
+    background: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.primaryButton:hover {
+    background: #3182ce;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(66, 153, 225, 0.3);
+}
+
+.secondaryButton {
+    padding: 10px 20px;
+    background: white;
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.secondaryButton:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+}
+
+.buttonIcon {
+    font-size: 14px;
+}
+
+/* معاينة الشريحة */
+.slidePreview {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: white;
+    border-radius: 12px;
+    padding: 40px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.previewContainer {
+    width: 800px;
+    height: 450px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+.previewBlock {
+    position: absolute;
+    padding: 8px;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
+.previewBlock h3 {
+    margin: 0;
+    font-size: 24px;
+}
+
+.previewBlock p {
+    margin: 0;
+    line-height: 1.4;
+}
+
+.previewBlock ul {
+    margin: 0;
+    padding-right: 20px;
+    direction: rtl;
+}
+
+.previewBlock li {
+    margin-bottom: 4px;
+}
+
+.previewBlock img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* إحصائيات الشريحة */
+.slideStats {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+.statCard {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.statCard h4 {
+    margin: 0 0 8px 0;
+    font-size: 14px;
+    color: #718096;
+    font-weight: 500;
+}
+
+.statNumber {
+    font-size: 24px;
+    font-weight: 700;
+    color: #4299e1;
+}
+
+.statValue {
+    font-size: 16px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+/* تأثيرات السحب والإفلات */
+.slideThumbnail.dragging {
+    opacity: 0.5;
+    transform: rotate(5deg);
+}
+
+/* التمرير */
+.slidesContainer::-webkit-scrollbar {
+    width: 6px;
+}
+
+.slidesContainer::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+.slidesContainer::-webkit-scrollbar-thumb {
+    background: #cbd5e0;
+    border-radius: 3px;
+}
+
+.slidesContainer::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0;
+}
+
+/* التجاوب */
+@media (max-width: 1024px) {
+    .editorContainer {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: 300px;
+    }
+
+    .slidesContainer {
+        flex-direction: row;
+        overflow-x: auto;
+    }
+
+    .slideThumbnail {
+        min-width: 200px;
+    }
+}
+
+@media (max-width: 768px) {
+    .viewerHeader {
+        flex-direction: column;
+        gap: 16px;
+    }
+
+    .viewerActions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .slideStats {
+        grid-template-columns: 1fr;
+    }
+
+    .previewContainer {
+        width: 100%;
+        height: 300px;
+    }
+}

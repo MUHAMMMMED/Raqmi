@@ -1,0 +1,257 @@
+/* src/components/BookList/PartCard/PartCard.module.css */
+.partCard {
+    background: white;
+    border-radius: 20px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+}
+
+.partCard::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 6px;
+    background: linear-gradient(90deg, #667eea, #764ba2);
+}
+
+.partCard:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.partHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f7fafc;
+}
+
+.partTitleSection {
+    flex: 1;
+}
+
+.partTitle {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 16px 0;
+    font-family: 'Cairo', sans-serif;
+    line-height: 1.3;
+}
+
+.partMeta {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.partOrder {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+    padding: 8px 20px;
+    border-radius: 25px;
+    font-size: 1rem;
+    font-weight: 700;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.partPages {
+    background: #edf2f7;
+    color: #4a5568;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.partStats {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.lessonsCount {
+    background: #48bb78;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+}
+
+.partContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+}
+
+.partDescription p {
+    font-size: 1.1rem;
+    color: #4a5568;
+    margin: 0;
+    line-height: 1.6;
+}
+
+.partActions {
+    display: flex;
+    gap: 16px;
+}
+
+.primaryButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: white;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+}
+
+.primaryButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+}
+
+.buttonIcon {
+    font-size: 16px;
+}
+
+.progressSection {
+    background: #f7fafc;
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+}
+
+.progressInfo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+.progressBar {
+    width: 100%;
+    height: 12px;
+    background: #e2e8f0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.progressFill {
+    height: 100%;
+    background: linear-gradient(90deg, #48bb78, #38a169);
+    border-radius: 10px;
+    transition: width 0.3s ease;
+}
+
+/* أنماط التعديل */
+.editInput {
+    font-size: 1.6rem;
+    font-weight: 700;
+    padding: 8px;
+    border: 2px solid #4299e1;
+    border-radius: 8px;
+    width: 100%;
+    font-family: 'Cairo', sans-serif;
+}
+
+.smallInput {
+    width: 60px;
+    padding: 6px;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    text-align: center;
+}
+
+.partActions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.primaryButton,
+.editButton,
+.deleteButton,
+.saveButton,
+.cancelButton {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.primaryButton {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: white;
+}
+
+.editButton {
+    background: #4299e1;
+    color: white;
+}
+
+.deleteButton {
+    background: #f56565;
+    color: white;
+}
+
+.saveButton {
+    background: #48bb78;
+    color: white;
+}
+
+.cancelButton {
+    background: #718096;
+    color: white;
+}
+
+.primaryButton:hover {
+    background: #38a169;
+}
+
+.editButton:hover {
+    background: #3182ce;
+}
+
+.deleteButton:hover {
+    background: #e53e3e;
+}
+
+.saveButton:hover {
+    background: #38a169;
+}
+
+.cancelButton:hover {
+    background: #4a5568;
+}
+
+.buttonIcon {
+    font-size: 14px;
+}

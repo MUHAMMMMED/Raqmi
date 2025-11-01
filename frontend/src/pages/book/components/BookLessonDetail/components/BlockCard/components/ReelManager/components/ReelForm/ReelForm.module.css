@@ -1,0 +1,465 @@
+/* === إصلاح عالمي للـ box-sizing === */
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+/* === الـ Overlay === */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* === النموذج الرئيسي === */
+.formContainer {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
+    overflow: hidden;
+    max-width: 900px;
+    width: 100%;
+    max-height: 95vh;
+    overflow-y: auto;
+    animation: slideUp 0.4s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* === الرأس === */
+.formHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 28px 36px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.headerContent h2 {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 700;
+}
+
+.headerContent p {
+    margin: 6px 0 0;
+    opacity: 0.95;
+    font-size: 1rem;
+}
+
+.closeButton {
+    background: rgba(255, 255, 255, 0.25);
+    border: none;
+    color: white;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 20px;
+    backdrop-filter: blur(4px);
+}
+
+.closeButton:hover {
+    background: rgba(255, 255, 255, 0.35);
+    transform: scale(1.1);
+}
+
+/* === الجسم === */
+.formBody {
+    padding: 36px;
+}
+
+.formSection {
+    margin-bottom: 36px;
+    padding-bottom: 28px;
+    border-bottom: 1px dashed #e2e8f0;
+}
+
+.formSection:last-of-type {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.formSection h3 {
+    margin: 0 0 24px 0;
+    color: #2d3748;
+    font-size: 1.35rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* === الحقول (input, textarea, select) === */
+.formGroup {
+    margin-bottom: 24px;
+}
+
+.formGroup label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 1rem;
+}
+
+.textInput,
+.textareaInput,
+.selectInput {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: #fafafa;
+    font-family: inherit;
+}
+
+.textInput:focus,
+.textareaInput:focus,
+.selectInput:focus {
+    outline: none;
+    border-color: #667eea;
+    background-color: white;
+    box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.1);
+}
+
+.textareaInput {
+    resize: vertical;
+    min-height: 110px;
+}
+
+/* === الـ Select المخصص === */
+.selectInput {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+    background-position: right 16px center;
+    background-repeat: no-repeat;
+    background-size: 16px;
+    padding-right: 44px;
+}
+
+.selectInput::-ms-expand {
+    display: none;
+}
+
+/* === الـ File Input === */
+.fileInput {
+    width: 100%;
+    padding: 14px 16px;
+    border: 2px dashed #cbd5e0;
+    border-radius: 12px;
+    background: #f8fafc;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    font-family: inherit;
+}
+
+.fileInput:hover {
+    border-color: #667eea;
+    background: #f0f4ff;
+}
+
+.fileInput::file-selector-button {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 8px;
+    margin-right: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.fileInput::file-selector-button:hover {
+    background: #5a67d8;
+}
+
+/* === معاينة الصورة === */
+.imagePreview {
+    position: relative;
+    margin-top: 12px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.imagePreview img {
+    width: 100%;
+    height: auto;
+    max-height: 300px;
+    object-fit: cover;
+    display: block;
+}
+
+.removeImage {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: rgba(220, 38, 38, 0.9);
+    color: white;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.removeImage:hover {
+    background: #dc2626;
+    transform: scale(1.1);
+}
+
+/* === خيارات الإجابة الفاخرة === */
+.optionsGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 16px;
+}
+
+.optionCard {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 16px;
+    padding: 20px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.optionCard:hover {
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.15);
+}
+
+.optionCard.correct {
+    border-color: #48bb78;
+    background: linear-gradient(135deg, #f0fff4 0%, #ecfdf5 100%);
+    box-shadow: 0 0 0 3px rgba(72, 187, 120, 0.15), 0 8px 25px rgba(72, 187, 120, 0.1);
+}
+
+.optionCard.correct::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 6px;
+    height: 100%;
+    background: #48bb78;
+}
+
+.optionHeader {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.letterCircle {
+    background: #667eea;
+    color: white;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.optionCard.correct .letterCircle {
+    background: #48bb78;
+}
+
+.optionLabel {
+    font-weight: 600;
+    color: #2d3748;
+    font-size: 1.1rem;
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.correctBadge {
+    background: #48bb78;
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+}
+
+.checkIcon {
+    background: #48bb78;
+    color: white;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+}
+
+.optionInput {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid transparent;
+    border-radius: 12px;
+    background: white;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.optionInput:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.optionCard.correct .optionInput {
+    border-color: #48bb78;
+    background: #f8fff9;
+}
+
+/* === الأزرار === */
+.formActions {
+    display: flex;
+    gap: 16px;
+    justify-content: flex-end;
+    padding: 28px 36px;
+    background: #f8fafc;
+    border-top: 1px solid #e2e8f0;
+    margin-top: 20px;
+}
+
+.cancelButton,
+.submitButton {
+    padding: 14px 32px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cancelButton {
+    background: white;
+    color: #4a5568;
+    border: 2px solid #e2e8f0;
+}
+
+.cancelButton:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+}
+
+.submitButton {
+    background: #48bb78;
+    color: white;
+    border: none;
+}
+
+.submitButton:hover:not(:disabled) {
+    background: #38a169;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.3);
+}
+
+.submitButton:disabled {
+    background: #a0aec0;
+    cursor: not-allowed;
+}
+
+/* === الأخطاء === */
+.error {
+    border-color: #e53e3e !important;
+    box-shadow: 0 0 0 4px rgba(229, 62, 62, 0.1) !important;
+}
+
+.errorText {
+    color: #e53e3e;
+    font-size: 0.9rem;
+    margin-top: 6px;
+    display: block;
+}
+
+/* === التجاوب === */
+@media (max-width: 768px) {
+    .formHeader {
+        padding: 20px;
+        flex-direction: column;
+        text-align: center;
+        gap: 16px;
+    }
+
+    .formBody {
+        padding: 24px;
+    }
+
+    .formActions {
+        flex-direction: column;
+    }
+
+    .optionHeader {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .letterCircle {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+}

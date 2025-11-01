@@ -1,0 +1,154 @@
+.container {
+    padding: 20px;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 2px solid #e2e8f0;
+}
+
+.headerContent h3 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0 0 8px 0;
+    color: #2d3748;
+    font-size: 1.5rem;
+}
+
+.headerContent p {
+    margin: 0;
+    color: #718096;
+    font-size: 0.95rem;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+}
+
+.createButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #ed8936;
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.createButton:hover:not(:disabled) {
+    background: #dd6b20;
+    transform: translateY(-2px);
+}
+
+.editButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #4299e1;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.editButton:hover:not(:disabled) {
+    background: #3182ce;
+}
+
+.deleteButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #e53e3e;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.deleteButton:hover:not(:disabled) {
+    background: #c53030;
+}
+
+.createButton:disabled,
+.editButton:disabled,
+.deleteButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.previewSection {
+    min-height: 400px;
+}
+
+.emptyState {
+    text-align: center;
+    padding: 60px 20px;
+    background: white;
+    border-radius: 12px;
+    border: 2px dashed #e2e8f0;
+}
+
+.emptyIcon {
+    font-size: 3rem;
+    color: #cbd5e0;
+    margin-bottom: 16px;
+}
+
+.emptyState h4 {
+    margin: 0 0 12px 0;
+    color: #4a5568;
+    font-size: 1.3rem;
+}
+
+.emptyState p {
+    margin: 0 0 24px 0;
+    color: #718096;
+    font-size: 1rem;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 16px;
+    }
+
+    .header {
+        flex-direction: column;
+        gap: 16px;
+        align-items: stretch;
+    }
+
+    .actions {
+        flex-direction: column;
+    }
+
+    .createButton,
+    .editButton,
+    .deleteButton {
+        justify-content: center;
+    }
+
+    .emptyState {
+        padding: 40px 16px;
+    }
+}

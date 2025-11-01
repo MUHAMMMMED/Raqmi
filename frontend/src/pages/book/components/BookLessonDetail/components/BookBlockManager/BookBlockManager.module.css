@@ -1,0 +1,199 @@
+ .manager {
+     padding: 0px;
+     direction: rtl;
+
+ }
+
+ .header {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 24px;
+     padding-bottom: 20px;
+     border-bottom: 2px solid #f7fafc;
+ }
+
+ .header h3 {
+     margin: 0;
+     color: #2d3748;
+     font-size: 1.5rem;
+     font-weight: 700;
+ }
+
+ .actions {
+     display: flex;
+     gap: 12px;
+     align-items: center;
+ }
+
+ .addButton,
+ .toggleButton {
+     display: flex;
+     align-items: center;
+     gap: 8px;
+     padding: 12px 20px;
+     border: none;
+     border-radius: 10px;
+     cursor: pointer;
+     font-weight: 600;
+     font-size: 0.9rem;
+     transition: all 0.3s ease;
+ }
+
+ .addButton {
+     background: linear-gradient(135deg, #48bb78, #38a169);
+     color: white;
+     box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+ }
+
+ .addButton:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+ }
+
+ .toggleButton {
+     background: #ed8936;
+     color: white;
+     box-shadow: 0 4px 12px rgba(237, 137, 54, 0.3);
+ }
+
+ .toggleButton:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 6px 20px rgba(237, 137, 54, 0.4);
+ }
+
+ .blocksList {
+     display: flex;
+     flex-direction: column;
+     gap: 24px;
+ }
+
+ .blockItem {
+     display: flex;
+     flex-direction: column;
+     gap: 16px;
+     padding: 5px;
+     transition: all 0.3s ease;
+     position: relative;
+     overflow: hidden;
+ }
+
+
+
+ .blockCardContainer {
+     flex: 1;
+ }
+
+ .blockActions {
+     display: flex;
+     gap: 12px;
+     justify-content: flex-end;
+     padding-top: 16px;
+     border-top: 1px solid #e2e8f0;
+ }
+
+ .editButton,
+ .deleteButton {
+     display: flex;
+     align-items: center;
+     gap: 8px;
+     padding: 10px 20px;
+     border: none;
+     border-radius: 8px;
+     cursor: pointer;
+     font-size: 0.9rem;
+     font-weight: 600;
+     transition: all 0.3s ease;
+     min-width: 100px;
+     justify-content: center;
+ }
+
+ .editButton {
+     background: #edf2f7;
+     color: #4a5568;
+     border: 1px solid #e2e8f0;
+ }
+
+ .editButton:hover {
+     background: #e2e8f0;
+     transform: translateY(-1px);
+     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+ }
+
+ .deleteButton {
+     background: #fed7d7;
+     color: #c53030;
+     border: 1px solid #feb2b2;
+ }
+
+ .deleteButton:hover {
+     background: #feb2b2;
+     transform: translateY(-1px);
+     box-shadow: 0 4px 12px rgba(197, 48, 48, 0.2);
+ }
+
+ .loading {
+     text-align: center;
+     padding: 60px 20px;
+     color: #718096;
+     font-size: 1.1rem;
+     background: #f7fafc;
+     border-radius: 12px;
+     border: 2px dashed #e2e8f0;
+ }
+
+ .emptyState {
+     text-align: center;
+     padding: 60px 20px;
+     color: #a0aec0;
+     background: #f7fafc;
+     border-radius: 12px;
+     border: 2px dashed #e2e8f0;
+     font-size: 1.1rem;
+ }
+
+ .emptyState::before {
+     content: "📚";
+     font-size: 3rem;
+     display: block;
+     margin-bottom: 16px;
+     opacity: 0.5;
+ }
+
+ /* تحسينات للشاشات الصغيرة */
+ @media (max-width: 768px) {
+     .manager {
+         padding: 20px;
+         border-radius: 12px;
+     }
+
+     .header {
+         flex-direction: column;
+         gap: 16px;
+         align-items: stretch;
+     }
+
+     .header h3 {
+         text-align: center;
+         font-size: 1.3rem;
+     }
+
+     .actions {
+         justify-content: center;
+         flex-wrap: wrap;
+     }
+
+     .blockItem {
+         padding: 16px;
+     }
+
+     .blockActions {
+         flex-direction: column;
+     }
+
+     .editButton,
+     .deleteButton {
+         width: 100%;
+         min-width: auto;
+     }
+ }

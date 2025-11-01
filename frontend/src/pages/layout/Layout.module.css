@@ -1,0 +1,38 @@
+/* components/layout/Layout.module.css */
+.layout {
+    display: flex;
+    min-height: 100vh;
+    background: #f8fafc;
+    font-family: 'Tajawal', sans-serif;
+    direction: rtl;
+}
+
+.mainContent {
+    flex: 1;
+    transition: margin-right 0.3s ease;
+    min-height: 100vh;
+}
+
+.sidebarExpanded {
+    margin-right: 280px;
+}
+
+.sidebarCollapsed {
+    margin-right: 70px;
+}
+
+.contentWrapper {
+    padding: 20px;
+    min-height: 100vh;
+}
+
+/* التجاوب */
+@media (max-width: 767px) {
+    .mainContent {
+        margin-right: 0 !important;
+    }
+
+    .contentWrapper {
+        padding: 15px;
+    }
+}

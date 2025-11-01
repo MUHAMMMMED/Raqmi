@@ -1,0 +1,102 @@
+/* src/components/BookList/HeaderSection/HeaderSection.module.css */
+.headerSection {
+    background: white;
+    border-radius: 24px;
+    padding: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.headerContent {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.titleSection {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.headerIcon {
+    font-size: 30px;
+    opacity: 0.9;
+}
+
+.mainTitle {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0 0 8px 0;
+    font-family: var(--main-font, 'Cairo');
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    opacity: 0.9;
+    margin: 0;
+    font-family: var(--desc-font, 'Tajawal');
+}
+
+.statsSection {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+}
+
+.statCard {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 16px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.statNumber {
+    display: block;
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.statLabel {
+    font-size: 0.9rem;
+    opacity: 0.9;
+}
+
+.addBookButton,
+.backButton {
+    background: linear-gradient(135deg, #48bb78, #38a169);
+    color: white;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.95rem;
+    box-shadow: 0 4px 12px rgba(72, 187, 120, 0.3);
+}
+
+.backButton {
+    background: linear-gradient(135deg, #ed8936, #dd6b20);
+    box-shadow: 0 4px 12px rgba(237, 137, 54, 0.3);
+}
+
+.addBookButton:hover,
+.backButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(72, 187, 120, 0.4);
+}
+
+.buttonIcon {
+    font-size: 16px;
+}

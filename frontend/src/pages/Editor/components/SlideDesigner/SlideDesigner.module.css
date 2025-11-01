@@ -1,0 +1,1479 @@
+/* SlideDesigner.module.css */
+
+/* الحاوية الرئيسية */
+.designerContainer {
+    display: flex;
+    height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+}
+
+/* الشريط الجانبي للأدوات */
+.toolbar {
+    width: 280px;
+    background: white;
+    border-right: 1px solid #e1e5e9;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+.toolbarHeader {
+    padding: 16px;
+    border-bottom: 1px solid #e1e5e9;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.toolbarSection {
+    padding: 16px;
+    border-bottom: 1px solid #e1e5e9;
+}
+
+.toolbarSection h3 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #4a5568;
+}
+
+/* منطقة العمل */
+.workspace {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.workspaceHeader {
+    padding: 12px 20px;
+    background: white;
+    border-bottom: 1px solid #e1e5e9;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.workspaceTitle {
+    font-size: 18px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.workspaceActions {
+    display: flex;
+    gap: 10px;
+}
+
+/* منطقة السلايد */
+.slideArea {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    overflow: auto;
+}
+
+.slideContainer {
+    width: 800px;
+    height: 450px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* أدوات التعديل */
+.propertiesPanel {
+    width: 280px;
+    background: white;
+    border-left: 1px solid #e1e5e9;
+    overflow-y: auto;
+}
+
+.propertiesHeader {
+    padding: 16px;
+    border-bottom: 1px solid #e1e5e9;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.propertiesContent {
+    padding: 16px;
+}
+
+/* أنماط الكتل المختلفة */
+.block {
+    position: absolute;
+    cursor: move;
+    user-select: none;
+    outline: 2px dashed transparent;
+    transition: outline 0.2s;
+}
+
+.block.selected {
+    outline: 2px dashed #4299e1;
+}
+
+.block:hover {
+    outline: 2px dashed #cbd5e0;
+}
+
+/* كتلة العنوان */
+.titleBlock {
+    font-size: 36px;
+    font-weight: 700;
+    color: #2d3748;
+    text-align: center;
+    width: 100%;
+    padding: 10px;
+}
+
+/* كتلة النص */
+.textBlock {
+    font-size: 18px;
+    color: #4a5568;
+    line-height: 1.5;
+    padding: 10px;
+}
+
+/* كتلة النقاط */
+.bulletBlock {
+    font-size: 18px;
+    color: #4a5568;
+    line-height: 1.5;
+    padding: 10px;
+}
+
+.bulletBlock ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+/* كتلة الاقتباس */
+.quoteBlock {
+    font-size: 24px;
+    font-style: italic;
+    color: #4a5568;
+    border-left: 4px solid #4299e1;
+    padding: 10px 20px;
+    background: #f7fafc;
+}
+
+/* كتلة الكود */
+.codeBlock {
+    font-family: 'Courier New', monospace;
+    font-size: 16px;
+    background: #2d3748;
+    color: #e2e8f0;
+    padding: 15px;
+    border-radius: 4px;
+    overflow: auto;
+}
+
+/* كتلة الصورة */
+.imageBlock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.imageBlock img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+/* كتلة الفيديو */
+.videoBlock {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.videoBlock video {
+    max-width: 100%;
+    max-height: 100%;
+}
+
+/* عناصر التحكم */
+.controlButton {
+    background: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 8px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.controlButton:hover {
+    background: #3182ce;
+}
+
+.controlButton.secondary {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+.controlButton.secondary:hover {
+    background: #cbd5e0;
+}
+
+.controlButton.danger {
+    background: #f56565;
+    color: white;
+}
+
+.controlButton.danger:hover {
+    background: #e53e3e;
+}
+
+/* أدوات السحب */
+.resizeHandle {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background: #4299e1;
+    border-radius: 50%;
+    z-index: 10;
+}
+
+.resizeHandle.top-left {
+    top: -4px;
+    left: -4px;
+    cursor: nw-resize;
+}
+
+.resizeHandle.top-right {
+    top: -4px;
+    right: -4px;
+    cursor: ne-resize;
+}
+
+.resizeHandle.bottom-left {
+    bottom: -4px;
+    left: -4px;
+    cursor: sw-resize;
+}
+
+.resizeHandle.bottom-right {
+    bottom: -4px;
+    right: -4px;
+    cursor: se-resize;
+}
+
+/* أدوات إضافة الكتل */
+.blockPalette {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.blockOption {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+}
+
+.blockOption:hover {
+    border-color: #4299e1;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.blockIcon {
+    font-size: 24px;
+    margin-bottom: 8px;
+    color: #4a5568;
+}
+
+.blockLabel {
+    font-size: 12px;
+    color: #4a5568;
+}
+
+/* أدوات التنسيق */
+.formattingTools {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.formatButton {
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.formatButton.active {
+    background: #4299e1;
+    color: white;
+    border-color: #4299e1;
+}
+
+.colorPicker {
+    width: 30px;
+    height: 30px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    padding: 0;
+}
+
+.fontSelector,
+.fontSizeSelector {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+/* لوحة الألوان */
+.colorPalette {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.colorOption {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.colorOption.selected {
+    border-color: #2d3748;
+}
+
+/* عناصر الإدخال */
+.inputGroup {
+    margin-bottom: 16px;
+}
+
+.inputGroup label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    color: #4a5568;
+}
+
+.inputGroup input,
+.inputGroup textarea,
+.inputGroup select {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.inputGroup textarea {
+    min-height: 80px;
+    resize: vertical;
+}
+
+/* شريط الأدوات العلوي */
+.topToolbar {
+    display: flex;
+    gap: 10px;
+    padding: 10px 16px;
+    background: white;
+    border-bottom: 1px solid #e1e5e9;
+}
+
+.toolbarButton {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 12px;
+    background: white;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+}
+
+.toolbarButton:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+}
+
+.toolbarButton.active {
+    background: #4299e1;
+    color: white;
+    border-color: #4299e1;
+}
+
+/* شريط التقدم */
+.slidesPanel {
+    padding: 16px;
+    background: white;
+    border-bottom: 1px solid #e1e5e9;
+}
+
+.slidesContainer {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    padding: 10px 0;
+}
+
+.slideThumbnail {
+    width: 120px;
+    height: 67px;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    cursor: pointer;
+    background: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 12px;
+    color: #718096;
+    flex-shrink: 0;
+}
+
+.slideThumbnail.active {
+    border-color: #4299e1;
+}
+
+.slideThumbnail:hover {
+    border-color: #cbd5e0;
+}
+
+/* أيقونات الرأس */
+.headerIcon {
+    margin-left: 8px;
+}
+
+.titleIcon {
+    margin-left: 8px;
+}
+
+.sectionIcon {
+    margin-left: 8px;
+}
+
+.buttonIcon {
+    margin-left: 6px;
+}
+
+.inputIcon {
+    margin-left: 6px;
+}
+
+/* شريط أدوات التنسيق */
+.formattingToolbar {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 12px 16px;
+    background: white;
+    border-bottom: 1px solid #e1e5e9;
+    flex-wrap: wrap;
+}
+
+.formatSection {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+}
+
+.formatLabel {
+    font-size: 14px;
+    font-weight: 500;
+    color: #4a5568;
+}
+
+.formatButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.formatButton:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+}
+
+.formatButton.active {
+    background: #4299e1;
+    color: white;
+    border-color: #4299e1;
+}
+
+.fontSizeDisplay {
+    font-size: 14px;
+    font-weight: 500;
+    color: #2d3748;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* عناصر التحكم بحجم الخط */
+.fontSizeControls {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sizeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sizeButton:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+}
+
+.fontSizeValue {
+    font-size: 14px;
+    font-weight: 500;
+    color: #2d3748;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* مقبض السحب */
+.dragHandle {
+    position: absolute;
+    top: -25px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4299e1;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    cursor: move;
+    z-index: 10;
+}
+
+/* العناصر الوسائط */
+.mediaPlaceholder {
+    width: 100%;
+    height: 100%;
+    background: #f7fafc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: #718096;
+    border: 2px dashed #cbd5e0;
+    border-radius: 4px;
+}
+
+.mediaPlaceholder span {
+    margin-top: 8px;
+    font-size: 14px;
+}
+
+/* تحسين الكتل */
+.block {
+    transition: all 0.2s;
+}
+
+.block:hover {
+    box-shadow: 0 0 0 2px #4299e1;
+}
+
+.block.selected {
+    box-shadow: 0 0 0 2px #4299e1;
+    z-index: 100;
+}
+
+/* تحسين الأزرار */
+.controlButton {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+/* زر الحذف */
+.deleteButton {
+    position: absolute;
+    top: -12px;
+    right: -12px;
+    width: 24px;
+    height: 24px;
+    background: #f56565;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 1000;
+    transition: all 0.2s;
+}
+
+.deleteButton:hover {
+    background: #e53e3e;
+    transform: scale(1.1);
+}
+
+/* مقابض تغيير الحجم */
+.resizeHandle {
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #4299e1;
+    border: 2px solid white;
+    border-radius: 2px;
+    z-index: 1000;
+    cursor: nwse-resize;
+}
+
+.resizeHandle.topLeft {
+    top: -6px;
+    left: -6px;
+    cursor: nw-resize;
+}
+
+.resizeHandle.topRight {
+    top: -6px;
+    right: -6px;
+    cursor: ne-resize;
+}
+
+.resizeHandle.bottomLeft {
+    bottom: -6px;
+    left: -6px;
+    cursor: sw-resize;
+}
+
+.resizeHandle.bottomRight {
+    bottom: -6px;
+    right: -6px;
+    cursor: se-resize;
+}
+
+.resizeHandle:hover {
+    background: #3182ce;
+    transform: scale(1.2);
+}
+
+/* مقبض السحب */
+.dragHandle {
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #4299e1;
+    color: white;
+    padding: 4px 8px;
+    border-radius: 4px;
+    cursor: move;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.dragHandle:hover {
+    background: #3182ce;
+}
+
+/* معلومات الأبعاد */
+.dimensionsInfo {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px;
+    margin: 16px 0;
+}
+
+.dimensionItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+    font-size: 14px;
+    color: #4a5568;
+}
+
+.dimensionItem:not(:last-child) {
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* تحسين الكتل */
+.block {
+    transition: all 0.2s;
+    min-width: 50px;
+    min-height: 30px;
+}
+
+.block:hover {
+    box-shadow: 0 0 0 2px #4299e1;
+}
+
+.block.selected {
+    box-shadow: 0 0 0 2px #4299e1;
+    z-index: 100;
+}
+
+/* تحسين العناصر الوسائط */
+.imageBlock img,
+.videoBlock video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 4px;
+}
+
+/* تحسين النصوص */
+.titleBlock,
+.textBlock,
+.bulletBlock,
+.quoteBlock {
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    overflow: hidden;
+    word-wrap: break-word;
+}
+
+.codeBlock {
+    width: 100%;
+    height: 100%;
+    padding: 12px;
+    box-sizing: border-box;
+    overflow: auto;
+}
+
+.codeBlock pre {
+    margin: 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* تحسين الأدوات */
+.formattingToolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    background: white;
+    border-bottom: 1px solid #e1e5e9;
+    flex-wrap: wrap;
+}
+
+.formatSection {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+
+/* أزرار الطبقات */
+.layerControls {
+    position: absolute;
+    top: -30px;
+    left: 10px;
+    display: flex;
+    gap: 4px;
+    z-index: 1000;
+}
+
+.layerButton {
+    width: 24px;
+    height: 24px;
+    background: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.layerButton:hover {
+    background: #3182ce;
+    transform: scale(1.1);
+}
+
+/* التحكم في الشفافية */
+.opacityControl {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.opacitySlider {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: #e2e8f0;
+    outline: none;
+    -webkit-appearance: none;
+}
+
+.opacitySlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: #4299e1;
+    cursor: pointer;
+}
+
+.opacityValue {
+    font-size: 12px;
+    color: #4a5568;
+    min-width: 40px;
+    text-align: center;
+}
+
+/* إدخال حجم الخط */
+.fontSizeInput {
+    width: 60px;
+    padding: 4px 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+}
+
+/* قائمة العناصر */
+.elementsList {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+}
+
+.elementItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.elementItem:hover {
+    background-color: #f7fafc;
+}
+
+.elementItem.selectedElement {
+    background-color: #ebf8ff;
+    border-right: 3px solid #4299e1;
+}
+
+.elementIcon {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f7fafc;
+    border-radius: 4px;
+    color: #4a5568;
+}
+
+.elementInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.elementName {
+    font-size: 12px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.elementPreview {
+    font-size: 10px;
+    color: #718096;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.elementActions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.layerBadge {
+    background: #4299e1;
+    color: white;
+    font-size: 10px;
+    padding: 2px 6px;
+    border-radius: 10px;
+    min-width: 20px;
+    text-align: center;
+}
+
+/* منع تجاوز النصوص للحدود */
+.titleBlock,
+.textBlock,
+.bulletBlock,
+.quoteBlock {
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
+    overflow: hidden;
+}
+
+.codeBlock pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* تحسين شريط التنسيق */
+.formattingToolbar {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px 16px;
+    background: white;
+    border-bottom: 1px solid #e1e5e9;
+    flex-wrap: wrap;
+}
+
+.formatSection {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 12px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+}
+
+/* تحسين الأدوات */
+.formattingTools {
+    display: flex;
+    gap: 4px;
+}
+
+.formatButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.formatButton:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+}
+
+.formatButton.active {
+    background: #4299e1;
+    color: white;
+    border-color: #4299e1;
+}
+
+/* تحسين محدد الخطوط */
+.fontSelector {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+optgroup {
+    font-weight: bold;
+    font-style: normal;
+}
+
+optgroup option {
+    font-weight: normal;
+    padding-left: 10px;
+}
+
+
+/* تحسين سلايدر الشفافية */
+.opacityControl {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.opacitySlider {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: #e2e8f0;
+    outline: none;
+    -webkit-appearance: none;
+    background: linear-gradient(to right, #e2e8f0 0%, #4299e1 100%);
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+}
+
+.opacitySlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #4299e1;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.opacitySlider::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #4299e1;
+    cursor: pointer;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.opacityValue {
+    font-size: 12px;
+    color: #4a5568;
+    min-width: 40px;
+    text-align: center;
+    font-weight: 600;
+}
+
+/* تحسين إدخال حجم الخط */
+.fontSizeInput {
+    width: 70px;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.fontSizeInput:focus {
+    border-color: #4299e1;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.2);
+}
+
+/* تحسين أزرار التنسيق */
+.formatButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.formatButton:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+    transform: translateY(-1px);
+}
+
+.formatButton.active {
+    background: #4299e1;
+    color: white;
+    border-color: #4299e1;
+    box-shadow: 0 2px 4px rgba(66, 153, 225, 0.3);
+}
+
+/* قائمة العناصر مع السحب */
+.elementsList {
+    max-height: 300px;
+    overflow-y: auto;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    background: white;
+}
+
+.elementItem {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px;
+    border-bottom: 1px solid #f1f5f9;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+}
+
+.elementItem:hover {
+    background-color: #f7fafc;
+}
+
+.elementItem.selectedElement {
+    background-color: #ebf8ff;
+    border-right: 3px solid #4299e1;
+}
+
+.elementItem.draggingElement {
+    opacity: 0.5;
+    background-color: #e2e8f0;
+}
+
+.elementItem.dragOver {
+    background-color: #bee3f8;
+    border-top: 2px solid #4299e1;
+}
+
+.elementDragHandle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 20px;
+    height: 20px;
+    color: #a0aec0;
+    cursor: grab;
+    transition: color 0.2s;
+}
+
+.elementDragHandle:hover {
+    color: #4299e1;
+}
+
+.elementItem:active .elementDragHandle {
+    cursor: grabbing;
+}
+
+.elementIcon {
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #f7fafc;
+    border-radius: 6px;
+    color: #4a5568;
+    font-size: 14px;
+}
+
+.elementInfo {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.elementName {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.elementPreview {
+    font-size: 11px;
+    color: #718096;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.elementActions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.layerBadge {
+    background: #4299e1;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 12px;
+    min-width: 24px;
+    text-align: center;
+}
+
+/* تحسين أزرار الحجم */
+.sizeButton {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    background: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+}
+
+.sizeButton:hover {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+    transform: translateY(-1px);
+}
+
+/* تحسين شريط التنسيق */
+.formattingToolbar {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 16px;
+    background: white;
+    border-bottom: 1px solid #e1e5e9;
+    flex-wrap: wrap;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.formatSection {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 16px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.formatLabel {
+    font-size: 14px;
+    font-weight: 600;
+    color: #4a5568;
+    white-space: nowrap;
+}
+
+/* تحسين الأدوات */
+.formattingTools {
+    display: flex;
+    gap: 6px;
+}
+
+/* تحسين محدد الخطوط */
+.fontSelector {
+    width: 100%;
+    padding: 10px;
+    border: 2px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.2s;
+}
+
+.fontSelector:focus {
+    border-color: #4299e1;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(66, 153, 225, 0.2);
+}
+
+optgroup {
+    font-weight: bold;
+    font-style: normal;
+    color: #2d3748;
+}
+
+optgroup option {
+    font-weight: normal;
+    padding-left: 15px;
+    color: #4a5568;
+}
+
+/* تحسين أزرار الطبقات في العناصر */
+.layerControls {
+    position: absolute;
+    top: -35px;
+    left: 10px;
+    display: flex;
+    gap: 6px;
+    z-index: 1000;
+}
+
+.layerButton {
+    width: 28px;
+    height: 28px;
+    background: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.layerButton:hover {
+    background: #3182ce;
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* تحسين المعلومات */
+.dimensionsInfo {
+    background: #f7fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+}
+
+.dimensionItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    font-size: 14px;
+    color: #4a5568;
+}
+
+.dimensionItem:not(:last-child) {
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.dimensionItem span:first-child {
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.dimensionItem span:last-child {
+    font-family: 'Courier New', monospace;
+    background: #edf2f7;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+/* Media Library Button Styles */
+.mediaButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mediaLibraryButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    background: #4299e1;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all 0.2s;
+    text-align: center;
+    justify-content: center;
+}
+
+.mediaLibraryButton:hover {
+    background: #3182ce;
+    transform: translateY(-1px);
+}
+
+.fileInput {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.mediaPreview {
+    margin-top: 12px;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    padding: 12px;
+    background: #f7fafc;
+}
+
+.previewImage {
+    width: 100%;
+    max-height: 150px;
+    object-fit: contain;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.previewVideo {
+    width: 100%;
+    max-height: 150px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+
+.removeMediaButton {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: #f56565;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background 0.2s;
+}
+
+.removeMediaButton:hover {
+    background: #e53e3e;
+}

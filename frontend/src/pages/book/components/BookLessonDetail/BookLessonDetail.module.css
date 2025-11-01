@@ -1,0 +1,57 @@
+ .container {
+     max-width: 1200px;
+     margin: 0 auto;
+     padding: 0px;
+     min-height: 100vh;
+     direction: rtl;
+ }
+
+ .content {
+     margin-top: 24px;
+     background: #fff;
+     border-radius: 16px;
+     padding: 30px;
+     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+     border: 1px solid #e2e8f0;
+ }
+
+ .contentSection {
+     display: flex;
+     flex-direction: column;
+     gap: 24px;
+ }
+
+ .managementSection {
+     background: #f7fafc;
+     border-radius: 12px;
+     padding: 20px;
+     border: 2px dashed #e2e8f0;
+ }
+
+ .blocksList {
+     display: flex;
+     flex-direction: column;
+     gap: 20px;
+ }
+
+ .list {
+     display: flex;
+     flex-direction: column;
+     gap: 20px;
+ }
+
+ /* تحسينات للعرض على الشاشات الصغيرة */
+ @media (max-width: 768px) {
+     .container {
+         padding: 16px;
+     }
+
+     .content {
+         padding: 20px;
+         margin-top: 16px;
+     }
+
+     .managementSection {
+         padding: 16px;
+     }
+ }
