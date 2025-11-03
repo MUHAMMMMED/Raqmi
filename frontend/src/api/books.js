@@ -8,7 +8,7 @@ export const getBook = async (id) => {
     const res = await AxiosInstance.get(`${API_URL}/books/${id}/`);
     return res.data;
 };
-// رفع كتاب جديد
+
 export const uploadBook = async (formData) => {
 
     const res = await AxiosInstance.post(`${API_URL}/books/`, formData, {
@@ -19,12 +19,37 @@ export const uploadBook = async (formData) => {
     return res.data;
 };
 
+
+
+export const updateBook = async (id, formData) => {
+    const response = await AxiosInstance.put(`${API_URL}/books/${id}/`, formData, {
+        headers: { 'Content-Type': 'multipart/form-data' }
+    });
+    return response.data;
+};
+
+export const deleteBook = async (id) => {
+    const response = await AxiosInstance.delete(`${API_URL}/books/${id}/`);
+    return response.data;
+};
+
+
+
 export const getBookLesson = async (id) => {
     const response = await AxiosInstance.get(`${API_URL}/lessons/${id}/`);
     return response.data;
 };
 
 
+
+export const createLesson = (data) =>
+    AxiosInstance.post(`${API_URL}/lessons/`, data).then(r => r.data);
+
+export const updateLesson = (lessonId, data) =>
+    AxiosInstance.put(`${API_URL}/lessons/${lessonId}/`, data).then(r => r.data);
+
+export const deleteLesson = (lessonId) =>
+    AxiosInstance.delete(`${API_URL}/lessons/${lessonId}/`).then(r => r.data);
 
 
 

@@ -1,6 +1,5 @@
 import AxiosInstance from "./AxiosInstance";
 
-
 const API_URL = "/books/book-parts/";
 
 export const createPart = (bookId, data) =>
@@ -9,5 +8,7 @@ export const createPart = (bookId, data) =>
 export const updatePart = (partId, data) =>
     AxiosInstance.put(`${API_URL}${partId}/`, data);
 
-export const deletePart = (partId) =>
-    AxiosInstance.delete(`${API_URL}${partId}/`);
+export const deletePart = async (partId) => {
+    const response = await AxiosInstance.delete(`${API_URL}${partId}/`);
+    return response.data;
+};

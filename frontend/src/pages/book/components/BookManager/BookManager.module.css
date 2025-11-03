@@ -1,0 +1,128 @@
+ .bookManager {
+     max-width: 1400px;
+     margin: 0 auto;
+ }
+
+ .resultsInfo {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 20px;
+     padding: 16px;
+     background: white;
+     border-radius: 12px;
+     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+     border: 1px solid #f1f5f9;
+ }
+
+ .resultsCount {
+     color: #374151;
+     font-weight: 600;
+     font-size: 0.95rem;
+ }
+
+ .resultsStats {
+     display: flex;
+     gap: 16px;
+ }
+
+ .statItem {
+     color: #64748b;
+     font-size: 0.85rem;
+ }
+
+ .statItem strong {
+     color: #374151;
+ }
+
+ .booksGrid {
+     display: grid;
+     grid-template-columns: repeat(auto-fill, minmax(400px, 1fr));
+     gap: 24px;
+ }
+
+ .noResults {
+     text-align: center;
+     padding: 60px 20px;
+     background: white;
+     border-radius: 16px;
+     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+     border: 2px dashed #e2e8f0;
+ }
+
+ .noResultsIcon {
+     font-size: 64px;
+     margin-bottom: 16px;
+ }
+
+ .noResults h3 {
+     color: #374151;
+     margin-bottom: 8px;
+     font-size: 1.3rem;
+ }
+
+ .noResults p {
+     color: #6b7280;
+     font-size: 1rem;
+     margin-bottom: 24px;
+ }
+
+ .addBookBtn {
+     background: linear-gradient(135deg, #667eea, #764ba2);
+     color: white;
+     padding: 12px 24px;
+     border-radius: 12px;
+     border: none;
+     font-weight: 600;
+     cursor: pointer;
+     transition: all 0.3s ease;
+ }
+
+ .addBookBtn:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+ }
+
+ /* Responsive */
+ @media (max-width: 768px) {
+     .booksGrid {
+         grid-template-columns: 1fr;
+     }
+
+     .resultsInfo {
+         flex-direction: column;
+         gap: 12px;
+         align-items: flex-start;
+     }
+
+     .resultsStats {
+         flex-wrap: wrap;
+         gap: 8px;
+     }
+
+     .statItem {
+         font-size: 0.8rem;
+     }
+ }
+
+ @media (max-width: 480px) {
+     .resultsInfo {
+         padding: 12px;
+     }
+
+     .noResults {
+         padding: 40px 16px;
+     }
+
+     .noResultsIcon {
+         font-size: 48px;
+     }
+
+     .noResults h3 {
+         font-size: 1.1rem;
+     }
+
+     .noResults p {
+         font-size: 0.9rem;
+     }
+ }

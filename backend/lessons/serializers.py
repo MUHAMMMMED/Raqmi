@@ -1,47 +1,36 @@
-# from rest_framework import serializers
-# from .models import Lesson
-# from slides.serializers import SlideSerializer
+ 
+from rest_framework import serializers
+from .models import *
 
-# class LessonSerializer(serializers.ModelSerializer):
-#     slides = SlideSerializer(many=True, read_only=True)
+
+# class LessonSourceSerializer(serializers.ModelSerializer):
 #     class Meta:
-#         model = Lesson
+#         model = LessonSource
 #         fields = '__all__'
 
 
-
-from rest_framework import serializers
-from .models import Lesson, LessonSource, LessonQuestion, PromptTemplate, Artifact
-
-
-class LessonSourceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = LessonSource
-        fields = '__all__'
+# class LessonQuestionSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = LessonQuestion
+#         fields = '__all__'
 
 
-class LessonQuestionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = LessonQuestion
-        fields = '__all__'
+# class PromptTemplateSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = PromptTemplate
+#         fields = '__all__'
 
 
-class PromptTemplateSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = PromptTemplate
-        fields = '__all__'
-
-
-class ArtifactSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Artifact
-        fields = '__all__'
+# class ArtifactSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Artifact
+#         fields = '__all__'
 
 
 class LessonSerializer(serializers.ModelSerializer):
-    sources = LessonSourceSerializer(many=True, read_only=True)
-    questions = LessonQuestionSerializer(many=True, read_only=True)
-    artifacts = ArtifactSerializer(many=True, read_only=True)
+    # sources = LessonSourceSerializer(many=True, read_only=True)
+    # questions = LessonQuestionSerializer(many=True, read_only=True)
+    # artifacts = ArtifactSerializer(many=True, read_only=True)
 
     class Meta:
         model = Lesson

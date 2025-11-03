@@ -1,10 +1,18 @@
 import {
+    FaBook,
     FaChartBar,
+    FaGraduationCap,
     FaHome,
-    FaPhotoVideo
+    FaVideo
 } from 'react-icons/fa';
+import {
+    ImBooks
+} from "react-icons/im";
+import { LuListEnd } from "react-icons/lu";
+import { RiBookShelfFill } from "react-icons/ri";
 
-// import { BiSolidCategory } from "react-icons/bi";
+
+import { BiSolidCategory } from "react-icons/bi";
 // import {
 //     FaBook,
 //     FaChartBar,
@@ -51,51 +59,51 @@ export const sidebarData = {
                 }
             ]
         },
-        // {
-        //     id: 2,
-        //     name: "إدارة المحتوى",
-        //     icon: <FaGraduationCap size={18} />,
-        //     items: [
-        //         {
-        //             id: 5,
-        //             name: "المرحلة تعليمية",
-        //             icon: <BiSolidCategory size={18} />,
-        //             component: 'categories',
-        //             badge: 8
-        //         },
-        //         {
-        //             id: 2,
-        //             name: "الكورسات",
-        //             icon: <FaGraduationCap size={18} />,
-        //             component: 'Courses',
-        //             badge: 5
-        //         },
-        //         {
-        //             id: 3,
-        //             name: "الدروس",
-        //             icon: <FaBook size={18} />,
-        //             component: 'Lessons',
-        //             badge: 12
-        //         },
-        //         {
-        //             id: 4,
-        //             name: "الريلز",
-        //             icon: <FaVideo size={18} />,
-        //             component: 'Reels',
-        //             badge: 8
-        //         },
+        {
+            id: 2,
+            name: "إدارة المحتوى",
+            icon: <FaGraduationCap size={18} />,
+            items: [
+                {
+                    id: 5,
+                    name: "المرحلة تعليمية",
+                    icon: <BiSolidCategory size={18} />,
+                    component: 'categories',
+                    badge: 8
+                },
+                {
+                    id: 2,
+                    name: "الكورسات",
+                    icon: <FaGraduationCap size={18} />,
+                    component: 'Courses',
+                    badge: 5
+                },
+                {
+                    id: 3,
+                    name: "الدروس",
+                    icon: <FaBook size={18} />,
+                    component: 'Lessons',
+                    badge: 12
+                },
+                {
+                    id: 4,
+                    name: "الريلز",
+                    icon: <FaVideo size={18} />,
+                    component: 'Reels',
+                    badge: 8
+                },
 
 
-        //         {
-        //             id: 6,
-        //             name: "القوالب",
-        //             icon: <FaPalette size={18} />,
-        //             component: 'Templates'
-        //         }
+                //         {
+                //             id: 6,
+                //             name: "القوالب",
+                //             icon: <FaPalette size={18} />,
+                //             component: 'Templates'
+                //         }
 
 
-        //     ]
-        // },
+            ]
+        },
         // {
         //     id: 3,
         //     name: "المكتبة",
@@ -112,15 +120,27 @@ export const sidebarData = {
         // },
         {
             id: 6,
-            name: "المكتبة  الوسائط ",
-            icon: <FaPhotoVideo size={18} />,
+            name: "المكتبة    ",
+            icon: <ImBooks size={18} />,
             items: [
+
+                {
+                    id: 6,
+                    name: " الفهرس",
+                    icon: <LuListEnd size={18} />,
+                    component: 'Index'
+                },
+
                 {
                     id: 5,
                     name: "الكتاب",
-                    icon: <FaPhotoVideo size={18} />,
+                    icon: <RiBookShelfFill size={18} />,
                     component: 'book'
                 },
+
+
+
+
 
             ]
         },

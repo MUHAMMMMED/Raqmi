@@ -1,0 +1,377 @@
+ .card {
+     background: white;
+     border-radius: 16px;
+     padding: 0;
+     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+     border: 1px solid #f1f5f9;
+     position: relative;
+     transition: all 0.3s ease;
+     overflow: hidden;
+     display: flex;
+     flex-direction: column;
+     height: 100%;
+     margin-top: 20px;
+ }
+
+ .card::before {
+     content: '';
+     position: absolute;
+     top: 0;
+     left: 0;
+     right: 0;
+     height: 4px;
+     background: linear-gradient(90deg, #667eea, #764ba2);
+ }
+
+ .card:hover {
+     transform: translateY(-4px);
+     box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+     border-color: #e2e8f0;
+ }
+
+ /* شريط العلوي */
+ .topBar {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     padding: 16px 20px 12px;
+     background: #f8fafc;
+     border-bottom: 1px solid #f1f5f9;
+ }
+
+ .order {
+     background: linear-gradient(135deg, #667eea, #764ba2);
+     color: white;
+     padding: 6px 12px;
+     border-radius: 12px;
+     font-size: 0.8rem;
+     font-weight: 700;
+ }
+
+ .actions {
+     display: flex;
+     gap: 6px;
+ }
+
+ .editBtn,
+ .deleteBtn {
+     background: white;
+     padding: 8px;
+     border-radius: 10px;
+     font-size: 13px;
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     width: 32px;
+     height: 32px;
+     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+     transition: all 0.2s ease;
+     border: 1px solid #e2e8f0;
+ }
+
+ .editBtn:hover,
+ .deleteBtn:hover {
+     transform: translateY(-2px);
+     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+ }
+
+ .editBtn {
+     color: #4299e1;
+ }
+
+ .editBtn:hover {
+     background: #4299e1;
+     color: white;
+     border-color: #4299e1;
+ }
+
+ .deleteBtn {
+     color: #f56565;
+ }
+
+ .deleteBtn:hover {
+     background: #f56565;
+     color: white;
+     border-color: #f56565;
+ }
+
+ /* المحتوى الرئيسي */
+ .content {
+     padding: 20px;
+     flex: 1;
+     display: flex;
+     flex-direction: column;
+ }
+
+ .title {
+     font-size: 1.4rem;
+     font-weight: 700;
+     color: #1e293b;
+     margin: 0 0 16px 0;
+     line-height: 1.4;
+ }
+
+ .metaInfo {
+     display: flex;
+     justify-content: space-between;
+     align-items: center;
+     margin-bottom: 16px;
+     gap: 12px;
+ }
+
+ .pageRange {
+     flex: 1;
+ }
+
+ .pages {
+     background: #f1f5f9;
+     color: #475569;
+     padding: 8px 16px;
+     border-radius: 12px;
+     font-size: 0.85rem;
+     font-weight: 600;
+     display: inline-block;
+ }
+
+ .lessonsCount {
+     flex-shrink: 0;
+ }
+
+ .lessons {
+     background: linear-gradient(135deg, #48bb78, #38a169);
+     color: white;
+     padding: 8px 16px;
+     border-radius: 12px;
+     font-size: 0.85rem;
+     font-weight: 700;
+     display: inline-block;
+ }
+
+ .desc {
+     color: #64748b;
+     margin: 0;
+     font-size: 0.95rem;
+     line-height: 1.6;
+     flex: 1;
+ }
+
+ /* زر العرض الرئيسي */
+ .mainAction {
+     padding: 0 20px 20px;
+ }
+
+ .viewBtn {
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     gap: 10px;
+     background: linear-gradient(135deg, #667eea, #764ba2);
+     color: white;
+     padding: 14px 24px;
+     border-radius: 12px;
+     font-weight: 700;
+     transition: all 0.3s ease;
+     width: 100%;
+     border: none;
+     cursor: pointer;
+     font-size: 1rem;
+ }
+
+ .viewBtn:hover {
+     background: linear-gradient(135deg, #5a67d8, #6b46c1);
+     transform: translateY(-2px);
+     box-shadow: 0 6px 20px rgba(102, 126, 234, 0.3);
+     gap: 12px;
+ }
+
+ /* نمط نافذة التأكيد على الحذف */
+ .deleteOverlay {
+     position: fixed;
+     inset: 0;
+     background: rgba(0, 0, 0, 0.75);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     z-index: 2000;
+     padding: 20px;
+ }
+
+ .deleteModal {
+     background: white;
+     border-radius: 20px;
+     padding: 32px;
+     text-align: center;
+     max-width: 400px;
+     width: 100%;
+     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+     animation: modalAppear 0.3s ease;
+ }
+
+ @keyframes modalAppear {
+     from {
+         opacity: 0;
+         transform: scale(0.9) translateY(20px);
+     }
+
+     to {
+         opacity: 1;
+         transform: scale(1) translateY(0);
+     }
+ }
+
+ .deleteHeader {
+     margin-bottom: 20px;
+ }
+
+ .warnIcon {
+     font-size: 48px;
+     color: #f56565;
+     margin-bottom: 16px;
+ }
+
+ .deleteBody {
+     margin-bottom: 24px;
+ }
+
+ .deleteBody p {
+     margin: 8px 0;
+     line-height: 1.5;
+ }
+
+ .warn {
+     color: #c53030;
+     font-size: 0.9rem;
+     margin: 12px 0;
+     font-weight: 500;
+ }
+
+ .deleteActions {
+     display: flex;
+     gap: 12px;
+     justify-content: center;
+ }
+
+ .cancelBtn,
+ .dangerBtn {
+     padding: 12px 24px;
+     border-radius: 10px;
+     font-weight: 600;
+     transition: all 0.2s ease;
+     min-width: 100px;
+     border: none;
+     cursor: pointer;
+ }
+
+ .cancelBtn {
+     background: #f1f5f9;
+     color: #475569;
+ }
+
+ .cancelBtn:hover:not(:disabled) {
+     background: #e2e8f0;
+ }
+
+ .dangerBtn {
+     background: #dc2626;
+     color: white;
+ }
+
+ .dangerBtn:hover:not(:disabled) {
+     background: #ef4444;
+     transform: translateY(-2px);
+     box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
+ }
+
+ /* نمط نافذة التعديل */
+ .modalOverlay {
+     position: fixed;
+     inset: 0;
+     background: rgba(0, 0, 0, 0.75);
+     display: flex;
+     align-items: center;
+     justify-content: center;
+     z-index: 2000;
+     padding: 20px;
+ }
+
+ .modal {
+     background: white;
+     border-radius: 20px;
+     max-width: 600px;
+     width: 100%;
+     max-height: 90vh;
+     overflow-y: auto;
+     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+     animation: modalAppear 0.3s ease;
+ }
+
+ /* تصميم متجاوب */
+ @media (max-width: 768px) {
+     .card {
+         border-radius: 12px;
+     }
+
+     .content {
+         padding: 16px;
+     }
+
+     .title {
+         font-size: 1.2rem;
+     }
+
+     .metaInfo {
+         flex-direction: column;
+         align-items: flex-start;
+         gap: 10px;
+     }
+
+     .pageRange,
+     .lessonsCount {
+         align-self: stretch;
+     }
+
+     .pages,
+     .lessons {
+         display: block;
+         text-align: center;
+     }
+
+     .deleteModal {
+         padding: 24px;
+     }
+
+     .deleteActions {
+         flex-direction: column;
+     }
+
+     .cancelBtn,
+     .dangerBtn {
+         width: 100%;
+     }
+ }
+
+ @media (max-width: 480px) {
+     .topBar {
+         padding: 12px 16px 8px;
+     }
+
+     .actions {
+         gap: 4px;
+     }
+
+     .editBtn,
+     .deleteBtn {
+         width: 28px;
+         height: 28px;
+         font-size: 11px;
+     }
+
+     .mainAction {
+         padding: 0 16px 16px;
+     }
+
+     .viewBtn {
+         padding: 12px 20px;
+         font-size: 0.9rem;
+     }
+ }

@@ -1,0 +1,63 @@
+.container {
+    padding: 32px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 32px;
+}
+
+.title {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: #2d3748;
+}
+
+.actions {
+    display: flex;
+    gap: 12px;
+}
+
+.addButton,
+.backButton {
+    padding: 10px 20px;
+    border-radius: 12px;
+    font-weight: 600;
+}
+
+.addButton {
+    background: #4299e1;
+    color: white;
+}
+
+.backButton {
+    background: #e2e8f0;
+    color: #4a5568;
+}
+
+.partsGrid {
+    display: grid;
+    gap: 24px;
+}
+
+.modalOverlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: white;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+}

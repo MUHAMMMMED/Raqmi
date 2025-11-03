@@ -1,10 +1,8 @@
 from django.contrib import admin
 from .models import Card
-
 @admin.register(Card)
 class CardAdmin(admin.ModelAdmin):
     list_display = (
-        "lesson",
         "front_text",
         "correct_answer",
         "again_count",
@@ -13,5 +11,5 @@ class CardAdmin(admin.ModelAdmin):
         "easy_count",
         "created_at",
     )
-    list_filter = ("lesson", "correct_answer")
+    list_filter = ("correct_answer",)  
     search_fields = ("front_text", "question_text")

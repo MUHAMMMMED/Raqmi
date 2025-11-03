@@ -1,0 +1,513 @@
+/* src/components/CourseList/components/CourseCard.module.css */
+
+.card {
+    background: var(--background-color, #FFFFFF);
+    border-radius: var(--border-radius, 16px);
+    padding: 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    border: 1px solid #f1f5f9;
+    position: relative;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-color, #667eea), var(--secondary-color, #764ba2));
+}
+
+.card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+    border-color: #e2e8f0;
+}
+
+/* شريط العلوي */
+.topBar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px 12px;
+    background: #f8fafc;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.version {
+    background: linear-gradient(135deg, var(--primary-color, #667eea), var(--secondary-color, #764ba2));
+    color: white;
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.actions {
+    display: flex;
+    gap: 6px;
+}
+
+.editBtn,
+.deleteBtn {
+    background: white;
+    padding: 6px;
+    border-radius: 8px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: all 0.2s ease;
+    border: 1px solid #e2e8f0;
+}
+
+.editBtn {
+    color: #4299e1;
+}
+
+.editBtn:hover {
+    background: #4299e1;
+    color: white;
+    border-color: #4299e1;
+    transform: translateY(-2px);
+}
+
+.deleteBtn {
+    color: #f56565;
+}
+
+.deleteBtn:hover {
+    background: #f56565;
+    color: white;
+    border-color: #f56565;
+    transform: translateY(-2px);
+}
+
+/* المحتوى الرئيسي */
+.content {
+    padding: 20px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.courseHeader {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+}
+
+.courseIcon {
+    width: 50px;
+    height: 50px;
+    background: linear-gradient(135deg, var(--primary-color, #667eea), var(--secondary-color, #764ba2));
+    border-radius: calc(var(--border-radius, 16px) * 0.75);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 20px;
+    flex-shrink: 0;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.courseInfo {
+    flex: 1;
+}
+
+.title {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 8px 0;
+    line-height: 1.4;
+    font-family: var(--main-font, 'Cairo');
+    word-wrap: break-word;
+}
+
+.categoryPath {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.85rem;
+    color: #64748b;
+    font-weight: 500;
+    flex-wrap: wrap;
+}
+
+.pathSeparator {
+    color: #cbd5e1;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+/* معاينة التصميم */
+.designPreview {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px;
+    background: #f8fafc;
+    border-radius: calc(var(--border-radius, 16px) * 0.75);
+    border: 1px solid #e2e8f0;
+}
+
+.colorPalette {
+    display: flex;
+    gap: 8px;
+}
+
+.colorSample {
+    width: 30px;
+    height: 30px;
+    border-radius: 8px;
+    border: 2px solid white;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.colorSample:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.colorSample:first-child {
+    border-color: var(--primary-color, #667eea);
+}
+
+.colorSample:last-child {
+    border-color: var(--secondary-color, #764ba2);
+}
+
+.fontInfo {
+    display: flex;
+    align-items: center;
+}
+
+.fontBadge {
+    background: white;
+    color: #374151;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: all 0.2s ease;
+}
+
+.fontBadge:hover {
+    background: #f1f5f9;
+    transform: translateY(-1px);
+}
+
+/* التذييل */
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px 20px;
+    background: #f8fafc;
+    border-top: 1px solid #f1f5f9;
+    margin-top: auto;
+}
+
+.designSpecs {
+    display: flex;
+    gap: 12px;
+}
+
+.specItem {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: white;
+    color: #475569;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border: 1px solid #e2e8f0;
+    transition: all 0.2s ease;
+}
+
+.specItem:hover {
+    background: #f1f5f9;
+    transform: translateY(-1px);
+}
+
+.specIcon {
+    font-size: 10px;
+    color: var(--primary-color, #667eea);
+}
+
+.viewButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(135deg, var(--primary-color, #667eea), var(--secondary-color, #764ba2));
+    color: white;
+    padding: 10px 16px;
+    border-radius: calc(var(--border-radius, 16px) * 0.75);
+    font-weight: 600;
+    font-size: 0.9rem;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.viewButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    gap: 12px;
+}
+
+.arrowIcon {
+    font-size: 12px;
+    transition: transform 0.2s ease;
+}
+
+.viewButton:hover .arrowIcon {
+    transform: translateX(3px);
+}
+
+/* تأثيرات خاصة للكارد */
+.card:hover .title {
+    color: var(--primary-color, #667eea);
+}
+
+.card:hover .courseIcon {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* أنيميشن للكارد الجديد */
+@keyframes cardAppear {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.95);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.card {
+    animation: cardAppear 0.4s ease-out;
+}
+
+/* حالة خاصة للكارد المميز */
+.card.featured {
+    border: 2px solid var(--secondary-color, #764ba2);
+    box-shadow: 0 8px 30px rgba(118, 75, 162, 0.2);
+}
+
+.card.featured::before {
+    height: 6px;
+    background: linear-gradient(90deg, var(--primary-color, #667eea), var(--secondary-color, #764ba2), #fbbf24);
+}
+
+/* تصميم متجاوب */
+@media (max-width: 768px) {
+    .card {
+        border-radius: 12px;
+    }
+
+    .content {
+        padding: 16px;
+        gap: 12px;
+    }
+
+    .courseHeader {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        gap: 12px;
+    }
+
+    .courseIcon {
+        align-self: center;
+    }
+
+    .title {
+        font-size: 1.2rem;
+        text-align: center;
+    }
+
+    .categoryPath {
+        justify-content: center;
+    }
+
+    .designPreview {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .colorPalette {
+        justify-content: center;
+    }
+
+    .fontInfo {
+        justify-content: center;
+    }
+
+    .footer {
+        flex-direction: column;
+        gap: 12px;
+        align-items: stretch;
+    }
+
+    .designSpecs {
+        justify-content: center;
+    }
+
+    .viewButton {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .topBar {
+        padding: 12px 16px 8px;
+    }
+
+    .content {
+        padding: 12px;
+    }
+
+    .version {
+        font-size: 0.7rem;
+        padding: 3px 8px;
+    }
+
+    .editBtn,
+    .deleteBtn {
+        width: 24px;
+        height: 24px;
+        font-size: 10px;
+    }
+
+    .courseIcon {
+        width: 40px;
+        height: 40px;
+        font-size: 16px;
+    }
+
+    .title {
+        font-size: 1.1rem;
+    }
+
+    .categoryPath {
+        font-size: 0.8rem;
+        flex-direction: column;
+        gap: 4px;
+    }
+
+    .pathSeparator {
+        display: none;
+    }
+
+    .colorSample {
+        width: 25px;
+        height: 25px;
+    }
+
+    .fontBadge {
+        font-size: 0.75rem;
+        padding: 4px 8px;
+    }
+
+    .specItem {
+        font-size: 0.7rem;
+        padding: 4px 8px;
+    }
+
+    .viewButton {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+/* تحسينات للوصول */
+.editBtn:focus,
+.deleteBtn:focus,
+.viewButton:focus {
+    outline: 2px solid var(--primary-color, #667eea);
+    outline-offset: 2px;
+}
+
+/* تأثيرات للعناصر التفاعلية */
+.colorSample,
+.fontBadge,
+.specItem {
+    cursor: pointer;
+}
+
+/* تلوين مختلف لكل عنصر في المسار */
+.categoryPath span:nth-child(1) {
+    color: #dc2626;
+    font-weight: 600;
+}
+
+.categoryPath span:nth-child(3) {
+    color: #2563eb;
+    font-weight: 600;
+}
+
+.categoryPath span:nth-child(5) {
+    color: #7c3aed;
+    font-weight: 600;
+}
+
+.categoryPath span:nth-child(7) {
+    color: #16a34a;
+    font-weight: 600;
+}
+
+/* تأثيرات للخطوط المخصصة */
+.title {
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* تحسينات للأداء */
+.card {
+    will-change: transform;
+    backface-visibility: hidden;
+}
+
+/* حالة التحميل */
+.card.loading {
+    opacity: 0.7;
+    pointer-events: none;
+}
+
+.card.loading::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: var(--border-radius, 16px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}

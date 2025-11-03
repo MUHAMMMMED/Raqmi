@@ -1,17 +1,7 @@
 from django.contrib import admin
-from .models import (
-    Lesson,
-    LessonSource,
-    LessonContentLink,
-    LessonQuestion,
-    PromptTemplate,
-    Artifact,
-)
+from .models import *
 
-
-# -----------------------------
-# LESSON ADMIN
-# -----------------------------
+ 
 @admin.register(Lesson)
 class LessonAdmin(admin.ModelAdmin):
     list_display = ("id", "title", "course", "order", "review_status", "updated_at")
@@ -35,62 +25,53 @@ class LessonAdmin(admin.ModelAdmin):
     )
 
 
-# -----------------------------
-# LESSON SOURCE ADMIN
-# -----------------------------
-@admin.register(LessonSource)
-class LessonSourceAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "lesson",
-        "book",
-        "part",
-        "book_lesson",
-        "block",
-        "page_start",
-        "page_end",
-        "extracted_at",
-    )
-    list_filter = ("book", "part", "book_lesson")
-    search_fields = ("lesson__title", "book__title", "part__title", "book_lesson__title")
-    autocomplete_fields = ("lesson", "book", "part", "book_lesson", "block")
+ 
+# @admin.register(LessonSource)
+# class LessonSourceAdmin(admin.ModelAdmin):
+#     list_display = (
+#         "id",
+#         "lesson",
+#         "book",
+#         "part",
+#         "book_lesson",
+#         "block",
+#         "page_start",
+#         "page_end",
+#         "extracted_at",
+#     )
+#     list_filter = ("book", "part", "book_lesson")
+#     search_fields = ("lesson__title", "book__title", "part__title", "book_lesson__title")
+#     autocomplete_fields = ("lesson", "book", "part", "book_lesson", "block")
+
+ 
+# @admin.register(LessonContentLink)
+# class LessonContentLinkAdmin(admin.ModelAdmin):
+#     list_display = ("id", "lesson", "block", "similarity_score", "created_at")
+#     list_filter = ("lesson",)
+#     search_fields = ("lesson__title", "block__title", "matched_text")
+#     autocomplete_fields = ("lesson", "block")
+#     readonly_fields = ("similarity_score", "matched_text", "created_at")
 
 
-# -----------------------------
-# LESSON CONTENT LINK ADMIN
-# -----------------------------
-@admin.register(LessonContentLink)
-class LessonContentLinkAdmin(admin.ModelAdmin):
-    list_display = ("id", "lesson", "block", "similarity_score", "created_at")
-    list_filter = ("lesson",)
-    search_fields = ("lesson__title", "block__title", "matched_text")
-    autocomplete_fields = ("lesson", "block")
-    readonly_fields = ("similarity_score", "matched_text", "created_at")
+ 
+# @admin.register(LessonQuestion)
+# class LessonQuestionAdmin(admin.ModelAdmin):
+#     list_display = (
+#         "id",
+#         "lesson",
+#         "question_type",
+#         "difficulty",
+#         "review_status",
+#         "is_ai_generated",
+#         "created_at",
+#     )
+#     list_filter = ("question_type", "review_status", "is_ai_generated")
+#     search_fields = ("lesson__title", "question_text", "answer_text")
+#     autocomplete_fields = ("lesson", "source", "question_image", "answer_image")
+#     readonly_fields = ("created_at", "updated_at")
 
 
-# -----------------------------
-# LESSON QUESTION ADMIN
-# -----------------------------
-@admin.register(LessonQuestion)
-class LessonQuestionAdmin(admin.ModelAdmin):
-    list_display = (
-        "id",
-        "lesson",
-        "question_type",
-        "difficulty",
-        "review_status",
-        "is_ai_generated",
-        "created_at",
-    )
-    list_filter = ("question_type", "review_status", "is_ai_generated")
-    search_fields = ("lesson__title", "question_text", "answer_text")
-    autocomplete_fields = ("lesson", "source", "question_image", "answer_image")
-    readonly_fields = ("created_at", "updated_at")
-
-
-# -----------------------------
-# PROMPT TEMPLATE ADMIN
-# -----------------------------
+ 
 @admin.register(PromptTemplate)
 class PromptTemplateAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "version", "used_for", "created_at")
@@ -99,9 +80,7 @@ class PromptTemplateAdmin(admin.ModelAdmin):
     readonly_fields = ("created_at",)
 
 
-# -----------------------------
-# ARTIFACT ADMIN
-# -----------------------------
+ 
 @admin.register(Artifact)
 class ArtifactAdmin(admin.ModelAdmin):
     list_display = ("id", "lesson", "media_type", "generated_by", "generated_at")

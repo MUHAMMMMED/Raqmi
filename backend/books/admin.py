@@ -1,10 +1,5 @@
 from django.contrib import admin
-from .models import (
-    Book, BookPart, BookLesson, BookBlock,
-    BookExercise,BlockLearningObjective,
-    BlockReel
-)
-
+from .models import *
 
 @admin.register(Book)
 class BookAdmin(admin.ModelAdmin):
@@ -38,8 +33,8 @@ class BookBlockAdmin(admin.ModelAdmin):
     ordering = ("lesson", "order")
 
 
-@admin.register(BookExercise)
-class BookExerciseAdmin(admin.ModelAdmin):
+@admin.register(BlockExercise)
+class BlockExerciseAdmin(admin.ModelAdmin):
     list_display = ("question_text", "question_type", "lesson", "part", "order")
     list_filter = ("question_type", "lesson", "part")
     search_fields = ("question_text",)
@@ -59,26 +54,10 @@ class BlockReelAdmin(admin.ModelAdmin):
     search_fields = ("block__content",)
 
 
-
-from django.contrib import admin
-from .models import AIBookLesson, AIBlock, LessonIndex
-
-@admin.register(AIBookLesson)
-class AIBookLessonAdmin(admin.ModelAdmin):
-    list_display = ('title', 'order')
-    search_fields = ('title',)
-    filter_horizontal = ('linked_lessons',)  # لتسهيل اختيار الدروس المرتبطة
-
-@admin.register(AIBlock)
-class AIBlockAdmin(admin.ModelAdmin):
-    list_display = ('title', 'lesson', 'created_at')
-    search_fields = ('title', 'content')
-    list_filter = ('lesson', 'created_at')
-    filter_horizontal = ('linked_blocks',)  # لتسهيل اختيار البلوكات المرتبطة
-
+ 
 @admin.register(LessonIndex)
 class LessonIndexAdmin(admin.ModelAdmin):
     list_display = ('title', 'stage', 'grade', 'program', 'subject')
     search_fields = ('title',)
     list_filter = ('stage', 'grade', 'program', 'subject')
-    raw_id_fields = ('ai_lesson',)  # لتسهيل اختيار درس AI عند وجود كمية كبيرة من الدروس
+ 

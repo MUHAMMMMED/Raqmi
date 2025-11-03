@@ -1,52 +1,7 @@
 from rest_framework import serializers
 from .models import Course
 from categories. serializers import *
-# class CourseSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Course
-#         fields = '__all__'
-
-
-# class CourseSerializer(serializers.ModelSerializer):
-#     stage = StageSerializer(read_only=True)
-#     grade = GradeSerializer(read_only=True)
-#     program = ProgramSerializer(read_only=True)
-#     subject = SubjectSerializer(read_only=True)
-    
-#     stage_id = serializers.PrimaryKeyRelatedField(
-#         queryset=Stage.objects.all(), 
-#         source='stage', 
-#         write_only=True
-#     )
-#     grade_id = serializers.PrimaryKeyRelatedField(
-#         queryset=Grade.objects.all(), 
-#         source='grade', 
-#         write_only=True
-#     )
-#     program_id = serializers.PrimaryKeyRelatedField(
-#         queryset=Program.objects.all(), 
-#         source='program', 
-#         write_only=True
-#     )
-#     subject_id = serializers.PrimaryKeyRelatedField(
-#         queryset=Subject.objects.all(), 
-#         source='subject', 
-#         write_only=True
-#     )
-
-#     class Meta:
-#         model = Course
-#         fields = [
-#             'id', 'name', 'stage', 'grade', 'program', 'subject',
-#             'stage_id', 'grade_id', 'program_id', 'subject_id',
-#             'primary_color', 'secondary_color', 'background_color',
-#             'main_font', 'desc_font', 'border_radius', 'padding',
-#             'version', 'license_info'
-#         ]
-#         read_only_fields = ['id']
-
-
-# serializers.py
+ 
 class CourseSerializer(serializers.ModelSerializer):
     stage_name = serializers.CharField(source='stage.name', read_only=True)
     grade_name = serializers.CharField(source='grade.name', read_only=True)

@@ -1,26 +1,20 @@
 from rest_framework import viewsets
 from .utils.mixins import DebugViewSetMixin
+from .utils.permissions import IsOwnerOrReadOnly
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
-from rest_framework import filters
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework import status
 import torch
 from sentence_transformers import SentenceTransformer, util
+from books.utils.service import increment_counter, double_value  
 from .models import *
 from .serializers import *
-from .utils.permissions import IsOwnerOrReadOnly
-from books.utils.service import increment_counter, double_value  
-
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
 
-
-# ===================== BookViewSet =====================
-
  
 
-class BookViewSet(viewsets.ModelViewSet):
+class BookViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
 
     # permission_classes = [IsAuthenticated],IsOwnerOrReadOnly
 
@@ -45,7 +39,7 @@ class BookViewSet(viewsets.ModelViewSet):
 
 
 
-class BookPartViewSet(viewsets.ModelViewSet):
+class BookPartViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
     queryset = BookPart.objects.all().order_by('order')
     serializer_class = BookPartSerializer
 
@@ -67,53 +61,24 @@ class BookBlockViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
     serializer_class = BookBlockSerializer
 
 class BookExerciseViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
-    queryset = BookExercise.objects.all().order_by('order')
-    serializer_class = BookExerciseSerializer
+    queryset = BlockExercise.objects.all().order_by('order')
+    serializer_class = BlockExerciseSerializer
 
 class BlockObjectiveViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
     queryset = BlockLearningObjective.objects.all()
     serializer_class = BlockLearningObjectiveSerializer
 
-
-
+ 
 class BlockReelViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
     queryset = BlockReel.objects.all()
     serializer_class = BlockReelSerializer
 
-
-
-
-
-
- 
-
-
-class AIBookLessonViewSet(viewsets.ModelViewSet):
-    queryset = AIBookLesson.objects.all()
-    serializer_class = AIBookLessonSerializer
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['title']
-    ordering_fields = ['order', 'title']
-
-class AIBlockViewSet(viewsets.ModelViewSet):
-    queryset = AIBlock.objects.all()
-    serializer_class = AIBlockSerializer
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['title', 'content']
-    ordering_fields = ['created_at', 'title']
-
-class LessonIndexViewSet(viewsets.ModelViewSet):
+  
+class LessonIndexViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
     queryset = LessonIndex.objects.all()
     serializer_class = LessonIndexSerializer
-    filter_backends = [filters.SearchFilter, filters.OrderingFilter]
-    search_fields = ['title', 'ai_lesson__title']
-    ordering_fields = ['title']
-
-
- 
- 
- 
-
+  
+   
 class SimilarBlockView(APIView):
     """
     يأخذ وصف نصي ويرجع أقرب BookBlock حسب التشابه

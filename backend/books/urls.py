@@ -10,8 +10,6 @@ router.register(r'blocks', BookBlockViewSet)
 router.register(r'exercises', BookExerciseViewSet)
 router.register(r'reel', BlockReelViewSet)
 router.register(r'objectives', BlockObjectiveViewSet)
-router.register(r'ai-lessons', AIBookLessonViewSet)
-router.register(r'ai-blocks', AIBlockViewSet)
 router.register(r'lesson-index', LessonIndexViewSet)
 
 urlpatterns = [

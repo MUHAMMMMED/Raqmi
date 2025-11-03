@@ -1,32 +1,7 @@
-# from rest_framework import viewsets
-# from .models import *
-# from .serializers import *
-
-# class StageViewSet(viewsets.ModelViewSet):
-#     queryset = Stage.objects.all()
-#     serializer_class = StageSerializer
-
-
-# class GradeViewSet(viewsets.ModelViewSet):
-#     queryset = Grade.objects.all()
-#     serializer_class = GradeSerializer
-
-
-# class ProgramViewSet(viewsets.ModelViewSet):
-#     queryset = Program.objects.all()
-#     serializer_class = ProgramSerializer
-
-
-# class SubjectViewSet(viewsets.ModelViewSet):
-#     queryset = Subject.objects.all()
-#     serializer_class = SubjectSerializer
-
-
-
+ 
 from rest_framework import viewsets, decorators, response
-from .models import Stage, Grade, Program, Subject
-from .serializers import StageSerializer, GradeSerializer, ProgramSerializer, SubjectSerializer
-
+from .models import *
+from .serializers import *
 
 class StageViewSet(viewsets.ModelViewSet):
     queryset = Stage.objects.all()

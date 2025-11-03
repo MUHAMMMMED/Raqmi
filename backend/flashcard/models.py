@@ -1,13 +1,11 @@
 from django.db import models
 from django.core.validators import MinValueValidator 
-from lessons.models import Lesson
 from books.models import BookBlock
 
 
 
 class Card(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
-    lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name='lesson_card', null=True, blank=True)
     block = models.ForeignKey(BookBlock, on_delete=models.CASCADE, related_name="book_block_card", null=True, blank=True)
     front_text = models.TextField(blank=True, null=True)
     front_image = models.ImageField(upload_to='Card_front_images/', blank=True, null=True)
@@ -26,10 +24,10 @@ class Card(models.Model):
     easy_count = models.IntegerField(default=0, validators=[MinValueValidator(0)])
 
     class Meta:
+ 
      indexes = [
         models.Index(fields=['created_at']),
-        models.Index(fields=['lesson']),
-    ]
+     ]
 
     def __str__(self):
         return self.front_text or "Unnamed Card"

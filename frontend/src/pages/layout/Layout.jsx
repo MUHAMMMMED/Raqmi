@@ -4,6 +4,7 @@ import BookList from '../book/BookList';
 import Categories from '../categories/Categories/Categories';
 import CourseList from '../courses/CourseList';
 import Dashboard from '../Dashboard/Dashboard';
+import LessonIndexManager from '../LessonIndex/LessonIndexManager';
 import MediaLibrary from '../MediaLibrary/MediaLibrary';
 import styles from './Layout.module.css';
 import Sidebar from './Sidebar/Sidebar';
@@ -40,6 +41,7 @@ const Layout = () => {
             case 'Courses': return <CourseList />;
             case 'book': return <BookList />;
             case 'Media': return <MediaLibrary />;
+            case 'Index': return <LessonIndexManager />;
 
             case 'categories': return <Categories />;
 
