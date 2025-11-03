@@ -180,20 +180,7 @@ class BlockReel(models.Model):
 
  
 
-
-# class AIBookLesson(models.Model):
-#     """
-#     درس AI يمثل الدرس الكامل، ويحتوي على embedding vector للبحث السريع
-#     """
-#     title = models.CharField(max_length=500)
-#     order = models.PositiveIntegerField(default=0)
-#     embedding_vector = models.JSONField(null=True, blank=True)  # vector للبحث
-#     linked_lessons = models.ManyToManyField(BookLesson, related_name="linked_ai_lessons")  
-#     def __str__(self):
-#         return f"  {self.title}"
-
-
-
+ 
 
 
 class LessonIndex(models.Model):
@@ -207,7 +194,7 @@ class LessonIndex(models.Model):
         on_delete=models.SET_NULL,
         related_name="course_lesson_index"
     )
-    lesson = models.ManyToManyField(BookLesson,related_name="book_lesson_index"  )
+    book_lesson = models.ManyToManyField(BookLesson,related_name="book_lesson_index"  )
     stage = models.ForeignKey(Stage, on_delete=models.CASCADE)
     grade = models.ForeignKey(Grade, on_delete=models.CASCADE)
     program = models.ForeignKey(Program, on_delete=models.CASCADE)

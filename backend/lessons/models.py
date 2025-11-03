@@ -46,10 +46,7 @@ class Lesson(models.Model):
 
 
 class Block(models.Model):
-    """
-    AI Block هو ملخص للبلوكات المشابهة داخل الدرس
-    """
-    # id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name="lesson_block")
     title = models.CharField(max_length=500)
     content = models.TextField()
@@ -58,14 +55,14 @@ class Block(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     cards = models.ManyToManyField(Card,related_name="cards_lesson"  )
-
+    order = models.IntegerField(default=0)
     def __str__(self):
         return f"{self.title} -  Block"
  
 
 
 
-class BlockExercise(models.Model):
+class LessonBlockExercise(models.Model):
     """التدريبات أو الأسئلة في نهاية الدروس أو الفصول"""
 
     block = models.ForeignKey(Block, on_delete=models.CASCADE, related_name="ai_block_exercises", null=True, blank=True)

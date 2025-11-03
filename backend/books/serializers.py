@@ -10,9 +10,7 @@ class BlockLearningObjectiveSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-
-  
-
+ 
 
 class BlockExerciseSerializer(serializers.ModelSerializer):
     block_title = serializers.CharField(source="block.title", read_only=True)
