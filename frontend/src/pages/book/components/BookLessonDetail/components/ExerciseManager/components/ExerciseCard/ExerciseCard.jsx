@@ -8,7 +8,7 @@ const label = type => ({
     essay: 'مقال'
 }[type] ?? type);
 
-const ExerciseCard = ({ exercise, onEdit, onDelete }) => {
+const ExerciseCard = ({ exercise, onEdit, onDelete, IsManager }) => {
     return (
         <article className={styles.card}>
             <header className={styles.header}>
@@ -51,16 +51,16 @@ const ExerciseCard = ({ exercise, onEdit, onDelete }) => {
                     <p>{exercise.explanation}</p>
                 </section>
             )}
+            {IsManager &&
 
-            {/* الأزرار داخل البطاقة */}
-            <div className={styles.actions}>
-                <button onClick={() => onEdit(exercise)} title="تعديل">
-                    <FaEdit /> تعديل
-                </button>
-                <button onClick={() => onDelete(exercise)} title="حذف">
-                    <FaTrash /> حذف
-                </button>
-            </div>
+                <div className={styles.actions}>
+                    <button onClick={() => onEdit(exercise)} title="تعديل">
+                        <FaEdit /> تعديل
+                    </button>
+                    <button onClick={() => onDelete(exercise)} title="حذف">
+                        <FaTrash /> حذف
+                    </button>
+                </div>}
         </article>
     );
 };

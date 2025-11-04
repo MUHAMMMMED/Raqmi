@@ -1,19 +1,16 @@
-
 import React, { useEffect, useState } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-
-
-import styles from './LessonList.module.css';
-
+import { DiWindows } from "react-icons/di";
 import {
     FaBook,
     FaBullseye,
+    FaChartBar,
     FaCheckCircle,
+    FaChevronDown,
+    FaChevronUp,
     FaClock,
     FaEdit,
     FaGraduationCap,
     FaHourglassHalf,
-    FaLayerGroup,
     FaPlus,
     FaSearch,
     FaTasks,
@@ -21,8 +18,10 @@ import {
     FaUserGraduate,
     FaVideo
 } from 'react-icons/fa';
+import { useNavigate, useParams } from "react-router-dom";
 import { getCourse } from "../../api/courses";
 import { getLessonsByCourse } from "../../api/lessons";
+import styles from './LessonList.module.css'; // تأكد من هذا الاستيراد
 
 const LessonList = () => {
     const { courseId } = useParams();
@@ -30,6 +29,7 @@ const LessonList = () => {
     const [course, setCourse] = useState(null);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
+    const [expandedLessons, setExpandedLessons] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -50,6 +50,13 @@ const LessonList = () => {
         } finally {
             setLoading(false);
         }
+    };
+
+    const toggleLessonExpansion = (lessonId) => {
+        setExpandedLessons(prev => ({
+            ...prev,
+            [lessonId]: !prev[lessonId]
+        }));
     };
 
     const filteredLessons = lessons.filter(lesson =>
@@ -84,15 +91,10 @@ const LessonList = () => {
         }
     };
 
-    const LessonCard = ({ lesson, index }) => {
+    const LessonItem = ({ lesson, index }) => {
         const designSettings = course ? {
-            primaryColor: course.primary_color || '#1E90FF',
-            secondaryColor: course.secondary_color || '#FFD700',
-            backgroundColor: course.background_color || '#FFFFFF',
-            mainFont: course.main_font || 'Cairo',
-            descFont: course.desc_font || 'Tajawal',
-            borderRadius: course.border_radius || 16,
-            padding: course.padding || 12
+            primaryColor: course.primary_color || '#667eea',
+            secondaryColor: course.secondary_color || '#764ba2',
         } : {};
 
         const lessonInfo = lesson.info || {};
@@ -101,196 +103,192 @@ const LessonList = () => {
         const difficulty = lessonInfo.صعوبة || 'متوسطة';
         const grade = lessonInfo.المستوى || course?.grade?.name || 'غير محدد';
         const lessonType = lessonInfo.نوع_الدرس || 'عام';
+        const isExpanded = expandedLessons[lesson.id];
 
         return (
             <div
-                className={styles.lessonCard}
+                className={styles.lessonItem}
                 style={{
                     '--primary-color': designSettings.primaryColor,
                     '--secondary-color': designSettings.secondaryColor,
-                    '--background-color': designSettings.backgroundColor,
-                    '--border-radius': `${designSettings.borderRadius}px`,
-                    '--padding': `${designSettings.padding}px`,
-                    '--main-font': designSettings.mainFont,
-                    '--desc-font': designSettings.descFont
                 }}
             >
-                <div className={styles.cardHeader}>
-                    <div className={styles.lessonIcon}>
-                        <FaBook />
+                <div className={styles.lessonHeader} onClick={() => toggleLessonExpansion(lesson.id)}>
+                    <div className={styles.lessonOrder}>
+                        {index + 1}
                     </div>
-                    <div className={styles.lessonInfo}>
-                        <div className={styles.lessonTitleSection}>
-                            <h3 className={styles.lessonTitle}>{lesson.title}</h3>
-                            <div className={styles.reviewStatus}>
-                                {getReviewStatusIcon(lesson.review_status)}
-                                <span className={`${styles.statusText} ${styles[lesson.review_status]}`}>
-                                    {getReviewStatusText(lesson.review_status)}
+                    <div className={styles.lessonContent}>
+                        <div className={styles.lessonMainInfo}>
+                            <div className={styles.lessonTitleRow}>
+                                <h3 className={styles.lessonTitle}>{lesson.title}</h3>
+                                <div className={styles.reviewStatus}>
+                                    {getReviewStatusIcon(lesson.review_status)}
+                                    <span className={`${styles.statusText} ${styles[lesson.review_status]}`}>
+                                        {getReviewStatusText(lesson.review_status)}
+                                    </span>
+                                </div>
+                            </div>
+
+                            {lesson.summary && (
+                                <p className={styles.lessonDescription}>
+                                    {lesson.summary}
+                                </p>
+                            )}
+
+                            <div className={styles.lessonMeta}>
+                                <span className={styles.metaItem}>
+                                    <FaGraduationCap className={styles.metaIcon} />
+                                    {lessonType}
+                                </span>
+                                <span className={styles.metaItem}>
+                                    <FaUserGraduate className={styles.metaIcon} />
+                                    {grade}
+                                </span>
+                                <span className={styles.metaItem}>
+                                    <FaClock className={styles.metaIcon} />
+                                    {duration}
+                                </span>
+                                <span className={styles.metaItem}>
+                                    <FaTasks className={styles.metaIcon} />
+                                    {difficulty}
                                 </span>
                             </div>
                         </div>
 
-                        {lesson.summary && (
-                            <p className={styles.lessonDescription}>
-                                {lesson.summary.substring(0, 120)}...
-                            </p>
-                        )}
-
-                        <div className={styles.lessonMeta}>
-                            <span className={styles.metaItem}>
-                                <FaGraduationCap className={styles.metaIcon} />
-                                {lessonType}
-                            </span>
-                            <span className={styles.metaItem}>
-                                <FaUserGraduate className={styles.metaIcon} />
-                                {grade}
-                            </span>
-                            <span className={styles.metaItem}>
-                                <FaClock className={styles.metaIcon} />
-                                {duration}
-                            </span>
-                            <span className={styles.metaItem}>
-                                <FaTasks className={styles.metaIcon} />
-                                {lesson.reels_count} ريل
-                            </span>
+                        <div className={styles.lessonStats}>
+                            <div className={styles.statBadges}>
+                                <span className={`${styles.statBadge} ${styles.slides}`}>
+                                    {lesson.slides_count || 0} شرائح
+                                </span>
+                                <span className={`${styles.statBadge} ${styles.reels}`}>
+                                    {lesson.reels_count || 0} ريلز
+                                </span>
+                                <span className={`${styles.statBadge} ${styles.difficulty} ${styles[difficulty]}`}>
+                                    {difficulty === 'صعبة' ? 'صعبة' :
+                                        difficulty === 'متوسطة' ? 'متوسطة' : 'سهلة'}
+                                </span>
+                            </div>
+                            <div className={styles.lessonActions}>
+                                <button
+                                    className={styles.actionBtn}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        navigate(`/lessons/${lesson.id}/editor`);
+                                    }}
+                                >
+                                    <FaEdit />
+                                    محرر
+                                </button>
+                                <button
+                                    className={`${styles.actionBtn} ${styles.primary}`}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        toggleLessonExpansion(lesson.id);
+                                    }}
+                                >
+                                    {isExpanded ? <FaChevronUp /> : <FaChevronDown />}
+                                    {isExpanded ? 'إخفاء' : 'تفاصيل'}
+                                </button>
+                            </div>
                         </div>
+                    </div>
+                </div>
 
+                {isExpanded && (
+                    <div className={styles.lessonExpandedContent}>
+                        {/* الأهداف التعليمية */}
                         {objectives.length > 0 && (
                             <div className={styles.objectivesSection}>
-                                <div className={styles.objectivesHeader}>
-                                    <FaBullseye className={styles.objectivesIcon} />
-                                    <span>الأهداف التعليمية:</span>
-                                </div>
-                                <div className={styles.objectivesList}>
-                                    {objectives.slice(0, 2).map((objective, index) => (
-                                        <span key={index} className={styles.objectiveTag}>
+                                <h4 className={styles.sectionTitle}>
+                                    <FaBullseye className={styles.sectionIcon} />
+                                    الأهداف التعليمية
+                                </h4>
+                                <div className={styles.objectivesGrid}>
+                                    {objectives.map((objective, idx) => (
+                                        <div key={idx} className={styles.objectiveItem}>
                                             {objective}
-                                        </span>
+                                        </div>
                                     ))}
-                                    {objectives.length > 2 && (
-                                        <span className={styles.moreObjectives}>
-                                            +{objectives.length - 2} أكثر
+                                </div>
+                            </div>
+                        )}
+
+                        {/* الإجراءات السريعة */}
+                        <div className={styles.quickActionsGrid}>
+                            <div
+                                className={styles.quickAction}
+                                onClick={() => navigate(`/lesson-index/${lesson.id}/`)}
+                            >
+                                <DiWindows className={styles.quickActionIcon} />
+                                <h4>المحتوى التعليمي</h4>
+                                <p>عرض وتعديل محتوى الدرس</p>
+                                <span className={styles.quickActionCount}>
+                                    {lesson.slides_count || 0} شريحة
+                                </span>
+                            </div>
+
+                            <div
+                                className={styles.quickAction}
+                                onClick={() => navigate(`/lessons/${lesson.id}/reels`)}
+                            >
+                                <FaVideo className={styles.quickActionIcon} />
+                                <h4>مقاطع الفيديو</h4>
+                                <p>إدارة مقاطع الريلز التعليمية</p>
+                                <span className={styles.quickActionCount}>
+                                    {lesson.reels_count || 0} ريل
+                                </span>
+                            </div>
+
+                            <div
+                                className={styles.quickAction}
+                                onClick={() => navigate(`/lessons/${lesson.id}/analytics`)}
+                            >
+                                <FaChartBar className={styles.quickActionIcon} />
+                                <h4>التقارير</h4>
+                                <p>عرض إحصائيات وتقارير الدرس</p>
+                            </div>
+                        </div>
+
+                        {/* معلومات الذكاء الاصطناعي */}
+                        {lesson.ai_model && (
+                            <div className={styles.aiInfo}>
+                                <div className={styles.aiInfoContent}>
+                                    <span className={styles.aiModel}>
+                                        <FaTasks />
+                                        تم إنشاؤه بواسطة: {lesson.ai_model}
+                                    </span>
+                                    {lesson.prompt_version && (
+                                        <span className={styles.promptVersion}>
+                                            إصدار النموذج: {lesson.prompt_version}
                                         </span>
                                     )}
                                 </div>
                             </div>
                         )}
-
-                        {lesson.ai_model && (
-                            <div className={styles.aiInfo}>
-                                <span className={styles.aiModel}>
-                                    تم إنشاؤه بواسطة: {lesson.ai_model}
-                                </span>
-                                {lesson.prompt_version && (
-                                    <span className={styles.promptVersion}>
-                                        الإصدار: {lesson.prompt_version}
-                                    </span>
-                                )}
-                            </div>
-                        )}
                     </div>
-                </div>
-
-                {/* الكروت السريعة */}
-                <div className={styles.quickActions}>
-                    <div
-                        className={styles.actionCard}
-                        onClick={() => navigate(`/lessons/${lesson.id}/cards`)}
-                    >
-                        <div className={styles.actionIcon}>
-                            <FaBook />
-                        </div>
-                        <div className={styles.actionInfo}>
-                            <h4>البطاقات التعليمية</h4>
-                            <p>إدارة البطاقات والاختبارات</p>
-                            <span className={styles.actionCount}>
-                                {lesson.cards_count || 0} بطاقة
-                            </span>
-                        </div>
-                    </div>
-
-                    <div
-                        className={styles.actionCard}
-                        onClick={() => navigate(`/lessons/${lesson.id}/slides`)}
-                    >
-                        <div className={styles.actionIcon}>
-                            <FaLayerGroup />
-                        </div>
-                        <div className={styles.actionInfo}>
-                            <h4>الشرائح</h4>
-                            <p>عرض وتعديل شرائح الدرس</p>
-                            <span className={styles.actionCount}>
-                                {lesson.slides_count || 0} شريحة
-                            </span>
-                        </div>
-                    </div>
-
-                    <div
-                        className={styles.actionCard}
-                        onClick={() => navigate(`/lessons/${lesson.id}/reels`)}
-                    >
-                        <div className={styles.actionIcon}>
-                            <FaVideo />
-                        </div>
-                        <div className={styles.actionInfo}>
-                            <h4>الريلز</h4>
-                            <p>إدارة مقاطع الفيديو التعليمية</p>
-                            <span className={styles.actionCount}>
-                                {lesson.reels_count || 0} ريل
-                            </span>
-                        </div>
-                    </div>
-                </div>
-
-                <div className={styles.cardFooter}>
-                    <div className={styles.lessonStats}>
-                        <div className={styles.difficultyBadge}>
-                            <span className={`${styles.difficulty} ${styles[difficulty]}`}>
-                                {difficulty === 'صعبة' ? 'صعبة' :
-                                    difficulty === 'متوسطة' ? 'متوسطة' : 'سهلة'}
-                            </span>
-                        </div>
-                        <div className={styles.versionInfo}>
-                            الإصدار: {lesson.version}
-                        </div>
-                    </div>
-                    <div
-                        className={styles.ctaButton}
-                        onClick={() => navigate(`/lessons/${lesson.id}/editor`)}
-                    >
-                        <span>فتح المحرر</span>
-                        <FaEdit className={styles.arrowIcon} />
-                    </div>
-                </div>
+                )}
             </div>
         );
     };
 
-    const CreateLessonCard = () => {
+    const CreateLessonButton = () => {
         const designSettings = course ? {
-            primaryColor: course.primary_color || '#1E90FF',
-            secondaryColor: course.secondary_color || '#FFD700',
-            backgroundColor: course.background_color || '#FFFFFF',
-            borderRadius: course.border_radius || 16,
+            primaryColor: course.primary_color || '#667eea',
+            secondaryColor: course.secondary_color || '#764ba2',
         } : {};
 
         return (
-            <div
-                className={styles.createLessonCard}
+            <button
+                className={styles.createLessonBtn}
                 style={{
                     '--primary-color': designSettings.primaryColor,
                     '--secondary-color': designSettings.secondaryColor,
-                    '--background-color': designSettings.backgroundColor,
-                    '--border-radius': `${designSettings.borderRadius}px`,
                 }}
                 onClick={() => navigate(`/courses/${courseId}/lessons/create`)}
             >
-                <div className={styles.createIcon}>
-                    <FaPlus />
-                </div>
-                <h3>إنشاء درس جديد</h3>
-                <p>ابدأ في تصميم درس جديد من الصفر</p>
-            </div>
+                <FaPlus />
+                إنشاء درس جديد
+            </button>
         );
     };
 
@@ -305,6 +303,7 @@ const LessonList = () => {
 
     return (
         <div className={styles.lessonListContainer}>
+            {/* رأس الصفحة */}
             <div className={styles.headerSection}>
                 <div className={styles.headerContent}>
                     <div className={styles.titleSection}>
@@ -317,7 +316,7 @@ const LessonList = () => {
                                 {course?.stage?.name} - {course?.grade?.name} - {course?.subject?.name}
                             </p>
                             <p className={styles.courseDescription}>
-                                اختر درساً للبدء في التعلم أو التحرير
+                                إدارة وتنظيم الدروس التعليمية للكورس
                             </p>
                         </div>
                     </div>
@@ -341,29 +340,36 @@ const LessonList = () => {
                             </span>
                             <span className={styles.statLabel}>درس معتمد</span>
                         </div>
-                    </div>
-                </div>
-
-                <div className={styles.searchSection}>
-                    <div className={styles.searchContainer}>
-                        <FaSearch className={styles.searchIcon} />
-                        <input
-                            type="text"
-                            placeholder="ابحث في الدروس حسب العنوان، الملخص، أو النوع..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className={styles.searchInput}
-                        />
+                        <div className={styles.statCard}>
+                            <span className={styles.statNumber}>
+                                {lessons.reduce((total, lesson) => total + (lesson.slides_count || 0), 0)}
+                            </span>
+                            <span className={styles.statLabel}>شريحة</span>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div className={styles.lessonsGrid}>
-                <CreateLessonCard />
+            {/* شريط البحث والإجراءات */}
+            <div className={styles.actionsSection}>
+                <div className={styles.searchContainer}>
+                    <FaSearch className={styles.searchIcon} />
+                    <input
+                        type="text"
+                        placeholder="ابحث في الدروس حسب العنوان، الملخص، أو النوع..."
+                        value={searchTerm}
+                        onChange={(e) => setSearchTerm(e.target.value)}
+                        className={styles.searchInput}
+                    />
+                </div>
+                <CreateLessonButton />
+            </div>
 
+            {/* قائمة الدروس */}
+            <div className={styles.lessonsList}>
                 {filteredLessons.length > 0 ? (
                     filteredLessons.map((lesson, index) => (
-                        <LessonCard key={lesson.id} lesson={lesson} index={index} />
+                        <LessonItem key={lesson.id} lesson={lesson} index={index} />
                     ))
                 ) : searchTerm ? (
                     <div className={styles.noResults}>
@@ -376,49 +382,52 @@ const LessonList = () => {
                         <FaBook className={styles.emptyIcon} />
                         <h2>لا توجد دروس بعد</h2>
                         <p>ابدأ بإنشاء أول درس في هذا الكورس</p>
+                        <CreateLessonButton />
                     </div>
                 )}
             </div>
 
+            {/* قسم التحليلات */}
             {lessons.length > 0 && (
-                <div className={styles.aiAnalysisSection}>
-                    <div className={styles.analysisHeader}>
-                        <FaTasks className={styles.analysisIcon} />
-                        <h4>ملخص تحليل الذكاء الاصطناعي</h4>
+                <div className={styles.analyticsSection}>
+                    <div className={styles.analyticsHeader}>
+                        <FaChartBar className={styles.analyticsIcon} />
+                        <h3>نظرة عامة على الدروس</h3>
                     </div>
-                    <div className={styles.analysisGrid}>
-                        <div className={styles.analysisCard}>
-                            <span className={styles.analysisNumber}>
+
+                    <div className={styles.analyticsGrid}>
+                        <div className={styles.analyticsCard}>
+                            <span className={styles.analyticsNumber}>
                                 {lessons.filter(lesson => lesson.ai_model).length}
                             </span>
-                            <span className={styles.analysisLabel}>درس تم إنشاؤه بالذكاء الاصطناعي</span>
+                            <span className={styles.analyticsLabel}>درس بالذكاء الاصطناعي</span>
                         </div>
-                        <div className={styles.analysisCard}>
-                            <span className={styles.analysisNumber}>
+                        <div className={styles.analyticsCard}>
+                            <span className={styles.analyticsNumber}>
                                 {[...new Set(lessons.map(lesson => lesson.info?.نوع_الدرس).filter(Boolean))].length}
                             </span>
-                            <span className={styles.analysisLabel}>نوع مختلف</span>
+                            <span className={styles.analyticsLabel}>نوع مختلف</span>
                         </div>
-                        <div className={styles.analysisCard}>
-                            <span className={styles.analysisNumber}>
+                        <div className={styles.analyticsCard}>
+                            <span className={styles.analyticsNumber}>
                                 {lessons.reduce((total, lesson) => {
                                     const objectives = lesson.info?.الأهداف || [];
                                     return total + objectives.length;
                                 }, 0)}
                             </span>
-                            <span className={styles.analysisLabel}>هدف تعليمي</span>
+                            <span className={styles.analyticsLabel}>هدف تعليمي</span>
                         </div>
-                        <div className={styles.analysisCard}>
-                            <span className={styles.analysisNumber}>
-                                {lessons.reduce((total, lesson) => total + lesson.reels_count, 0)}
+                        <div className={styles.analyticsCard}>
+                            <span className={styles.analyticsNumber}>
+                                {lessons.reduce((total, lesson) => total + (lesson.reels_count || 0), 0)}
                             </span>
-                            <span className={styles.analysisLabel}>ريل إجمالي</span>
+                            <span className={styles.analyticsLabel}>ريل إجمالي</span>
                         </div>
                     </div>
 
-                    <div className={styles.reviewStats}>
-                        <h5>حالة المراجعة:</h5>
-                        <div className={styles.reviewProgress}>
+                    <div className={styles.reviewAnalytics}>
+                        <h4>حالة مراجعة الدروس:</h4>
+                        <div className={styles.reviewStats}>
                             <div className={styles.reviewStat}>
                                 <span className={styles.reviewCount}>
                                     {lessons.filter(l => l.review_status === 'approved').length}

@@ -11,7 +11,7 @@ import {
     updateCard,
 } from '../../../../../../../../api/cards';
 
-const CardManager = ({ cards = [], blockId, lessonId, fetchData }) => {
+const CardManager = ({ cards = [], blockId, lessonId, fetchData, IsManager }) => {
     const [showForm, setShowForm] = useState(false);
     const [editingCard, setEditingCard] = useState(null);
     const [loading, setLoading] = useState(false);
@@ -64,43 +64,48 @@ const CardManager = ({ cards = [], blockId, lessonId, fetchData }) => {
             {/* Header */}
             <div className={styles.header}>
                 <h3>إدارة البطاقات التعليمية</h3>
-                <button className={styles.addButton} onClick={handleCreate} disabled={loading}>
-                    <FaPlus /> إضافة بطاقة جديدة
-                </button>
+                {IsManager &&
+                    <button className={styles.addButton} onClick={handleCreate} disabled={loading}>
+                        <FaPlus /> إضافة بطاقة جديدة
+                    </button>}
             </div>
 
             {/* Cards Grid */}
             <div className={styles.cardsGrid}>
                 {cards.map((card) => (
                     <div key={card.id} className={styles.cardWrapper}>
-                        <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
-                            <button
-                                className={styles.editButton}
-                                onClick={() => handleEdit(card)}
-                                disabled={loading}
-                            >
-                                <FaEdit /> تعديل
-                            </button>
-                            <button
-                                className={styles.deleteButton}
-                                onClick={() => handleDelete(card.id)}
-                                disabled={loading}
-                            >
-                                <FaTrash /> حذف
-                            </button>
-                        </div>
+                        {IsManager &&
+                            <div className={styles.actions} onClick={(e) => e.stopPropagation()}>
+                                <button
+                                    className={styles.editButton}
+                                    onClick={() => handleEdit(card)}
+                                    disabled={loading}
+                                >
+                                    <FaEdit /> تعديل
+                                </button>
+                                <button
+                                    className={styles.deleteButton}
+                                    onClick={() => handleDelete(card.id)}
+                                    disabled={loading}
+                                >
+                                    <FaTrash /> حذف
+                                </button>
+                            </div>
+                        }
                         <FlashCardItem card={card} />
                     </div>
                 ))}
             </div>
 
+
             {/* Empty State */}
             {cards.length === 0 && (
                 <div className={styles.emptyState}>
                     <p>لا توجد بطاقات تعليمية حتى الآن</p>
-                    <button className={styles.addButton} onClick={handleCreate}>
-                        <FaPlus /> إضافة أول بطاقة
-                    </button>
+                    {IsManager &&
+                        <button className={styles.addButton} onClick={handleCreate}>
+                            <FaPlus /> إضافة أول بطاقة
+                        </button>}
                 </div>
             )}
 

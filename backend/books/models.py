@@ -82,7 +82,7 @@ class BookBlock(models.Model):
  
 
 class BlockExercise(models.Model):
-    """التدريبات أو الأسئلة في نهاية الدروس أو الفصول"""
+ 
     part = models.ForeignKey(BookPart, on_delete=models.CASCADE, related_name="exercises", null=True, blank=True)
     lesson = models.ForeignKey(BookLesson, on_delete=models.CASCADE, related_name="exercises", null=True, blank=True)
     block = models.ForeignKey(BookBlock, on_delete=models.CASCADE, related_name="exercises", null=True, blank=True)
@@ -178,15 +178,9 @@ class BlockReel(models.Model):
     def __str__(self):
         return f"Reel Preview for {self.block.title}"
 
- 
-
- 
-
-
+  
 class LessonIndex(models.Model):
     title = models.CharField(max_length=500)
-
- 
     lesson = models.OneToOneField(
        "lessons.Lesson", 
         blank=True, 

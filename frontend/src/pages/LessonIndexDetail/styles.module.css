@@ -1,0 +1,721 @@
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+    font-family: 'Cairo', 'Tajawal', sans-serif;
+    direction: rtl;
+    background: #f8fafc;
+    min-height: 100vh;
+}
+
+/* الهيدر الأصلي (متدرج أزرق) */
+.header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 30px;
+    border-radius: 16px;
+    margin-bottom: 24px;
+    color: white;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.2);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.backButton {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    order: 2;
+}
+
+.backButton:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(-4px);
+}
+
+.title {
+    margin: 0;
+    font-size: 1.8rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: 'Cairo', sans-serif;
+    order: 1;
+}
+
+.metaTags {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+}
+
+.metaTag {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    color: #4a5568;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.section {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 24px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.sectionTitle {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin: 0 0 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding-bottom: 12px;
+}
+
+/* معلومات الدرس */
+.infoGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.infoItem {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 0.95rem;
+}
+
+.infoIcon {
+    color: #667eea;
+    font-size: 1.1rem;
+}
+
+.infoLabel {
+    font-weight: 600;
+    color: #4a5568;
+    min-width: 60px;
+}
+
+.infoValue {
+    color: #2d3748;
+    font-weight: 500;
+}
+
+.summary {
+    margin-top: 16px;
+}
+
+.summaryText {
+    background: #f7fafc;
+    padding: 16px;
+    border-radius: 12px;
+    line-height: 1.7;
+    color: #4a5568;
+    border-right: 4px solid #667eea;
+    font-size: 0.95rem;
+}
+
+/* دروس الكتاب */
+.bookLesson {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.bookLesson:hover {
+    background: white;
+    border-color: #667eea;
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.1);
+}
+
+/* تفاصيل درس الكتاب */
+.lessonDetails {
+    margin-bottom: 20px;
+}
+
+.lessonHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.lessonTitle {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #667eea;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.toggleButton {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.toggleButton:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.3);
+}
+
+.lessonInfoGrid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    background: #f8f9fa;
+    padding: 16px;
+    border-radius: 12px;
+    border: 1px dashed #cbd5e0;
+    margin-bottom: 16px;
+}
+
+/* حاوية البلوكات */
+.blocksContainer {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 2px dashed #e2e8f0;
+}
+
+.blockWrapper {
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
+.noBlocks {
+    color: #a0aec0;
+    font-style: italic;
+    text-align: center;
+    padding: 16px;
+    background: #f7fafc;
+    border-radius: 8px;
+    font-size: 0.95rem;
+}
+
+/* نظام التبويب */
+.tabsContainer {
+    margin-bottom: 24px;
+}
+
+.tabs {
+    display: flex;
+    background: white;
+    border-radius: 16px;
+    padding: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+    gap: 8px;
+}
+
+.tab {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border: none;
+    background: transparent;
+    border-radius: 12px;
+    font-weight: 600;
+    color: #718096;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 0.95rem;
+}
+
+.tab:hover {
+    background: #f7fafc;
+    color: #4a5568;
+}
+
+.activeTab {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+}
+
+.tabIcon {
+    font-size: 1.1rem;
+}
+
+.badge {
+    background: rgba(255, 255, 255, 0.2);
+    color: inherit;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.activeTab .badge {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* أنماط محتوى الدرس التعليمي */
+.lessonBlock {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.lessonBlock:hover {
+    background: white;
+    border-color: #764ba2;
+    box-shadow: 0 6px 20px rgba(118, 75, 162, 0.1);
+}
+
+.blockContent {
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    line-height: 1.6;
+    color: #4a5568;
+    border-right: 3px solid #764ba2;
+}
+
+.blockDetails {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 2px dashed #e2e8f0;
+}
+
+.detailSection {
+    margin-bottom: 24px;
+    background: white;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.detailTitle {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.detailIcon {
+    color: #764ba2;
+}
+
+/* الأهداف التعليمية */
+.objectivesList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.objectiveItem {
+    background: #f7fafc;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border-left: 4px solid #48bb78;
+}
+
+.objectiveHeader {
+    margin-bottom: 8px;
+    color: #2d3748;
+}
+
+.objectiveDescription {
+    color: #4a5568;
+    line-height: 1.5;
+}
+
+/* التمارين */
+.exercisesList {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.exerciseItem {
+    background: #f7fafc;
+    padding: 16px;
+    border-radius: 8px;
+    border-left: 4px solid #4299e1;
+}
+
+.exerciseQuestion {
+    margin-bottom: 12px;
+    color: #2d3748;
+    font-weight: 500;
+}
+
+.exerciseDetails {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    font-size: 0.9rem;
+}
+
+.exerciseType,
+.exerciseAnswer,
+.exerciseExplanation {
+    color: #4a5568;
+}
+
+/* الريل التعليمي */
+.reelItem {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.reelField {
+    background: #f7fafc;
+    padding: 10px 12px;
+    border-radius: 6px;
+    border-left: 3px solid #ed8936;
+}
+
+/* البطاقات */
+.cardsList {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.cardItem {
+    background: #f7fafc;
+    padding: 16px;
+    border-radius: 8px;
+    border-left: 4px solid #9f7aea;
+}
+
+.cardHeader {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: #2d3748;
+}
+
+.cardIcon {
+    color: #9f7aea;
+}
+
+.cardContent {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.cardField {
+    color: #4a5568;
+    line-height: 1.4;
+}
+
+.cardOptions {
+    background: #edf2f7;
+    padding: 8px 12px;
+    border-radius: 6px;
+    font-size: 0.9rem;
+}
+
+.cardAnswer {
+    background: #c6f6d5;
+    padding: 8px 12px;
+    border-radius: 6px;
+    color: #22543d;
+    font-weight: 600;
+}
+
+.cardStats {
+    display: flex;
+    gap: 12px;
+    font-size: 0.85rem;
+    color: #718096;
+    flex-wrap: wrap;
+}
+
+.cardStats span {
+    background: #e2e8f0;
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+/* حاوية الفلاش كارد */
+.flashCardsContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 24px;
+    padding: 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* حاوية الصور */
+.imageContainer {
+    margin-bottom: 16px;
+    text-align: center;
+}
+
+.contentImage {
+    max-width: 100%;
+    max-height: 400px;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e2e8f0;
+    object-fit: cover;
+}
+
+/* أيقونة الصورة في الشبكة */
+.infoItem .fa-image {
+    color: #9f7aea;
+}
+
+/* البلوكات المرتبطة */
+.linkedBlock {
+    margin-bottom: 12px;
+}
+
+/* حالات التحميل والخطأ */
+.loading,
+.error,
+.noData {
+    text-align: center;
+    padding: 60px 20px;
+    border-radius: 16px;
+    margin: 20px 0;
+    font-size: 1.1rem;
+}
+
+.loading {
+    color: #667eea;
+    background: #edf2f7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+}
+
+.loading::after {
+    content: "";
+    width: 20px;
+    height: 20px;
+    border: 2px solid #667eea;
+    border-top: 2px solid transparent;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+.error {
+    background: #fed7d7;
+    color: #9b2c2c;
+    border: 1px solid #feb2b2;
+}
+
+.noData {
+    background: #f7fafc;
+    color: #718096;
+    border: 1px solid #e2e8f0;
+}
+
+/* أنيميشن التحميل */
+@keyframes spin {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/* التجاوب */
+@media (max-width: 992px) {
+    .container {
+        padding: 20px;
+    }
+
+    .header {
+        padding: 24px;
+    }
+
+    .title {
+        font-size: 1.6rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .container {
+        padding: 16px;
+    }
+
+    .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .title {
+        font-size: 1.5rem;
+        order: 2;
+    }
+
+    .backButton {
+        order: 1;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .infoGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .lessonInfoGrid {
+        grid-template-columns: 1fr;
+    }
+
+    .lessonHeader {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .toggleButton {
+        width: 100%;
+        justify-content: center;
+    }
+
+    .tabs {
+        flex-direction: column;
+    }
+
+    .tab {
+        justify-content: flex-start;
+    }
+
+    .exerciseDetails {
+        flex-direction: column;
+    }
+
+    .blockContent {
+        padding: 12px;
+    }
+
+    .detailSection {
+        padding: 12px;
+    }
+
+    .cardStats {
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .contentImage {
+        max-height: 300px;
+    }
+
+    .flashCardsContainer {
+        grid-template-columns: 1fr;
+        gap: 20px;
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .container {
+        padding: 12px;
+    }
+
+    .header {
+        padding: 18px;
+    }
+
+    .title {
+        font-size: 1.3rem;
+    }
+
+    .section {
+        padding: 16px;
+    }
+
+    .metaTag {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+    }
+
+    .lessonTitle {
+        font-size: 1.2rem;
+    }
+
+    .lessonBlock {
+        padding: 16px;
+    }
+
+    .objectiveItem,
+    .exerciseItem,
+    .cardItem {
+        padding: 10px 12px;
+    }
+
+    .contentImage {
+        max-height: 250px;
+    }
+
+    .flashCardsContainer {
+        padding: 12px;
+    }
+}

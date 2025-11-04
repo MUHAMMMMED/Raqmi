@@ -2,6 +2,9 @@ from rest_framework import serializers
 from .models import *
 from categories.serializers import  *
 from flashcard.serializers import CardSerializer
+from lessons.models import Lesson
+from lessons.serializers import BlockSerializer
+
 
 
 class BlockLearningObjectiveSerializer(serializers.ModelSerializer):
@@ -41,15 +44,30 @@ class BookBlockSerializer(serializers.ModelSerializer):
 
  
  
-
+ 
 class BookLessonSerializer(serializers.ModelSerializer):
     blocks = BookBlockSerializer(many=True, read_only=True)
     exercises = BlockExerciseSerializer(many=True, read_only=True)
 
- 
+    # حقول إضافية من العلاقات
+    book_title = serializers.CharField(source="part.book.title", read_only=True)
+    part_title = serializers.CharField(source="part.title", read_only=True)
+    part_start_page = serializers.IntegerField(source="part.start_page", read_only=True)
+    part_end_page = serializers.IntegerField(source="part.end_page", read_only=True)
+
     class Meta:
         model = BookLesson
-        fields = "__all__"
+        fields = "__all__"  
+
+
+# class BookLessonSerializer(serializers.ModelSerializer):
+#     blocks = BookBlockSerializer(many=True, read_only=True)
+#     exercises = BlockExerciseSerializer(many=True, read_only=True)
+
+ 
+#     class Meta:
+#         model = BookLesson
+#         fields = "__all__"
 
 
 class BookPartSerializer(serializers.ModelSerializer):
@@ -81,14 +99,25 @@ class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = "__all__"
-        # exclude = ['embedding_vector']  
-
-
+        exclude = ['embedding_vector']  
 
  
+    
+ 
+
+
+class LessonSerializer(serializers.ModelSerializer):
+    lesson_block = BlockSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Lesson 
+        fields = '__all__'
+  
+
  
 class LessonIndexSerializer(serializers.ModelSerializer):
-    # ai_lesson = AIBookLessonSerializer(read_only=True)
+    book_lesson = BookLessonSerializer(many=True,read_only=True)
+    lesson = LessonSerializer(read_only=True)
     stage = serializers.PrimaryKeyRelatedField(queryset=Stage.objects.all())
     grade = serializers.PrimaryKeyRelatedField(queryset=Grade.objects.all())
     program = serializers.PrimaryKeyRelatedField(queryset=Program.objects.all())
@@ -98,8 +127,7 @@ class LessonIndexSerializer(serializers.ModelSerializer):
     grade_title = serializers.CharField(source='grade.name', read_only=True)
     program_title = serializers.CharField(source='program.name', read_only=True)
     subject_title = serializers.CharField(source='subject.name', read_only=True)
-
-
+   
     class Meta:
         model = LessonIndex
         fields = "__all__"

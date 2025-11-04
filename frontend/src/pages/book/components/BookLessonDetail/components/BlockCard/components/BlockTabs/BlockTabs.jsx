@@ -8,7 +8,7 @@ import Objectives from '../Objectives/Objectives';
 import ReelManager from '../ReelManager/ReelManager';
 import styles from './BlockTabs.module.css';
 
-const BlockTabs = ({ objectives = [], exercises = [], flashcards = [], reelPreview = null, blockId, lessonId, partId, fetchData }) => {
+const BlockTabs = ({ objectives = [], exercises = [], flashcards = [], reelPreview = null, blockId, lessonId, partId, fetchData, IsManager }) => {
 
     const [activeTab, setActiveTab] = useState('objectives');
 
@@ -52,6 +52,7 @@ const BlockTabs = ({ objectives = [], exercises = [], flashcards = [], reelPrevi
                         objectives={objectives}
                         blockId={blockId}
                         fetchData={fetchData}
+                        IsManager={IsManager}
                     />
                 )}
 
@@ -63,7 +64,9 @@ const BlockTabs = ({ objectives = [], exercises = [], flashcards = [], reelPrevi
                             blockId={blockId}
                             lessonId={lessonId}
                             partId={partId}
-                            fetchData={fetchData} />
+                            fetchData={fetchData}
+                            IsManager={IsManager}
+                        />
 
                     </div>
                 )}
@@ -76,6 +79,7 @@ const BlockTabs = ({ objectives = [], exercises = [], flashcards = [], reelPrevi
                             blockId={blockId}
                             lessonId={lessonId}
                             fetchData={fetchData}
+                            IsManager={IsManager}
                         />
                     </div>
                 )}
@@ -87,6 +91,7 @@ const BlockTabs = ({ objectives = [], exercises = [], flashcards = [], reelPrevi
                             reelPreview={reelPreview}
                             blockId={blockId}
                             fetchData={fetchData}
+                            IsManager={IsManager}
                         />
                     </div>
                 )}

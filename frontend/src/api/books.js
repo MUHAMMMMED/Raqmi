@@ -96,3 +96,10 @@ export const deleteReel = async (id) => {
     const res = await AxiosInstance.delete(`${API_URL}/reel/${id}/`);
     return res.data;
 };
+
+export const getIndex = async (id) => {
+    const res = await AxiosInstance.get(`${API_URL}/lesson-index/${id}/`);
+    return res.data;
+};
+
+

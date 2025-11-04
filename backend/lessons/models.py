@@ -46,26 +46,48 @@ class Lesson(models.Model):
 
 
 class Block(models.Model):
-
     lesson = models.ForeignKey(Lesson, on_delete=models.CASCADE, related_name="lesson_block")
     title = models.CharField(max_length=500)
     content = models.TextField()
+    image = models.ImageField(upload_to="book_blocks/", null=True, blank=True)
+    block_type = models.CharField(
+        max_length=50,
+        choices=[
+            ("text", "نص"),
+            ("image", "صورة"),
+            ("table", "جدول"),
+            ("example", "مثال توضيحي"),
+            ("note", "ملاحظة"),
+        ],
+        default="text",
+    )
     embedding_vector = models.JSONField(null=True, blank=True)
     linked_blocks = models.ManyToManyField(BookBlock, related_name="course_linked_blocks")  
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     cards = models.ManyToManyField(Card,related_name="cards_lesson"  )
     order = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ['order', 'created_at']
+
     def __str__(self):
         return f"{self.title} -  Block"
  
 
+    # @property
+    # def image_url(self):
+    #     if self.image and hasattr(self.image, 'url'):
+    #         return self.image.url
+    #     return None
+
+ 
 
 
 class LessonBlockExercise(models.Model):
     """التدريبات أو الأسئلة في نهاية الدروس أو الفصول"""
 
-    block = models.ForeignKey(Block, on_delete=models.CASCADE, related_name="ai_block_exercises", null=True, blank=True)
+    block = models.ForeignKey(Block, on_delete=models.CASCADE, related_name="course_block_exercises", null=True, blank=True)
     question_text = models.TextField()
     question_type = models.CharField(
         max_length=50,
@@ -88,7 +110,7 @@ class LessonBlockExercise(models.Model):
 
 
 class BlockLearningObjective(models.Model):
-    block = models.ForeignKey(Block, on_delete=models.CASCADE, related_name="ai_block_objective",)
+    block = models.ForeignKey(Block, on_delete=models.CASCADE, related_name="course_block_objective",)
     title = models.CharField(max_length=255)      
     description = models.TextField()        
 
@@ -99,7 +121,7 @@ class BlockReel(models.Model):
     لا ينشئ ريل فعلي بل يصف كيف سيكون عرضه.
     """
 
-    block = models.OneToOneField(Block, related_name="ai_block_reel", on_delete=models.CASCADE)
+    block = models.OneToOneField(Block, related_name="course_block_reel", on_delete=models.CASCADE)
     hook_text = models.CharField(
         max_length=255,
         verbose_name="نص الجذب (Hook)",
@@ -148,11 +170,7 @@ class BlockReel(models.Model):
  
     CORRECT_CHOICES = [(1, "A"),(2, "B"),(3, "C"),(4, "D"),  ]
     correct_option = models.PositiveSmallIntegerField(choices=CORRECT_CHOICES)
-
-    class Meta:
-        verbose_name = "شكل الريل الخاص بالبلوك"
-        verbose_name_plural = "أشكال الريلز الخاصة بالبلوكات"
-
+ 
     def __str__(self):
         return f"Reel Preview for {self.block.title}"
 

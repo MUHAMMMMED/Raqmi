@@ -6,7 +6,7 @@ import ReelPreview from './components/ReelPreview/ReelPreview';
 
 import { createReel, deleteReel, updateReel } from '../../../../../../../../api/books';
 
-const ReelManager = ({ reelPreview, blockId, fetchData }) => {
+const ReelManager = ({ reelPreview, blockId, fetchData, IsManager }) => {
     const [showForm, setShowForm] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -55,50 +55,57 @@ const ReelManager = ({ reelPreview, blockId, fetchData }) => {
                     <h3><FaVideo /> نموذج الريل</h3>
                     <p>إدارة نموذج الريل الخاص بهذا البلوك</p>
                 </div>
-                <div className={styles.actions}>
-                    {reelPreview ? (
-                        <>
+                {IsManager &&
+                    <div className={styles.actions}>
+                        {reelPreview ? (
+
+                            <>
+                                <button
+                                    className={styles.editButton}
+                                    onClick={handleEdit}
+                                    disabled={loading}
+                                >
+                                    <FaEdit /> تعديل النموذج
+                                </button>
+                                <button
+                                    className={styles.deleteButton}
+                                    onClick={handleDelete}
+                                    disabled={loading}
+                                >
+                                    <FaTrash /> حذف
+                                </button>
+                            </>
+                        ) : (
                             <button
-                                className={styles.editButton}
-                                onClick={handleEdit}
+                                className={styles.createButton}
+                                onClick={handleCreate}
                                 disabled={loading}
                             >
-                                <FaEdit /> تعديل النموذج
+                                <FaPlus /> إنشاء نموذج ريل
                             </button>
-                            <button
-                                className={styles.deleteButton}
-                                onClick={handleDelete}
-                                disabled={loading}
-                            >
-                                <FaTrash /> حذف
-                            </button>
-                        </>
-                    ) : (
-                        <button
-                            className={styles.createButton}
-                            onClick={handleCreate}
-                            disabled={loading}
-                        >
-                            <FaPlus /> إنشاء نموذج ريل
-                        </button>
-                    )}
-                </div>
+                        )}
+                    </div>}
             </div>
 
             <div className={styles.previewSection}>
                 {reelPreview ? (
                     <ReelPreview reelPreview={reelPreview} />
                 ) : (
+
                     <div className={styles.emptyState}>
                         <FaVideo className={styles.emptyIcon} />
                         <h4>لا يوجد نموذج ريل</h4>
                         <p>قم بإنشاء نموذج ريل لمعاينة شكل الريل الخاص بهذا البلوك</p>
-                        <button
-                            className={styles.createButton}
-                            onClick={handleCreate}
-                        >
-                            <FaPlus /> إنشاء نموذج ريل
-                        </button>
+                        {IsManager && (
+                            <>
+                                <button
+                                    className={styles.createButton}
+                                    onClick={handleCreate}
+                                >
+                                    <FaPlus /> إنشاء نموذج ريل
+                                </button>
+                            </>
+                        )}
                     </div>
                 )}
             </div>

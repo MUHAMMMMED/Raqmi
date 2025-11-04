@@ -69,6 +69,7 @@ const BookLessonDetail = () => {
                                 partId={lesson?.part}
                                 onUpdate={handleBlockUpdate}
                                 fetchData={load}
+                                IsManager={false}
                             />
 
                         </div>
@@ -100,10 +101,10 @@ const BookLessonDetail = () => {
                     <BookBlockManager
                         Blocks={sortedBlocks}
                         lessonId={lessonId}
-
                         partId={lesson.part}
                         onUpdate={handleBlockUpdate}
                         fetchData={load}
+                        IsManager={true}
                     />
                 )}
             </section>

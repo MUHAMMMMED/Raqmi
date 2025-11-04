@@ -10,7 +10,7 @@ import { createBlock, deleteBlock, updateBlock } from '../../../../../../api/boo
 
 
 
-const BookBlockManager = ({ lessonId, partId, onUpdate, Blocks = [], fetchData }) => {
+const BookBlockManager = ({ lessonId, partId, onUpdate, Blocks = [], fetchData, IsManager }) => {
     const [loading, setLoading] = useState(false);
     const [showForm, setShowForm] = useState(false);
     const [editingBlock, setEditingBlock] = useState(null);
@@ -114,24 +114,25 @@ const BookBlockManager = ({ lessonId, partId, onUpdate, Blocks = [], fetchData }
                     Blocks.map(block => (
                         <div key={block.id} className={styles.blockItem}>
                             <div className={styles.blockCardContainer}>
-                                <BlockCard block={block} fetchData={fetchData} lessonId={lessonId} partId={partId} />
+                                <BlockCard block={block} fetchData={fetchData} lessonId={lessonId} partId={partId} IsManager />
                             </div>
-                            <div className={styles.blockActions}>
-                                <button
-                                    className={styles.editButton}
-                                    onClick={() => openEditForm(block)}
-                                    disabled={loading}
-                                >
-                                    <FaEdit /> تعديل
-                                </button>
-                                <button
-                                    className={styles.deleteButton}
-                                    onClick={() => setBlockToDelete(block)}
-                                    disabled={loading}
-                                >
-                                    <FaTrash /> حذف
-                                </button>
-                            </div>
+                            {IsManager &&
+                                <div className={styles.blockActions}>
+                                    <button
+                                        className={styles.editButton}
+                                        onClick={() => openEditForm(block)}
+                                        disabled={loading}
+                                    >
+                                        <FaEdit /> تعديل
+                                    </button>
+                                    <button
+                                        className={styles.deleteButton}
+                                        onClick={() => setBlockToDelete(block)}
+                                        disabled={loading}
+                                    >
+                                        <FaTrash /> حذف
+                                    </button>
+                                </div>}
                         </div>
                     ))
                 )}

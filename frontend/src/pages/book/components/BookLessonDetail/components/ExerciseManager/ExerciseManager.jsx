@@ -6,23 +6,18 @@ import styles from './ExerciseManager.module.css';
 import ExerciseCard from './components/ExerciseCard/ExerciseCard';
 import ExerciseForm from './components/ExerciseForm/ExerciseForm';
 
-const ExerciseManager = ({ blockId, lessonId, partId, exercises = [], onUpdate, fetchData }) => {
+const ExerciseManager = ({ blockId, lessonId, partId, exercises = [], onUpdate, fetchData, IsManager }) => {
     const [showForm, setShowForm] = useState(false);
     const [editingExercise, setEditingExercise] = useState(null);
     const [exerciseToDelete, setExerciseToDelete] = useState(null);
     const [loading, setLoading] = useState(false);
 
-
-
     const handleCreate = async (data) => {
         try {
             setLoading(true);
-
-
             const exerciseData = {
                 ...data
             };
-
             // ضمان قيم افتراضية
             if (exerciseData.order === null || exerciseData.order === undefined) {
                 exerciseData.order = 0;
@@ -30,7 +25,6 @@ const ExerciseManager = ({ blockId, lessonId, partId, exercises = [], onUpdate, 
             if (exerciseData.page_number === '') {
                 exerciseData.page_number = null;
             }
-
 
             await createExercise(exerciseData);
             setShowForm(false);
@@ -104,9 +98,10 @@ const ExerciseManager = ({ blockId, lessonId, partId, exercises = [], onUpdate, 
         <div className={styles.manager}>
             <div className={styles.header}>
                 <h3>إدارة التمارين ({exercises.length})</h3>
-                <button className={styles.addBtn} onClick={() => setShowForm(true)}>
-                    <FaPlus /> إضافة تمرين
-                </button>
+                {IsManager &&
+                    <button className={styles.addBtn} onClick={() => setShowForm(true)}>
+                        <FaPlus /> إضافة تمرين
+                    </button>}
             </div>
 
             {showForm && (
@@ -132,6 +127,7 @@ const ExerciseManager = ({ blockId, lessonId, partId, exercises = [], onUpdate, 
                                 exercise={ex}
                                 onEdit={openEdit}
                                 onDelete={setExerciseToDelete}
+                                IsManager={IsManager}
                             />
                         </div>
                     ))

@@ -9,6 +9,7 @@ import CardDetails from "./pages/lesson/components/CardDetail/CardDetail";
 import CreateLesson from "./pages/lesson/components/CreateLessonCard/CreateLesson";
 import SlideDetails from "./pages/lesson/components/SlideDetails/SlideDetails";
 import LessonList from "./pages/lesson/LessonList";
+import Index from "./pages/LessonIndexDetail/Index";
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -19,6 +20,8 @@ const AppRouter = () => (
       <Route path="/courses/:courseId/lessons" element={<LessonList />} />
       <Route path="/books/:bookId/lessons/create" element={<CreateLesson />} />
       <Route path="/lessons/:lessonId/editor" element={<EditorPage />} />
+
+      <Route path="/lesson-index/:id" element={<Index />} />
 
 
 

@@ -7,22 +7,21 @@ import {
     FaTimes,
     FaTrash
 } from 'react-icons/fa';
-
-import styles from './Objectives.module.css';
-
 import {
     createObjective,
     deleteObjective,
     updateObjective
 } from '../../../../../../../../api/objectives';
-export default function Objectives({ objectives = [], blockId, fetchData }) {
+import styles from './Objectives.module.css';
+export default function Objectives({ objectives = [], blockId, fetchData, IsManager }) {
     const [loading, setLoading] = useState(false);
     const [showForm, setShowForm] = useState(false);
     const [editingObjective, setEditingObjective] = useState(null);
     const [formData, setFormData] = useState({
         title: '',
         description: '',
-        block: blockId
+        block: blockId,
+
     });
 
     const handleInputChange = (e) => {
@@ -117,15 +116,15 @@ export default function Objectives({ objectives = [], blockId, fetchData }) {
                     الأهداف التعليمية
                     <span className={styles.objectivesCount}>({objectives.length})</span>
                 </h4>
-
-                <button
-                    className={styles.addButton}
-                    onClick={() => setShowForm(true)}
-                    disabled={loading}
-                >
-                    <FaPlus />
-                    إضافة هدف
-                </button>
+                {IsManager &&
+                    <button
+                        className={styles.addButton}
+                        onClick={() => setShowForm(true)}
+                        disabled={loading}
+                    >
+                        <FaPlus />
+                        إضافة هدف
+                    </button>}
             </div>
 
             {/* نموذج الإضافة/التعديل */}
@@ -204,14 +203,15 @@ export default function Objectives({ objectives = [], blockId, fetchData }) {
                     <div className={styles.emptyState}>
                         <FaGraduationCap className={styles.emptyIcon} />
                         <p>لا توجد أهداف تعليمية مضافة بعد</p>
-                        <button
-                            className={styles.addButton}
-                            onClick={() => setShowForm(true)}
-                            disabled={loading}
-                        >
-                            <FaPlus />
-                            إضافة أول هدف
-                        </button>
+                        {IsManager &&
+                            <button
+                                className={styles.addButton}
+                                onClick={() => setShowForm(true)}
+                                disabled={loading}
+                            >
+                                <FaPlus />
+                                إضافة أول هدف
+                            </button>}
                     </div>
                 ) : (
                     objectives.map((objective) => (
@@ -220,25 +220,25 @@ export default function Objectives({ objectives = [], blockId, fetchData }) {
                                 <h5 className={styles.objItemTitle}>{objective.title}</h5>
                                 <p className={styles.objItemDescription}>{objective.description}</p>
                             </div>
-
-                            <div className={styles.objActions}>
-                                <button
-                                    className={styles.editButton}
-                                    onClick={() => handleEdit(objective)}
-                                    title="تعديل الهدف"
-                                    disabled={loading}
-                                >
-                                    <FaEdit />
-                                </button>
-                                <button
-                                    className={styles.deleteButton}
-                                    onClick={() => handleDelete(objective.id)}
-                                    title="حذف الهدف"
-                                    disabled={loading}
-                                >
-                                    <FaTrash />
-                                </button>
-                            </div>
+                            {IsManager &&
+                                <div className={styles.objActions}>
+                                    <button
+                                        className={styles.editButton}
+                                        onClick={() => handleEdit(objective)}
+                                        title="تعديل الهدف"
+                                        disabled={loading}
+                                    >
+                                        <FaEdit />
+                                    </button>
+                                    <button
+                                        className={styles.deleteButton}
+                                        onClick={() => handleDelete(objective.id)}
+                                        title="حذف الهدف"
+                                        disabled={loading}
+                                    >
+                                        <FaTrash />
+                                    </button>
+                                </div>}
                         </div>
                     ))
                 )}

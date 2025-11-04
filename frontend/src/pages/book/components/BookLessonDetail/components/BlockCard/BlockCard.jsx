@@ -13,7 +13,7 @@ const getLabel = type => ({
     text: 'نص', image: 'صورة', table: 'جدول', example: 'مثال توضيحي', note: 'ملاحظة'
 }[type] ?? type);
 
-const BlockCard = ({ block, fetchData, lessonId, partId }) => {
+const BlockCard = ({ block, fetchData, lessonId, partId, IsManager }) => {
     if (!block || typeof block !== 'object') return null;
     const Icon = getIcon(block.block_type);
 
@@ -44,6 +44,7 @@ const BlockCard = ({ block, fetchData, lessonId, partId }) => {
                 lessonId={lessonId}
                 partId={partId}
                 fetchData={fetchData}
+                IsManager={IsManager}
             />
         </article>
     );
