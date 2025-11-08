@@ -1,0 +1,210 @@
+/* SlideThumbnail.module.css */
+.thumbnail {
+    background: white;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.thumbnail:hover {
+    border-color: #cbd5e0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.selected {
+    border-color: #4299e1;
+    background: #f0f9ff;
+}
+
+.dragOver {
+    border-color: #4299e1;
+    background: #ebf8ff;
+    transform: scale(1.02);
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.dragHandle {
+    color: #a0aec0;
+    cursor: grab;
+    padding: 4px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+}
+
+.dragHandle:hover {
+    color: #718096;
+    background: #f7fafc;
+}
+
+.number {
+    background: #4299e1;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 2px 8px;
+    border-radius: 12px;
+    min-width: 20px;
+    text-align: center;
+}
+
+.actions {
+    display: flex;
+    gap: 4px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.thumbnail:hover .actions {
+    opacity: 1;
+}
+
+.btn {
+    width: 24px;
+    height: 24px;
+    border: none;
+    background: #f7fafc;
+    border-radius: 4px;
+    color: #718096;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+.danger:hover {
+    background: #fed7d7;
+    color: #e53e3e;
+}
+
+.preview {
+    height: 120px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.previewImage {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+.previewPlaceholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #718096;
+    font-size: 12px;
+    background: #f1f5f9;
+    border-radius: 6px;
+}
+
+.footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.title {
+    font-size: 13px;
+    font-weight: 600;
+    color: #2d3748;
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    margin-right: 8px;
+}
+
+.count {
+    font-size: 11px;
+    color: #718096;
+    background: #f7fafc;
+    padding: 2px 6px;
+    border-radius: 8px;
+    white-space: nowrap;
+}
+
+/* تحسينات للشريحة المحددة */
+.selected .preview {
+    border-color: #4299e1;
+}
+
+.selected .title {
+    color: #4299e1;
+}
+
+.selected .count {
+    background: #bee3f8;
+    color: #2c5282;
+}
+
+/* تحسينات للتجاوب */
+@media (max-width: 768px) {
+    .thumbnail {
+        padding: 8px;
+    }
+
+    .preview {
+        height: 100px;
+    }
+
+    .actions {
+        opacity: 1;
+        /* إظهار الأزرار دائماً على الجوال */
+    }
+
+    .title {
+        font-size: 12px;
+    }
+
+    .count {
+        font-size: 10px;
+    }
+}
+
+/* تأثيرات للصور عند التحميل */
+.previewImage {
+    transition: opacity 0.3s ease;
+}
+
+.previewImage.loading {
+    opacity: 0.6;
+}
+
+/* بديل إذا لم تكن هناك صورة معاينة */
+.noPreview {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    font-weight: 600;
+}

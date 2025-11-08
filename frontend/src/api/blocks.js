@@ -1,7 +1,7 @@
 import AxiosInstance from "./AxiosInstance";
 
 
-const API = "slides/slide-blocks";
+const API = "slides/blocks";
 
 export const getBlocks = (slideId) => AxiosInstance.get(`${API}/?slide=${slideId}`);
 export const createBlock = (data) => AxiosInstance.post(API, data);

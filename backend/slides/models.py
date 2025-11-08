@@ -3,6 +3,38 @@ from lessons.models import Lesson
 from medialibrary.models import MediaLibrary
  
  
+
+
+
+class Content(models.Model):
+    lesson = models.ForeignKey(
+        Lesson,
+        related_name='contents',
+        on_delete=models.CASCADE,
+ 
+    )
+    title = models.CharField(max_length=255, verbose_name="Content Title")
+    # image = models.ForeignKey(
+    #     'MediaLibrary',
+    #     on_delete=models.SET_NULL,
+    #     null=True,
+    #     blank=True,
+    #     related_name='content_images',
+    #     verbose_name="Content Image"
+    # )
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated At")
+
+    class Meta:
+        verbose_name = "Content"
+        verbose_name_plural = "Contents"
+
+    def __str__(self):
+        return f"{self.lesson.title} - {self.title}"
+ 
+
+
+
 class Slide(models.Model):
     LAYOUT_CHOICES = [
         ('default', 'Default'),
@@ -13,7 +45,13 @@ class Slide(models.Model):
         ('full_image', 'Full Image'),
     ]
     slide_viewer = models.ImageField(upload_to="slides/", null=True, blank=True)
-    lesson = models.ForeignKey(Lesson, related_name="slides", on_delete=models.CASCADE)
+    # lesson = models.ForeignKey(Lesson, related_name="slides", on_delete=models.CASCADE)
+    content = models.ForeignKey(
+        Content,
+        related_name="slides",
+        on_delete=models.CASCADE,
+        blank=True, null=True,
+    )
     title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Slide Title")
     order = models.IntegerField(default=0, verbose_name="Order")
     background_color = models.CharField(max_length=20, default="#FFFFFF", verbose_name="Background Color")
@@ -41,7 +79,7 @@ class Slide(models.Model):
         ordering = ['order', 'created_at']
     
     def __str__(self):
-        return f"{self.lesson.title} - {self.title or 'Slide ' + str(self.order)}"
+        return f"  - {self.title or 'Slide ' + str(self.order)}"
     
     @property
     def background_image_url(self):
@@ -54,189 +92,127 @@ class Slide(models.Model):
     def blocks_count(self):
         return self.blocks.count()
     
-    def duplicate(self):
-        new_slide = Slide.objects.create(
-            lesson=self.lesson,
-            title=f"{self.title} (Copy)" if self.title else None,
-            order=self.order + 1,
-            background_color=self.background_color,
-            background_image=self.background_image,
-            background_opacity=self.background_opacity,
-            layout_style=self.layout_style
-        )
+    # def duplicate(self):
+    #     new_slide = Slide.objects.create(
+    #         lesson=self.lesson,
+    #         title=f"{self.title} (Copy)" if self.title else None,
+    #         order=self.order + 1,
+    #         background_color=self.background_color,
+    #         background_image=self.background_image,
+    #         background_opacity=self.background_opacity,
+    #         layout_style=self.layout_style
+    #     )
         
-        for block in self.blocks.all():
-            block.duplicate(new_slide)
+        # for block in self.blocks.all():
+        #     block.duplicate(new_slide)
         
-        return new_slide
+        # return new_slide
 
+ 
+ 
 
 class SlideBlock(models.Model):
     BLOCK_TYPES = [
-        ("title", "Title"),
-        ("text", "Text"),
-        ("bullet_points", "Bullet Points"),
-        ("image", "Image"),
-        ("video", "Video"),
-        ("quote", "Quote"),
-        ("code", "Code"),
-        ("divider", "Divider"),
-        ("shape", "Shape"),
+        ("title", "Title"), ("text", "Text"), ("bullet_points", "Bullet Points"),
+        ("image", "Image"), ("video", "Video"), ("quote", "Quote"),
+        ("code", "Code"), ("divider", "Divider"), ("shape", "Shape"),
     ]
-    
-    slide = models.ForeignKey(Slide, related_name="blocks", on_delete=models.CASCADE, verbose_name="Slide")
-    type = models.CharField(max_length=20, choices=BLOCK_TYPES, verbose_name="Block Type")
-    order = models.IntegerField(default=0, verbose_name="Order")
-    content = models.TextField(blank=True, null=True, verbose_name="Content")
-    
 
-    # New field: voice narration
-    voice_script = models.TextField(
-        blank=True,
-        null=True,
-        verbose_name="Voice Script",
-        help_text="النص الذي سيتم تحويله إلى صوت عند عرض الشريحة."
-    )
- 
-    layer_index = models.IntegerField(default=0, verbose_name="Layer Index")
-    speech_duration = models.FloatField(default=0, verbose_name="Speech Duration (seconds)")
-    # Media from library
+    slide = models.ForeignKey(Slide, related_name="blocks",
+                              on_delete=models.CASCADE)
+    type = models.CharField(max_length=20, choices=BLOCK_TYPES)
+    order = models.IntegerField(default=0)
+
+    # ---------- core content ----------
+    content = models.TextField(blank=True, null=True)
     media = models.ForeignKey(
-        MediaLibrary,
-        on_delete=models.SET_NULL,
-        null=True,
-        blank=True,
-        related_name='slide_blocks',
-        verbose_name="Media"
+        MediaLibrary, on_delete=models.SET_NULL,
+        null=True, blank=True, related_name="slide_blocks"
     )
-    
-    # Design properties
-    position_x = models.IntegerField(default=100, verbose_name="X Position")
-    position_y = models.IntegerField(default=100, verbose_name="Y Position")
-    width = models.IntegerField(default=200, verbose_name="Width")
-    height = models.IntegerField(default=100, verbose_name="Height")
-    z_index = models.IntegerField(default=1, verbose_name="Z-Index")
-    opacity = models.FloatField(default=1.0, verbose_name="Opacity")
-    background_opacity = models.FloatField(default=1.0, verbose_name="Background Opacity")
-    
-    # Text properties
-    font_family = models.CharField(max_length=100, default="Arial, sans-serif", verbose_name="Font Family")
-    font_size = models.IntegerField(default=18, verbose_name="Font Size")
-    font_color = models.CharField(max_length=20, default="#000000", verbose_name="Font Color")
-    font_weight = models.CharField(max_length=20, default="normal", verbose_name="Font Weight")
-    font_style = models.CharField(max_length=20, default="normal", verbose_name="Font Style")
-    text_align = models.CharField(max_length=20, default="right", verbose_name="Text Align")
-    text_decoration = models.CharField(max_length=20, default="none", verbose_name="Text Decoration")
-    
-    # Additional properties
-    background_color = models.CharField(max_length=20, blank=True, null=True, verbose_name="Background Color")
-    border_radius = models.IntegerField(default=0, verbose_name="Border Radius")
-    border_color = models.CharField(max_length=20, blank=True, null=True, verbose_name="Border Color")
-    border_width = models.IntegerField(default=0, verbose_name="Border Width")
-    
-    # Extra data
-    extra_data = models.JSONField(default=dict, blank=True, verbose_name="Extra Data")
-    
-    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated At")
+
+    # ---------- voice narration ----------
+    voice_script = models.TextField(blank=True, null=True,
+        help_text="النص الذي سيتم تحويله إلى صوت عند عرض الشريحة.")
+    speech_duration = models.FloatField(default=0)
+
+    # ---------- layout ----------
+    position_x = models.IntegerField(default=100)
+    position_y = models.IntegerField(default=100)
+    width = models.IntegerField(default=200)
+    height = models.IntegerField(default=100)
+    z_index = models.IntegerField(default=1)
+    opacity = models.FloatField(default=1.0)
+    background_opacity = models.FloatField(default=1.0)
+
+    # ---------- text style ----------
+    font_family = models.CharField(max_length=100, default="Arial, sans-serif")
+    font_size = models.IntegerField(default=18)
+    font_color = models.CharField(max_length=20, default="#000000")
+    font_weight = models.CharField(max_length=20, default="normal")
+    font_style = models.CharField(max_length=20, default="normal")
+    text_align = models.CharField(max_length=20, default="right")
+    text_decoration = models.CharField(max_length=20, default="none")
+
+    # ---------- visual style ----------
+    background_color = models.CharField(max_length=20, blank=True, null=True)
+    border_radius = models.IntegerField(default=0)
+    border_color = models.CharField(max_length=20, blank=True, null=True)
+    border_width = models.IntegerField(default=0)
+
+    # ---------- extra (only for truly custom data) ----------
+    extra_data = models.JSONField(default=dict, blank=True, null=True)
+
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
     class Meta:
         verbose_name = "Slide Block"
         verbose_name_plural = "Slide Blocks"
         ordering = ['z_index', 'order', 'created_at']
-    
+
     def __str__(self):
         return f"{self.slide.title} - {self.get_type_display()}"
-    
-    @property
-    def position(self):
-        return {'x': self.position_x, 'y': self.position_y}
-    
-    @property
-    def size(self):
-        return {'width': self.width, 'height': self.height}
-    
+
+    # -----------------------------------------------------------------
+    # Helper properties – used only by the serializer (read-only)
+    # -----------------------------------------------------------------
     @property
     def style(self):
         return {
-            'fontFamily': self.font_family,
-            'fontSize': f"{self.font_size}px",
-            'color': self.font_color,
-            'fontWeight': self.font_weight,
-            'fontStyle': self.font_style,
-            'textAlign': self.text_align,
-            'textDecoration': self.text_decoration,
-            'backgroundColor': self.background_color,
-            'borderRadius': f"{self.border_radius}px",
-            'borderColor': self.border_color,
-            'borderWidth': f"{self.border_width}px",
+            "fontFamily": self.font_family,
+            "fontSize": f"{self.font_size}px",
+            "color": self.font_color,
+            "fontWeight": self.font_weight,
+            "fontStyle": self.font_style,
+            "textAlign": self.text_align,
+            "textDecoration": self.text_decoration,
+            "backgroundColor": self.background_color or "transparent",
+            "borderRadius": f"{self.border_radius}px",
+            "border": f"{self.border_width}px solid {self.border_color or 'transparent'}",
         }
-    
+
+    @property
+    def position(self):
+        return {"x": self.position_x, "y": self.position_y}
+
+    @property
+    def size(self):
+        return {"width": self.width, "height": self.height}
+
+ 
+
     @property
     def media_url(self):
-        if self.media and self.media.file_url:
-            self.media.increment_usage()
-            return self.media.file_url
-        return None
-    
-    def duplicate(self, new_slide=None):
-        new_block = SlideBlock.objects.create(
-            slide=new_slide or self.slide,
-            type=self.type,
-            order=self.order,
-            content=self.content,
-            media=self.media,
-            position_x=self.position_x,
-            position_y=self.position_y,
-            width=self.width,
-            height=self.height,
-            z_index=self.z_index,
-            opacity=self.opacity,
-            background_opacity=self.background_opacity,
-            font_family=self.font_family,
-            font_size=self.font_size,
-            font_color=self.font_color,
-            font_weight=self.font_weight,
-            font_style=self.font_style,
-            text_align=self.text_align,
-            text_decoration=self.text_decoration,
-            background_color=self.background_color,
-            border_radius=self.border_radius,
-            border_color=self.border_color,
-            border_width=self.border_width,
-            extra_data=self.extra_data.copy() if self.extra_data else {}
-        )
-        return new_block
-    
-    def update_from_designer(self, designer_data):
-        self.position_x = designer_data.get('position', {}).get('x', 100)
-        self.position_y = designer_data.get('position', {}).get('y', 100)
-        self.width = designer_data.get('size', {}).get('width', 200)
-        self.height = designer_data.get('size', {}).get('height', 100)
-        self.z_index = designer_data.get('zIndex', 1)
-        self.opacity = designer_data.get('opacity', 1.0)
-        self.background_opacity = designer_data.get('backgroundOpacity', 1.0)
-        
-        style_data = designer_data.get('style', {})
-        if style_data:
-            self.font_family = style_data.get('fontFamily', 'Arial, sans-serif')
-            self.font_size = int(style_data.get('fontSize', '18').replace('px', ''))
-            self.font_color = style_data.get('color', '#000000')
-            self.font_weight = style_data.get('fontWeight', 'normal')
-            self.font_style = style_data.get('fontStyle', 'normal')
-            self.text_align = style_data.get('textAlign', 'right')
-            self.text_decoration = style_data.get('textDecoration', 'none')
-            self.background_color = style_data.get('backgroundColor')
-            
-            if 'borderRadius' in style_data:
-                self.border_radius = int(style_data['borderRadius'].replace('px', ''))
-            if 'borderWidth' in style_data:
-                self.border_width = int(style_data['borderWidth'].replace('px', ''))
-            self.border_color = style_data.get('borderColor')
-        
-        self.save()
+     if self.media and self.media.file:
+        # base_url = getattr(settings, "BASE_URL", "")
+        base_url = "http://127.0.0.1:8000"
+        if base_url:
+            return f"{base_url}{self.media.file.url}"
+        return self.media.file.url
+     return None
 
 
+ 
 class HistoryLog(models.Model):
     ACTION_CHOICES = [
         ('create', 'Create'),

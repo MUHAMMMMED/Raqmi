@@ -1,70 +1,37 @@
 
+
+
+
 import html2canvas from 'html2canvas';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
-    FaAlignCenter,
-    FaAlignLeft,
-    FaAlignRight,
-    FaArrowDown,
-    FaArrowsAlt,
-    FaArrowUp,
-    FaBold,
-    FaCamera,
-    FaCode,
-    FaExpandArrowsAlt,
-    FaEye,
-    FaEyeSlash,
-    FaFolderOpen,
-    FaFont,
-    FaImage,
-    FaItalic,
-    FaLayerGroup,
-    FaListUl,
-    FaMinus,
-    FaPalette,
-    FaPlus,
-    FaQuoteRight,
-    FaSave,
-    FaTextHeight,
-    FaTimes,
-    FaTrash,
-    FaUnderline,
-    FaVectorSquare,
-    FaVideo
+    FaAlignCenter, FaAlignLeft, FaAlignRight, FaArrowDown,
+    FaArrowUp, FaBold, FaCode, FaFolderOpen, FaFont, FaImage, FaItalic,
+    FaListUl, FaMinus, FaPalette, FaPlus, FaQuoteRight, FaSave,
+    FaTimes, FaUnderline, FaVectorSquare, FaVideo
 } from 'react-icons/fa';
-import {
-    MdClose,
-    MdDragHandle,
-    MdLayers,
-    MdTextFields,
-    MdTitle
-} from 'react-icons/md';
+import { MdClose, MdDragHandle, MdLayers, MdTextFields, MdTitle } from 'react-icons/md';
+import { getDefaultContent, getDefaultSize, getDefaultStyle } from './constants';
 
+import { useNavigate, useParams } from "react-router-dom";
+import AxiosInstance from '../../../../api/AxiosInstance';
 import MediaLibraryModal from '../MediaLibrary/MediaLibraryModal';
+import BlockProperties from './BlockProperties';
+import Image from './components/Image/Image';
+import Video from './components/Video/Video';
 import styles from './SlideDesigner.module.css';
 
-// Font options list
-const FONT_OPTIONS = [
-    { value: 'Arial, sans-serif', label: 'Arial', type: 'english' },
-    { value: "'Times New Roman', serif", label: 'Times New Roman', type: 'english' },
-    { value: "'Courier New', monospace", label: 'Courier New', type: 'english' },
-    { value: 'Tahoma, sans-serif', label: 'Tahoma', type: 'english' },
-    { value: "'Segoe UI', sans-serif", label: 'Segoe UI', type: 'english' },
-    { value: "'Cairo', sans-serif", label: 'Cairo', type: 'arabic' },
-    { value: "'Tajawal', sans-serif", label: 'Tajawal', type: 'arabic' },
-    { value: "'Amiri', serif", label: 'Amiri', type: 'arabic' },
-    { value: "'Almarai', sans-serif", label: 'Almarai', type: 'arabic' },
-    { value: "'Changa', sans-serif", label: 'Changa', type: 'arabic' },
-    { value: "'El Messiri', sans-serif", label: 'El Messiri', type: 'arabic' },
-    { value: "'Lalezar', cursive", label: 'Lalezar', type: 'arabic' },
-    { value: "'Reem Kufi', sans-serif", label: 'Reem Kufi', type: 'arabic' },
-    { value: "'Scheherazade New', serif", label: 'Scheherazade', type: 'arabic' },
-    { value: "'IBM Plex Sans Arabic', sans-serif", label: 'IBM Plex Arabic', type: 'arabic' }
-];
+// مكتبة السحب والإفلات
+import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 
-const SlideDesigner = ({ slide, onSave, onCancel }) => {
+const SlideDesigner = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+
+    const [slide, setSlide] = useState(null);
     const [blocks, setBlocks] = useState([]);
     const [selectedBlock, setSelectedBlock] = useState(null);
+    const [editingBlockId, setEditingBlockId] = useState(null);
     const [slideProperties, setSlideProperties] = useState({
         backgroundColor: '#FFFFFF',
         backgroundImage: null,
@@ -72,220 +39,344 @@ const SlideDesigner = ({ slide, onSave, onCancel }) => {
         layoutStyle: 'default',
         backgroundOpacity: 1
     });
+
     const [isDragging, setIsDragging] = useState(false);
     const [isResizing, setIsResizing] = useState(false);
-    const [isReordering, setIsReordering] = useState(false);
     const [dragOffset, setDragOffset] = useState({ x: 0, y: 0 });
     const [resizeDirection, setResizeDirection] = useState(null);
-    const [reorderBlock, setReorderBlock] = useState(null);
     const [initialSize, setInitialSize] = useState({ width: 0, height: 0 });
     const [initialMouse, setInitialMouse] = useState({ x: 0, y: 0 });
     const [showMediaLibrary, setShowMediaLibrary] = useState(false);
     const [mediaSelectionFor, setMediaSelectionFor] = useState(null);
     const [isGeneratingPreview, setIsGeneratingPreview] = useState(false);
+    const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
     const slideRef = useRef(null);
 
-    // Process data from API
+    /* --------------------------------------------------------------
+       1. Load slide
+    -------------------------------------------------------------- */
     useEffect(() => {
-        if (slide) {
-            const processedBlocks = (slide.blocks || []).map(block => {
-                const extra = typeof block.extra === 'string' ? JSON.parse(block.extra) : (block.extra || {});
+        if (!id) return;
+        loadSlide();
+    }, [id]);
 
-                return {
-                    id: block.id,
-                    type: block.type,
-                    content: block.content || '',
-                    media: block.media || null,
-                    mediaLibraryId: block.media_library_id || null,
-                    position: extra.position || { x: 100, y: 100 },
-                    size: extra.size || getDefaultSize(block.type),
-                    style: {
-                        ...getDefaultStyle(block.type),
-                        ...extra.style
-                    },
-                    zIndex: extra.zIndex || 1,
-                    opacity: extra.opacity !== undefined ? extra.opacity : 1,
-                    backgroundOpacity: extra.backgroundOpacity !== undefined ? extra.backgroundOpacity : 1
-                };
-            }).sort((a, b) => (a.zIndex || 1) - (b.zIndex || 1));
-
-            setBlocks(processedBlocks);
-
-            setSlideProperties({
-                backgroundColor: slide.background_color || '#FFFFFF',
-                backgroundImage: slide.background_image || null,
-                backgroundImageLibraryId: slide.background_image_library_id || null,
-                layoutStyle: slide.layout_style || 'default',
-                backgroundOpacity: slide.background_opacity || 1
-            });
+    const loadSlide = async () => {
+        try {
+            const { data } = await AxiosInstance.get(`slides/slides/${id}/`);
+            setSlide(data);
+        } catch (err) {
+            alert('فشل تحميل الشريحة');
+            navigate(-1);
         }
+    };
+
+    /* --------------------------------------------------------------
+       2. Transform API → frontend
+    -------------------------------------------------------------- */
+    useEffect(() => {
+        if (!slide) return;
+
+        const processed = (slide.blocks || []).map(b => ({
+            id: b.id,
+            type: b.type,
+            content: b.content || '',
+            media: b.image_url || null,
+            mediaLibraryId: b.media_library_id || null,
+
+            position: { x: b.position_x, y: b.position_y },
+            size: { width: b.width, height: b.height },
+            zIndex: b.z_index,
+            opacity: b.opacity,
+            backgroundOpacity: b.background_opacity,
+
+            style: {
+                fontFamily: b.font_family || 'Arial, sans-serif',
+                fontSize: `${b.font_size}px`,
+                color: b.font_color || '#000000',
+                fontWeight: b.font_weight || 'normal',
+                fontStyle: b.font_style || 'normal',
+                textAlign: b.text_align || 'right',
+                textDecoration: b.text_decoration || 'none',
+                backgroundColor: b.background_color || 'transparent',
+                borderRadius: `${b.border_radius}px`,
+                border: `${b.border_width}px solid ${b.border_color || 'transparent'}`,
+            },
+
+            extra_data: b.extra_data || {}
+        })).sort((a, b) => a.zIndex - b.zIndex);
+
+        setBlocks(processed);
+
+        setSlideProperties({
+            backgroundColor: slide.background_color || '#FFFFFF',
+            backgroundImage: slide.background_image_url || null,
+            backgroundImageLibraryId: slide.background_image || null,
+            layoutStyle: slide.layout_style || 'default',
+            backgroundOpacity: slide.background_opacity || 1,
+        });
     }, [slide]);
 
-    // Generate slide preview as image
+    /* --------------------------------------------------------------
+       3. Preview - جودة عالية جدًا (بدون تغيير DOM)
+    -------------------------------------------------------------- */
     const generateSlidePreview = async () => {
         if (!slideRef.current) return null;
-
         setIsGeneratingPreview(true);
 
         try {
+            const rect = slideRef.current.getBoundingClientRect();
+            const width = rect.width;
+            const height = rect.height;
+
             const canvas = await html2canvas(slideRef.current, {
                 backgroundColor: null,
-                scale: 0.8, // تخفيض الحجم للحصول على صورة أصغر
+                scale: 3, // جودة عالية جدًا
                 useCORS: true,
                 allowTaint: true,
                 logging: false,
-                width: slideRef.current.scrollWidth,
-                height: slideRef.current.scrollHeight
+                width,
+                height,
+                onclone: (doc) => {
+                    const style = doc.createElement('style');
+                    style.innerHTML = `
+                        * { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+                        img { image-rendering: crisp-edges; }
+                    `;
+                    doc.head.appendChild(style);
+                }
             });
 
-            // تحويل Canvas إلى Blob
-            const blob = await new Promise(resolve => {
-                canvas.toBlob(resolve, 'image/jpeg', 0.8); // جودة 80%
+            return await new Promise((resolve) => {
+                canvas.toBlob(resolve, 'image/png', 1.0);
             });
-
-            // تحويل Blob إلى Base64
-            const base64Image = await new Promise((resolve) => {
-                const reader = new FileReader();
-                reader.onloadend = () => resolve(reader.result);
-                reader.readAsDataURL(blob);
-            });
-
-            return base64Image;
-        } catch (error) {
-            console.error('Error generating slide preview:', error);
+        } catch (e) {
+            console.error('Error generating preview:', e);
             return null;
         } finally {
             setIsGeneratingPreview(false);
         }
     };
 
-    // Get default size
-    const getDefaultSize = (type) => {
-        switch (type) {
-            case 'title': return { width: 400, height: 80 };
-            case 'text': return { width: 350, height: 120 };
-            case 'bullet_points': return { width: 350, height: 150 };
-            case 'quote': return { width: 450, height: 100 };
-            case 'code': return { width: 450, height: 180 };
-            case 'image': return { width: 250, height: 200 };
-            case 'video': return { width: 320, height: 240 };
-            default: return { width: 200, height: 100 };
+
+    /* --------------------------------------------------------------
+       4. Block-level Save / Create / Delete
+    -------------------------------------------------------------- */
+    const saveBlock = async (block) => {
+        if (!slide?.id) return { success: false };
+
+        const payload = {
+            type: block.type,
+            content: block.content || null,
+            media: block.mediaLibraryId ? block.mediaLibraryId : null,
+            position_x: Math.round(block.position.x),
+            position_y: Math.round(block.position.y),
+            width: block.size.width,
+            height: block.size.height,
+            z_index: block.zIndex,
+            opacity: block.opacity,
+            background_opacity: block.backgroundOpacity,
+            font_family: block.style.fontFamily,
+            font_size: parseInt(block.style.fontSize) || 18,
+            font_color: block.style.color,
+            font_weight: block.style.fontWeight,
+            font_style: block.style.fontStyle,
+            text_align: block.style.textAlign,
+            text_decoration: block.style.textDecoration,
+            background_color: block.style.backgroundColor === 'transparent' ? null : block.style.backgroundColor,
+            border_radius: parseInt(block.style.borderRadius) || 0,
+            border_color: (block.style.border?.match(/solid\s+(.+)/) || [])[1] || null,
+            border_width: parseInt(block.style.border) || 0,
+            extra_data: block.extra_data || {},
+            slide: slide.id
+        };
+
+        try {
+            if (String(block.id).startsWith('temp-')) {
+                const res = await AxiosInstance.post(`slides/blocks/`, payload);
+                const newId = res.data.id;
+                setBlocks(prev => prev.map(b => b.id === block.id ? { ...b, id: newId } : b));
+                setHasUnsavedChanges(false);
+                return { success: true, action: 'created', id: newId };
+            } else {
+                await AxiosInstance.patch(`slides/blocks/${block.id}/`, payload);
+                setHasUnsavedChanges(false);
+                return { success: true, action: 'updated' };
+            }
+        } catch (e) {
+            console.error('Block save failed', e);
+            alert('فشل حفظ العنصر');
+            return { success: false };
         }
     };
 
-    // Get default style
-    const getDefaultStyle = (type) => {
-        const baseStyle = {
-            fontFamily: 'Arial, sans-serif',
-            fontSize: type === 'title' ? '36px' : type === 'quote' ? '24px' : '18px',
-            color: type === 'code' ? '#e2e8f0' : '#2d3748',
-            backgroundColor: type === 'code' ? '#2d3748' : 'transparent',
-            textAlign: 'right',
-            fontWeight: 'normal',
-            fontStyle: 'normal',
-            textDecoration: 'none'
-        };
+    const saveAllBlocks = async () => {
+        const results = [];
+        for (const block of blocks) {
+            const payload = {
+                type: block.type,
+                content: block.content || null,
+                media: block.mediaLibraryId ? block.mediaLibraryId : null,
+                position_x: Math.round(block.position.x),
+                position_y: Math.round(block.position.y),
+                width: block.size.width,
+                height: block.size.height,
+                z_index: block.zIndex,
+                opacity: block.opacity,
+                background_opacity: block.backgroundOpacity,
+                font_family: block.style.fontFamily,
+                font_size: parseInt(block.style.fontSize) || 18,
+                font_color: block.style.color,
+                font_weight: block.style.fontWeight,
+                font_style: block.style.fontStyle,
+                text_align: block.style.textAlign,
+                text_decoration: block.style.textDecoration,
+                background_color: block.style.backgroundColor === 'transparent' ? null : block.style.backgroundColor,
+                border_radius: parseInt(block.style.borderRadius) || 0,
+                border_color: (block.style.border?.match(/solid\s+(.+)/) || [])[1] || null,
+                border_width: parseInt(block.style.border) || 0,
+                extra_data: block.extra_data || {},
+                slide: slide.id
+            };
 
-        return baseStyle;
+            try {
+                if (String(block.id).startsWith('temp-')) {
+                    const res = await AxiosInstance.post(`slides/blocks/`, payload);
+                    const newId = res.data.id;
+                    setBlocks(prev => prev.map(b => b.id === block.id ? { ...b, id: newId } : b));
+                    results.push({ success: true, action: 'created', id: newId });
+                } else {
+                    await AxiosInstance.patch(`slides/blocks/${block.id}/`, payload);
+                    results.push({ success: true, action: 'updated', id: block.id });
+                }
+            } catch (e) {
+                console.error(`Failed to save block ${block.id}`, e);
+                results.push({ success: false, id: block.id });
+            }
+        }
+
+        if (results.length > 0) setHasUnsavedChanges(false);
+        return results;
     };
 
-    // Add new block
+    const deleteBlockFromServer = async (blockId) => {
+        if (String(blockId).startsWith('temp-')) {
+            setBlocks(prev => prev.filter(b => b.id !== blockId));
+            if (selectedBlock?.id === blockId) setSelectedBlock(null);
+            if (editingBlockId === blockId) setEditingBlockId(null);
+            setHasUnsavedChanges(false);
+            return { success: true };
+        }
+
+        try {
+            await AxiosInstance.delete(`slides/blocks/${blockId}/`);
+            setBlocks(prev => prev.filter(b => b.id !== blockId));
+            if (selectedBlock?.id === blockId) setSelectedBlock(null);
+            if (editingBlockId === blockId) setEditingBlockId(null);
+            setHasUnsavedChanges(false);
+            return { success: true };
+        } catch (e) {
+            alert('فشل حذف العنصر');
+            return { success: false };
+        }
+    };
+
+    /* --------------------------------------------------------------
+       5. Add block
+    -------------------------------------------------------------- */
     const addBlock = (type) => {
-        const maxZIndex = Math.max(...blocks.map(b => b.zIndex || 1), 0);
+        const maxZ = Math.max(...blocks.map(b => b.zIndex || 1), 0);
         const newBlock = {
-            id: `temp-${Date.now()}`,
+            id: `temp-${Date.now()}-${Math.random()}`,
             type,
             content: getDefaultContent(type),
             media: null,
             mediaLibraryId: null,
             position: { x: 100, y: 100 },
             size: getDefaultSize(type),
-            style: getDefaultStyle(type),
-            zIndex: maxZIndex + 1,
+            zIndex: maxZ + 1,
             opacity: 1,
-            backgroundOpacity: 1
+            backgroundOpacity: 1,
+            style: { ...getDefaultStyle(type) },
+            extra_data: {}
         };
-
         setBlocks([...blocks, newBlock]);
         setSelectedBlock(newBlock);
+        setEditingBlockId(newBlock.id);
+        setHasUnsavedChanges(true);
     };
 
-    // Default content
-    const getDefaultContent = (type) => {
-        switch (type) {
-            case 'title': return 'Main Title';
-            case 'text': return 'This is a normal text that you can modify according to your needs';
-            case 'bullet_points': return '• First point\n• Second point\n• Third point';
-            case 'quote': return 'This is an inspiring quote that you can modify to suit you';
-            case 'code': return '// Example code\nfunction example() {\n  return "Hello World";\n}';
-            default: return '';
-        }
-    };
-
-    // Update block
+    /* --------------------------------------------------------------
+       6. Block helpers
+    -------------------------------------------------------------- */
     const updateBlock = (blockId, updates) => {
-        setBlocks(blocks.map(block =>
-            block.id === blockId ? { ...block, ...updates } : block
-        ));
+        setBlocks(prev => prev.map(b => (b.id === blockId ? { ...b, ...updates } : b)));
+        setHasUnsavedChanges(true);
     };
 
-    // Update style
     const updateBlockStyle = (blockId, styleUpdates) => {
-        setBlocks(blocks.map(block =>
-            block.id === blockId
-                ? { ...block, style: { ...block.style, ...styleUpdates } }
-                : block
+        setBlocks(prev => prev.map(b =>
+            b.id === blockId ? { ...b, style: { ...b.style, ...styleUpdates } } : b
         ));
+        setHasUnsavedChanges(true);
     };
 
-    // Toggle style
-    const toggleStyle = (blockId, property, activeValue, inactiveValue = 'normal') => {
-        const currentValue = selectedBlock?.style?.[property];
-        const newValue = currentValue === activeValue ? inactiveValue : activeValue;
-        updateBlockStyle(blockId, { [property]: newValue });
+    const toggleEdit = (blockId) => {
+        setEditingBlockId(prev => (prev === blockId ? null : blockId));
     };
 
-    // Change font size
-    const changeFontSize = (blockId, change) => {
-        const currentSize = parseInt(selectedBlock?.style?.fontSize) || 18;
-        const newSize = Math.max(1, currentSize + change);
-        updateBlockStyle(blockId, { fontSize: `${newSize}px` });
+    const updateBlockContent = (blockId, newContent) => {
+        updateBlock(blockId, { content: newContent });
     };
 
-    // Change opacity
-    const changeOpacity = (blockId, opacity) => {
-        const newOpacity = Math.max(0, Math.min(1, parseFloat(opacity)));
-        updateBlock(blockId, { opacity: newOpacity });
+    const selectBlock = (block) => {
+        setSelectedBlock(block);
     };
 
-    // Change background opacity
-    const changeBackgroundOpacity = (blockId, opacity) => {
-        const newOpacity = Math.max(0, Math.min(1, parseFloat(opacity)));
-        updateBlock(blockId, { backgroundOpacity: newOpacity });
+    const showProperties = (block) => {
+        setSelectedBlock(block);
     };
 
-    // Change slide background opacity
-    const changeSlideBackgroundOpacity = (opacity) => {
-        const newOpacity = Math.max(0, Math.min(1, parseFloat(opacity)));
-        setSlideProperties(prev => ({
-            ...prev,
-            backgroundOpacity: newOpacity
-        }));
+    const changeFontSize = (blockId, delta) => {
+        const cur = parseInt(selectedBlock?.style?.fontSize) || 18;
+        const next = Math.max(1, cur + delta);
+        updateBlockStyle(blockId, { fontSize: `${next}px` });
     };
 
-    // Layer management
+    const toggleStyle = (blockId, prop, on, off = 'normal') => {
+        const cur = selectedBlock?.style?.[prop];
+        updateBlockStyle(blockId, { [prop]: cur === on ? off : on });
+    };
+
+    const changeOpacity = (blockId, v) => {
+        const val = Math.max(0, Math.min(1, parseFloat(v)));
+        updateBlock(blockId, { opacity: val });
+    };
+
+    const changeBackgroundOpacity = (blockId, v) => {
+        const val = Math.max(0, Math.min(1, parseFloat(v)));
+        updateBlock(blockId, { backgroundOpacity: val });
+    };
+
+    const changeSlideBackgroundOpacity = (v) => {
+        const val = Math.max(0, Math.min(1, parseFloat(v)));
+        setSlideProperties(p => ({ ...p, backgroundOpacity: val }));
+        setHasUnsavedChanges(true);
+    };
+
     const bringToFront = (blockId) => {
-        const maxZIndex = Math.max(...blocks.map(b => b.zIndex || 1), 0);
-        updateBlock(blockId, { zIndex: maxZIndex + 1 });
+        const max = Math.max(...blocks.map(b => b.zIndex || 1), 0);
+        updateBlock(blockId, { zIndex: max + 1 });
     };
 
     const sendToBack = (blockId) => {
-        const minZIndex = Math.min(...blocks.map(b => b.zIndex || 1), 1);
-        updateBlock(blockId, { zIndex: Math.max(1, minZIndex - 1) });
+        const min = Math.min(...blocks.map(b => b.zIndex || 1), 1);
+        updateBlock(blockId, { zIndex: Math.max(1, min - 1) });
     };
 
-    // Media Library functions
+    /* --------------------------------------------------------------
+       7. Media
+    -------------------------------------------------------------- */
     const openMediaLibrary = (forWhat) => {
         setMediaSelectionFor(forWhat);
         setShowMediaLibrary(true);
@@ -293,14 +384,12 @@ const SlideDesigner = ({ slide, onSave, onCancel }) => {
 
     const handleMediaSelect = (mediaItem) => {
         if (mediaSelectionFor === 'background') {
-            // For slide background
-            setSlideProperties(prev => ({
-                ...prev,
+            setSlideProperties(p => ({
+                ...p,
                 backgroundImage: mediaItem.file_url,
                 backgroundImageLibraryId: mediaItem.id
             }));
         } else if (mediaSelectionFor) {
-            // For block media
             updateBlock(mediaSelectionFor, {
                 media: mediaItem.file_url,
                 mediaLibraryId: mediaItem.id
@@ -308,143 +397,83 @@ const SlideDesigner = ({ slide, onSave, onCancel }) => {
         }
         setShowMediaLibrary(false);
         setMediaSelectionFor(null);
+        setHasUnsavedChanges(true);
     };
 
     const removeBackgroundImage = () => {
-        setSlideProperties(prev => ({
-            ...prev,
-            backgroundImage: null,
-            backgroundImageLibraryId: null
-        }));
+        setSlideProperties(p => ({ ...p, backgroundImage: null, backgroundImageLibraryId: null }));
+        setHasUnsavedChanges(true);
     };
 
     const removeBlockMedia = (blockId) => {
-        updateBlock(blockId, {
-            media: null,
-            mediaLibraryId: null
-        });
+        updateBlock(blockId, { media: null, mediaLibraryId: null });
     };
 
-    // Reordering layers
-    const startReorder = (e, block) => {
-        e.stopPropagation();
-        setIsReordering(true);
-        setReorderBlock(block);
-    };
-
-    const handleReorder = (targetIndex) => {
-        if (!reorderBlock || !isReordering) return;
-
-        const newBlocks = [...blocks];
-        const currentIndex = newBlocks.findIndex(b => b.id === reorderBlock.id);
-
-        if (currentIndex !== -1 && targetIndex !== currentIndex) {
-            const [movedBlock] = newBlocks.splice(currentIndex, 1);
-            newBlocks.splice(targetIndex, 0, movedBlock);
-
-            const updatedBlocks = newBlocks.map((block, index) => ({
-                ...block,
-                zIndex: index + 1
-            }));
-
-            setBlocks(updatedBlocks);
-        }
-    };
-
-    const stopReorder = () => {
-        setIsReordering(false);
-        setReorderBlock(null);
-    };
-
-    // Drag and resize functions
+    /* --------------------------------------------------------------
+       8. Drag & Resize
+    -------------------------------------------------------------- */
     const startDrag = useCallback((e, block) => {
         e.stopPropagation();
         setIsDragging(true);
         setSelectedBlock(block);
-
+        setEditingBlockId(null);
         const rect = slideRef.current.getBoundingClientRect();
-        const offsetX = e.clientX - rect.left - block.position.x;
-        const offsetY = e.clientY - rect.top - block.position.y;
-        setDragOffset({ x: offsetX, y: offsetY });
+        const offX = e.clientX - rect.left - block.position.x;
+        const offY = e.clientY - rect.top - block.position.y;
+        setDragOffset({ x: offX, y: offY });
     }, []);
 
-    const startResize = useCallback((e, block, direction) => {
+    const startResize = useCallback((e, block, dir) => {
         e.stopPropagation();
         setIsResizing(true);
-        setResizeDirection(direction);
+        setResizeDirection(dir);
         setSelectedBlock(block);
+        setEditingBlockId(null);
         setInitialSize({ width: block.size.width, height: block.size.height });
         setInitialMouse({ x: e.clientX, y: e.clientY });
     }, []);
 
     const handleDrag = useCallback((e) => {
         if (!isDragging || !selectedBlock) return;
-
         const rect = slideRef.current.getBoundingClientRect();
         const x = e.clientX - rect.left - dragOffset.x;
         const y = e.clientY - rect.top - dragOffset.y;
-
         const maxX = rect.width - selectedBlock.size.width;
         const maxY = rect.height - selectedBlock.size.height;
-
         const boundedX = Math.max(0, Math.min(x, maxX));
         const boundedY = Math.max(0, Math.min(y, maxY));
 
         updateBlock(selectedBlock.id, {
-            position: { x: boundedX, y: boundedY }
+            position: {
+                x: Math.round(boundedX),
+                y: Math.round(boundedY)
+            }
         });
     }, [isDragging, selectedBlock, dragOffset]);
 
     const handleResize = useCallback((e) => {
         if (!isResizing || !selectedBlock) return;
-
-        const deltaX = e.clientX - initialMouse.x;
-        const deltaY = e.clientY - initialMouse.y;
-
-        let newWidth = initialSize.width;
-        let newHeight = initialSize.height;
-
+        const dx = e.clientX - initialMouse.x;
+        const dy = e.clientY - initialMouse.y;
+        let w = initialSize.width;
+        let h = initialSize.height;
         switch (resizeDirection) {
-            case 'nw':
-                newWidth = Math.max(50, initialSize.width - deltaX);
-                newHeight = Math.max(30, initialSize.height - deltaY);
-                break;
-            case 'ne':
-                newWidth = Math.max(50, initialSize.width + deltaX);
-                newHeight = Math.max(30, initialSize.height - deltaY);
-                break;
-            case 'sw':
-                newWidth = Math.max(50, initialSize.width - deltaX);
-                newHeight = Math.max(30, initialSize.height + deltaY);
-                break;
-            case 'se':
-                newWidth = Math.max(50, initialSize.width + deltaX);
-                newHeight = Math.max(30, initialSize.height + deltaY);
-                break;
-            default:
-                break;
+            case 'nw': w = Math.max(50, initialSize.width - dx); h = Math.max(30, initialSize.height - dy); break;
+            case 'ne': w = Math.max(50, initialSize.width + dx); h = Math.max(30, initialSize.height - dy); break;
+            case 'sw': w = Math.max(50, initialSize.width - dx); h = Math.max(30, initialSize.height + dy); break;
+            case 'se': w = Math.max(50, initialSize.width + dx); h = Math.max(30, initialSize.height + dy); break;
+            default: break;
         }
-
-        updateBlock(selectedBlock.id, {
-            size: { width: newWidth, height: newHeight }
-        });
+        updateBlock(selectedBlock.id, { size: { width: w, height: h } });
     }, [isResizing, selectedBlock, resizeDirection, initialSize, initialMouse]);
 
-    const stopDrag = useCallback(() => {
-        setIsDragging(false);
-    }, []);
+    const stopDrag = useCallback(() => { setIsDragging(false); setHasUnsavedChanges(true); }, []);
+    const stopResize = useCallback(() => { setIsResizing(false); setResizeDirection(null); setHasUnsavedChanges(true); }, []);
 
-    const stopResize = useCallback(() => {
-        setIsResizing(false);
-        setResizeDirection(null);
-    }, []);
-
-    // Event listeners for drag and resize
     useEffect(() => {
         if (isDragging || isResizing) {
             document.addEventListener('mousemove', isDragging ? handleDrag : handleResize);
             document.addEventListener('mouseup', isDragging ? stopDrag : stopResize);
-
             return () => {
                 document.removeEventListener('mousemove', isDragging ? handleDrag : handleResize);
                 document.removeEventListener('mouseup', isDragging ? stopDrag : stopResize);
@@ -452,762 +481,435 @@ const SlideDesigner = ({ slide, onSave, onCancel }) => {
         }
     }, [isDragging, isResizing, handleDrag, handleResize, stopDrag, stopResize]);
 
-    // Delete block
-    const deleteBlock = (blockId) => {
-        setBlocks(blocks.filter(block => block.id !== blockId));
-        if (selectedBlock && selectedBlock.id === blockId) {
-            setSelectedBlock(null);
-        }
-    };
-
-    // Save slide with all properties including preview
-    const handleSave = async () => {
+    /* --------------------------------------------------------------
+       9. Final save - مُحسّن لحفظ الصورة تلقائياً (باستخدام FormData)
+    -------------------------------------------------------------- */
+    const handleFinalSave = async () => {
         setIsGeneratingPreview(true);
-
         try {
-            // Generate slide preview
-            const slidePreview = await generateSlidePreview();
-
-            const slideData = {
-                ...slide,
-                blocks: blocks.map(block => ({
-                    id: block.id,
-                    type: block.type,
-                    content: block.content,
-                    media: block.media,
-                    media_library_id: block.mediaLibraryId,
-                    extra: {
-                        position: block.position,
-                        size: block.size,
-                        style: block.style,
-                        zIndex: block.zIndex,
-                        opacity: block.opacity,
-                        backgroundOpacity: block.backgroundOpacity
-                    }
-                })),
+            // 1. حفظ خصائص الشريحة
+            await AxiosInstance.patch(`slides/slides/${slide.id}/`, {
                 background_color: slideProperties.backgroundColor,
-                background_image: slideProperties.backgroundImage,
-                background_image_library_id: slideProperties.backgroundImageLibraryId,
-                layout_style: slideProperties.layoutStyle,
+                background_image: slideProperties.backgroundImageLibraryId ?? null,
                 background_opacity: slideProperties.backgroundOpacity,
-                slide_preview: slidePreview // إضافة المعاينة كـ Base64
-            };
-
-            onSave(slideData);
-        } catch (error) {
-            console.error('Error generating preview:', error);
-            // إذا فشل توليد المعاينة، احفظ بدونها
-            const slideData = {
-                ...slide,
-                blocks: blocks.map(block => ({
-                    id: block.id,
-                    type: block.type,
-                    content: block.content,
-                    media: block.media,
-                    media_library_id: block.mediaLibraryId,
-                    extra: {
-                        position: block.position,
-                        size: block.size,
-                        style: block.style,
-                        zIndex: block.zIndex,
-                        opacity: block.opacity,
-                        backgroundOpacity: block.backgroundOpacity
-                    }
-                })),
-                background_color: slideProperties.backgroundColor,
-                background_image: slideProperties.backgroundImage,
-                background_image_library_id: slideProperties.backgroundImageLibraryId,
                 layout_style: slideProperties.layoutStyle,
-                background_opacity: slideProperties.backgroundOpacity
-            };
+            });
 
-            onSave(slideData);
+            // 2. حفظ جميع الكتل
+            const blockResults = await saveAllBlocks();
+            const successBlocks = blockResults.filter(r => r.success).length;
+            console.log(`تم حفظ ${successBlocks} من ${blockResults.length} كتلة`);
+
+            // 3. إنشاء وحفظ صورة المعاينة
+            const blob = await generateSlidePreview();
+            if (blob) {
+                const formData = new FormData();
+                formData.append('slide_viewer', blob, `slide_preview_${slide.id}.png`);
+
+                await AxiosInstance.patch(`slides/slides/${slide.id}/`, formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                });
+                console.log('تم حفظ صورة المعاينة بنجاح');
+            }
+
+            alert('تم حفظ الشريحة بنجاح!');
+            navigate(-1);
+        } catch (e) {
+            console.error('Error in final save:', e);
+            alert('خطأ أثناء الحفظ النهائي');
         } finally {
             setIsGeneratingPreview(false);
         }
     };
 
-    // Helper function to convert HEX to RGB
-    const hexToRgb = (hex) => {
-        const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-        return result ?
-            `${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}`
-            : '255, 255, 255';
+    /* --------------------------------------------------------------
+       10. Save Preview Only - لحفظ المعاينة فقط
+    -------------------------------------------------------------- */
+    const savePreviewOnly = async () => {
+        if (!slide?.id) {
+            alert('لا توجد شريحة نشطة');
+            return;
+        }
+
+        setIsGeneratingPreview(true);
+        try {
+            await saveAllBlocks();
+
+            const blob = await generateSlidePreview();
+            if (!blob) {
+                alert('فشل في إنشاء المعاينة');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('slide_viewer', blob, `slide_preview_${slide.id}.png`);
+
+            await AxiosInstance.patch(`slides/slides/${slide.id}/`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            });
+
+            alert('تم حفظ صورة المعاينة بنجاح!');
+            setHasUnsavedChanges(false);
+        } catch (e) {
+            console.error('Error saving preview:', e);
+            alert('خطأ في حفظ المعاينة');
+        } finally {
+            setIsGeneratingPreview(false);
+        }
     };
 
-    // Render block function
-    const renderBlock = (block) => {
-        const isSelected = selectedBlock && selectedBlock.id === block.id;
+    const handleCancel = () => {
+        if (hasUnsavedChanges && !window.confirm('هناك تغييرات غير محفوظة، هل تريد الخروج؟')) return;
+        navigate(-1);
+    };
 
-        const position = block.position || { x: 100, y: 100 };
-        const size = block.size || getDefaultSize(block.type);
+    const hexToRgb = (hex) => {
+        const c = hex.replace('#', '');
+        const r = parseInt(c.substring(0, 2), 16);
+        const g = parseInt(c.substring(2, 4), 16);
+        const b = parseInt(c.substring(4, 6), 16);
+        return `${r}, ${g}, ${b}`;
+    };
+
+    const deleteBlock = (blockId) => {
+        setBlocks(prev => prev.filter(b => b.id !== blockId));
+        if (selectedBlock?.id === blockId) setSelectedBlock(null);
+        if (editingBlockId === blockId) setEditingBlockId(null);
+        setHasUnsavedChanges(true);
+    };
+
+    /* --------------------------------------------------------------
+       11. Layers Drag & Drop
+    -------------------------------------------------------------- */
+    const onDragEnd = (result) => {
+        if (!result.destination) return;
+
+        const { source, destination } = result;
+        const newBlocks = Array.from(blocks);
+        const [moved] = newBlocks.splice(source.index, 1);
+        newBlocks.splice(destination.index, 0, moved);
+
+        const reordered = newBlocks.map((b, idx) => ({
+            ...b,
+            zIndex: idx + 1,
+        }));
+
+        setBlocks(reordered);
+        setHasUnsavedChanges(true);
+    };
+
+    /* --------------------------------------------------------------
+       12. Render block
+    -------------------------------------------------------------- */
+    const renderBlock = (block) => {
+        const isSel = selectedBlock?.id === block.id;
+        const isEdit = editingBlockId === block.id;
+        const pos = block.position || { x: 100, y: 100 };
+        const sz = block.size || getDefaultSize(block.type);
 
         const blockStyle = {
             ...block.style,
-            left: `${position.x}px`,
-            top: `${position.y}px`,
-            width: `${size.width}px`,
-            height: `${size.height}px`,
+            left: `${pos.x}px`,
+            top: `${pos.y}px`,
+            width: `${sz.width}px`,
+            height: `${sz.height}px`,
             position: 'absolute',
-            cursor: isDragging ? 'grabbing' : 'grab',
+            cursor: isDragging ? 'grabbing' : (isEdit ? 'text' : 'grab'),
             zIndex: block.zIndex || 1,
-            opacity: block.opacity !== undefined ? block.opacity : 1
+            opacity: block.opacity ?? 1,
+            padding: '8px',
+            boxSizing: 'border-box',
+            overflow: 'hidden',
         };
 
-        // Prevent text overflow
-        if (['title', 'text', 'bullet_points', 'quote', 'code'].includes(block.type)) {
-            blockStyle.overflow = 'hidden';
-            blockStyle.wordWrap = 'break-word';
-            blockStyle.overflowWrap = 'break-word';
-        }
+        const isTextBlock = ['title', 'text', 'bullet_points', 'quote', 'code'].includes(block.type);
 
         let content;
-
-        switch (block.type) {
-            case 'title':
-                content = (
-                    <div
-                        className={styles.titleBlock}
-                        style={{
-                            fontFamily: block.style?.fontFamily,
-                            fontSize: block.style?.fontSize,
-                            color: block.style?.color,
-                            fontWeight: block.style?.fontWeight,
-                            textAlign: block.style?.textAlign,
-                            fontStyle: block.style?.fontStyle,
-                            textDecoration: block.style?.textDecoration,
-                            width: '100%',
-                            height: '100%',
-                            overflow: 'hidden'
-                        }}
-                    >
-                        {block.content}
-                    </div>
-                );
-                break;
-
-            case 'text':
-                content = (
-                    <div
-                        className={styles.textBlock}
-                        style={{
-                            fontFamily: block.style?.fontFamily,
-                            fontSize: block.style?.fontSize,
-                            color: block.style?.color,
-                            textAlign: block.style?.textAlign,
-                            lineHeight: '1.6',
-                            fontStyle: block.style?.fontStyle,
-                            textDecoration: block.style?.textDecoration,
-                            fontWeight: block.style?.fontWeight,
-                            width: '100%',
-                            height: '100%',
-                            overflow: 'hidden'
-                        }}
-                    >
-                        {block.content}
-                    </div>
-                );
-                break;
-
-            case 'bullet_points':
-                const points = block.content?.split('\n').filter(point => point.trim()) || [];
-                content = (
-                    <div
-                        className={styles.bulletBlock}
-                        style={{
-                            fontFamily: block.style?.fontFamily,
-                            fontSize: block.style?.fontSize,
-                            color: block.style?.color,
-                            textAlign: block.style?.textAlign,
-                            fontStyle: block.style?.fontStyle,
-                            textDecoration: block.style?.textDecoration,
-                            fontWeight: block.style?.fontWeight,
-                            width: '100%',
-                            height: '100%',
-                            overflow: 'hidden'
-                        }}
-                    >
-                        <ul>
-                            {points.map((point, index) => (
-                                <li key={index}>{point.replace('•', '').trim()}</li>
-                            ))}
-                        </ul>
-                    </div>
-                );
-                break;
-
-            case 'quote':
-                content = (
-                    <div
-                        className={styles.quoteBlock}
-                        style={{
-                            fontFamily: block.style?.fontFamily,
-                            fontSize: block.style?.fontSize,
-                            color: block.style?.color,
-                            fontStyle: block.style?.fontStyle,
-                            textDecoration: block.style?.textDecoration,
-                            fontWeight: block.style?.fontWeight,
-                            borderLeftColor: block.style?.borderColor || '#4299e1',
-                            width: '100%',
-                            height: '100%',
-                            overflow: 'hidden',
-                            backgroundColor: block.style?.backgroundColor ?
-                                `rgba(${hexToRgb(block.style.backgroundColor || '#ffffff')}, ${block.backgroundOpacity || 1})` :
-                                'transparent'
-                        }}
-                    >
-                        {block.content}
-                    </div>
-                );
-                break;
-
-            case 'code':
-                content = (
-                    <div
-                        className={styles.codeBlock}
-                        style={{
-                            fontFamily: block.style?.fontFamily || 'Courier New, monospace',
-                            fontSize: block.style?.fontSize,
-                            backgroundColor: block.style?.backgroundColor ?
-                                `rgba(${hexToRgb(block.style.backgroundColor || '#2d3748')}, ${block.backgroundOpacity || 1})` :
-                                '#2d3748',
-                            color: block.style?.color,
-                            width: '100%',
-                            height: '100%',
-                            overflow: 'auto'
-                        }}
-                    >
-                        <pre>{block.content}</pre>
-                    </div>
-                );
-                break;
-
-            case 'image':
-                content = (
-                    <div
-                        className={styles.imageBlock}
-                        style={{
-                            opacity: block.backgroundOpacity !== undefined ? block.backgroundOpacity : 1
-                        }}
-                    >
-                        {block.media ? (
-                            <img
-                                src={block.media}
-                                alt="Block content"
-                                style={{ width: '100%', height: '100%', objectFit: 'contain' }}
-                            />
-                        ) : (
-                            <div className={styles.mediaPlaceholder}>
-                                <FaImage size={32} />
-                                <span>Image</span>
-                            </div>
-                        )}
-                    </div>
-                );
-                break;
-
-            case 'video':
-                content = (
-                    <div
-                        className={styles.videoBlock}
-                        style={{
-                            opacity: block.backgroundOpacity !== undefined ? block.backgroundOpacity : 1
-                        }}
-                    >
-                        {block.media ? (
-                            <video controls style={{ width: '100%', height: '100%' }}>
-                                <source src={block.media} type="video/mp4" />
-                                Your browser does not support the video tag.
-                            </video>
-                        ) : (
-                            <div className={styles.mediaPlaceholder}>
-                                <FaVideo size={32} />
-                                <span>Video</span>
-                            </div>
-                        )}
-                    </div>
-                );
-                break;
-
-            default:
-                content = <div>{block.content}</div>;
+        if (isTextBlock) {
+            content = (
+                <EditableContent
+                    block={block}
+                    isEditing={isEdit}
+                    onToggleEdit={() => toggleEdit(block.id)}
+                    onUpdate={updateBlockContent}
+                    onSelectBlock={selectBlock}
+                    onShowProperties={showProperties}
+                    selectedBlock={selectedBlock}
+                />
+            );
+        } else {
+            content = block.type === 'image' ? <Image block={block} styles={styles} /> :
+                block.type === 'video' ? <Video block={block} styles={styles} /> : null;
         }
 
         return (
             <div
                 key={block.id}
-                className={`${styles.block} ${isSelected ? styles.selected : ''}`}
+                className={`${styles.block} ${isSel ? styles.selected : ''} ${isEdit ? styles.editing : ''}`}
                 style={blockStyle}
-                onMouseDown={(e) => startDrag(e, block)}
+                onMouseDown={(e) => !isEdit && startDrag(e, block)}
                 onClick={(e) => {
                     e.stopPropagation();
-                    setSelectedBlock(block);
+                    if (!isEdit) {
+                        selectBlock(block);
+                        showProperties(block);
+                    }
                 }}
             >
-                {/* Delete button */}
-                {isSelected && (
-                    <button
-                        className={styles.deleteButton}
-                        onClick={(e) => {
-                            e.stopPropagation();
-                            deleteBlock(block.id);
-                        }}
-                        title="Delete element"
-                    >
+                {isSel && !isEdit && (
+                    <button className={styles.deleteButton} onClick={(e) => { e.stopPropagation(); deleteBlock(block.id); }}>
                         <MdClose size={16} />
                     </button>
                 )}
-
-                {/* Drag handle */}
-                {isSelected && (
-                    <div className={styles.dragHandle}>
-                        <FaExpandArrowsAlt size={14} />
-                        Drag to move
-                    </div>
-                )}
-
                 {content}
-
-                {/* Resize handles */}
-                {isSelected && (
+                {isSel && !isEdit && (
                     <>
-                        <div
-                            className={`${styles.resizeHandle} ${styles.topLeft}`}
-                            onMouseDown={(e) => startResize(e, block, 'nw')}
-                        />
-                        <div
-                            className={`${styles.resizeHandle} ${styles.topRight}`}
-                            onMouseDown={(e) => startResize(e, block, 'ne')}
-                        />
-                        <div
-                            className={`${styles.resizeHandle} ${styles.bottomLeft}`}
-                            onMouseDown={(e) => startResize(e, block, 'sw')}
-                        />
-                        <div
-                            className={`${styles.resizeHandle} ${styles.bottomRight}`}
-                            onMouseDown={(e) => startResize(e, block, 'se')}
-                        />
+                        <div className={`${styles.resizeHandle} ${styles.topLeft}`} onMouseDown={(e) => startResize(e, block, 'nw')} />
+                        <div className={`${styles.resizeHandle} ${styles.topRight}`} onMouseDown={(e) => startResize(e, block, 'ne')} />
+                        <div className={`${styles.resizeHandle} ${styles.bottomLeft}`} onMouseDown={(e) => startResize(e, block, 'sw')} />
+                        <div className={`${styles.resizeHandle} ${styles.bottomRight}`} onMouseDown={(e) => startResize(e, block, 'se')} />
                     </>
                 )}
-
-                {/* Layer buttons */}
-                {isSelected && (
+                {isSel && !isEdit && (
                     <div className={styles.layerControls}>
-                        <button
-                            className={styles.layerButton}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                bringToFront(block.id);
-                            }}
-                            title="Bring to Front"
-                        >
-                            <FaArrowUp size={12} />
-                        </button>
-                        <button
-                            className={styles.layerButton}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                sendToBack(block.id);
-                            }}
-                            title="Send to Back"
-                        >
-                            <FaArrowDown size={12} />
-                        </button>
+                        <button onClick={(e) => { e.stopPropagation(); bringToFront(block.id); }}><FaArrowUp size={19} /></button>
+                        <button onClick={(e) => { e.stopPropagation(); sendToBack(block.id); }}><FaArrowDown size={19} /></button>
                     </div>
                 )}
             </div>
         );
     };
 
-    // Render elements list with drag and drop
-    const renderElementsList = () => {
-        return (
-            <div className={styles.elementsList}>
-                {blocks.map((block, index) => (
-                    <div
-                        key={block.id}
-                        className={`${styles.elementItem} ${selectedBlock?.id === block.id ? styles.selectedElement : ''} ${reorderBlock?.id === block.id ? styles.draggingElement : ''}`}
-                        onClick={() => setSelectedBlock(block)}
-                        draggable
-                        onDragStart={(e) => startReorder(e, block)}
-                        onDragOver={(e) => {
-                            e.preventDefault();
-                            if (reorderBlock?.id !== block.id) {
-                                e.currentTarget.classList.add(styles.dragOver);
-                            }
-                        }}
-                        onDragLeave={(e) => {
-                            e.currentTarget.classList.remove(styles.dragOver);
-                        }}
-                        onDrop={(e) => {
-                            e.preventDefault();
-                            e.currentTarget.classList.remove(styles.dragOver);
-                            handleReorder(index);
-                        }}
-                        onDragEnd={stopReorder}
-                    >
-                        <div className={styles.elementDragHandle}>
-                            <MdDragHandle size={16} />
-                        </div>
-                        <div className={styles.elementIcon}>
-                            {block.type === 'title' && <MdTitle />}
-                            {block.type === 'text' && <MdTextFields />}
-                            {block.type === 'bullet_points' && <FaListUl />}
-                            {block.type === 'image' && <FaImage />}
-                            {block.type === 'video' && <FaVideo />}
-                            {block.type === 'quote' && <FaQuoteRight />}
-                            {block.type === 'code' && <FaCode />}
-                        </div>
-                        <div className={styles.elementInfo}>
-                            <span className={styles.elementName}>
-                                {block.type === 'title' ? 'Title' :
-                                    block.type === 'text' ? 'Text' :
-                                        block.type === 'bullet_points' ? 'List' :
-                                            block.type === 'image' ? 'Image' :
-                                                block.type === 'video' ? 'Video' :
-                                                    block.type === 'quote' ? 'Quote' : 'Code'}
-                            </span>
-                            <span className={styles.elementPreview}>
-                                {block.content ? block.content.substring(0, 20) + (block.content.length > 20 ? '...' : '') : 'No content'}
-                            </span>
-                        </div>
-                        <div className={styles.elementActions}>
-                            <span className={styles.layerBadge}>
-                                {block.zIndex}
-                            </span>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        );
-    };
+    if (!slide) return <div className={styles.loading}>جاري التحميل...</div>;
 
     return (
         <div className={styles.designerContainer}>
-            {/* Tools Sidebar */}
+            {/* TOOLBAR */}
             <div className={styles.toolbar}>
                 <div className={styles.toolbarHeader}>
                     <FaVectorSquare className={styles.headerIcon} />
-                    Design Tools
+                    أدوات التصميم
+                    {hasUnsavedChanges && <span className={styles.unsavedIndicator}>*</span>}
                 </div>
 
+                {/* Add Elements */}
                 <div className={styles.toolbarSection}>
-                    <h3>
-                        <FaPlus className={styles.sectionIcon} />
-                        Add Elements
-                    </h3>
+                    <h3><FaPlus className={styles.sectionIcon} /> إضافة عناصر</h3>
                     <div className={styles.blockPalette}>
-                        <div className={styles.blockOption} onClick={() => addBlock('title')}>
-                            <MdTitle className={styles.blockIcon} />
-                            <div className={styles.blockLabel}>Title</div>
-                        </div>
-                        <div className={styles.blockOption} onClick={() => addBlock('text')}>
-                            <MdTextFields className={styles.blockIcon} />
-                            <div className={styles.blockLabel}>Text</div>
-                        </div>
-                        <div className={styles.blockOption} onClick={() => addBlock('bullet_points')}>
-                            <FaListUl className={styles.blockIcon} />
-                            <div className={styles.blockLabel}>Bullet List</div>
-                        </div>
-                        <div className={styles.blockOption} onClick={() => addBlock('image')}>
-                            <FaImage className={styles.blockIcon} />
-                            <div className={styles.blockLabel}>Image</div>
-                        </div>
-                        <div className={styles.blockOption} onClick={() => addBlock('video')}>
-                            <FaVideo className={styles.blockIcon} />
-                            <div className={styles.blockLabel}>Video</div>
-                        </div>
-                        <div className={styles.blockOption} onClick={() => addBlock('quote')}>
-                            <FaQuoteRight className={styles.blockIcon} />
-                            <div className={styles.blockLabel}>Quote</div>
-                        </div>
-                        <div className={styles.blockOption} onClick={() => addBlock('code')}>
-                            <FaCode className={styles.blockIcon} />
-                            <div className={styles.blockLabel}>Code</div>
-                        </div>
+                        <div className={styles.blockOption} onClick={() => addBlock('title')}><MdTitle className={styles.blockIcon} /><div className={styles.blockLabel}>عنوان</div></div>
+                        <div className={styles.blockOption} onClick={() => addBlock('text')}><MdTextFields className={styles.blockIcon} /><div className={styles.blockLabel}>نص</div></div>
+                        <div className={styles.blockOption} onClick={() => addBlock('bullet_points')}><FaListUl className={styles.blockIcon} /><div className={styles.blockLabel}>قائمة</div></div>
+                        <div className={styles.blockOption} onClick={() => addBlock('image')}><FaImage className={styles.blockIcon} /><div className={styles.blockLabel}>صورة</div></div>
+                        <div className={styles.blockOption} onClick={() => addBlock('video')}><FaVideo className={styles.blockIcon} /><div className={styles.blockLabel}>فيديو</div></div>
+                        <div className={styles.blockOption} onClick={() => addBlock('quote')}><FaQuoteRight className={styles.blockIcon} /><div className={styles.blockLabel}>اقتباس</div></div>
+                        <div className={styles.blockOption} onClick={() => addBlock('code')}><FaCode className={styles.blockIcon} /><div className={styles.blockLabel}>كود</div></div>
                     </div>
                 </div>
 
+                {/* Background */}
                 <div className={styles.toolbarSection}>
-                    <h3>
-                        <FaPalette className={styles.sectionIcon} />
-                        Slide Background
-                    </h3>
+                    <h3><FaPalette className={styles.sectionIcon} /> خلفية الشريحة</h3>
                     <div className={styles.inputGroup}>
-                        <label>Background Color</label>
-                        <input
-                            type="color"
-                            value={slideProperties.backgroundColor}
-                            onChange={(e) => setSlideProperties({
-                                ...slideProperties,
-                                backgroundColor: e.target.value
-                            })}
-                        />
+                        <label>لون الخلفية</label>
+                        <input type="color" value={slideProperties.backgroundColor}
+                            onChange={e => { setSlideProperties(p => ({ ...p, backgroundColor: e.target.value })); setHasUnsavedChanges(true); }} />
                     </div>
-
                     <div className={styles.inputGroup}>
-                        <label>Background Opacity</label>
+                        <label>شفافية الخلفية</label>
                         <div className={styles.opacityControl}>
-                            <input
-                                type="range"
-                                min="0"
-                                max="1"
-                                step="0.01"
+                            <input type="range" min="0" max="1" step="0.01"
                                 value={slideProperties.backgroundOpacity}
-                                onChange={(e) => changeSlideBackgroundOpacity(e.target.value)}
-                                className={styles.opacitySlider}
-                            />
-                            <span className={styles.opacityValue}>
-                                {Math.round(slideProperties.backgroundOpacity * 100)}%
-                            </span>
+                                onChange={e => changeSlideBackgroundOpacity(e.target.value)}
+                                className={styles.opacitySlider} />
+                            <span className={styles.opacityValue}>{Math.round(slideProperties.backgroundOpacity * 100)}%</span>
                         </div>
                     </div>
-
                     <div className={styles.inputGroup}>
-                        <label>Background Image</label>
-                        <div className={styles.mediaButtons}>
-                            <button
-                                type="button"
-                                onClick={() => openMediaLibrary('background')}
-                                className={styles.mediaLibraryButton}
-                            >
-                                <FaFolderOpen />
-                                Choose from Library
-                            </button>
-                            <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => {
-                                    const file = e.target.files[0];
-                                    if (file) {
-                                        const reader = new FileReader();
-                                        reader.onload = (event) => {
-                                            setSlideProperties({
-                                                ...slideProperties,
-                                                backgroundImage: event.target.result,
-                                                backgroundImageLibraryId: null
-                                            });
-                                        };
-                                        reader.readAsDataURL(file);
-                                    }
-                                }}
-                                className={styles.fileInput}
-                            />
-                        </div>
+                        <label>صورة الخلفية</label>
+                        <button onClick={() => openMediaLibrary('background')} className={styles.mediaLibraryButton}>
+                            <FaFolderOpen /> اختر من المكتبة
+                        </button>
                         {slideProperties.backgroundImage && (
                             <div className={styles.mediaPreview}>
-                                <img src={slideProperties.backgroundImage} alt="Background" className={styles.previewImage} />
-                                <button
-                                    onClick={removeBackgroundImage}
-                                    className={styles.removeMediaButton}
-                                >
-                                    <FaTimes />
-                                    Remove
-                                </button>
+                                <img src={slideProperties.backgroundImage} alt="bg" className={styles.previewImage} />
+                                <button onClick={removeBackgroundImage} className={styles.removeMediaButton}><FaTimes /> إزالة</button>
                             </div>
                         )}
                     </div>
                 </div>
 
-                {/* Elements list with drag and drop */}
+                {/* Elements List + Save All */}
                 <div className={styles.toolbarSection}>
-                    <h3>
-                        <MdLayers className={styles.sectionIcon} />
-                        Elements ({blocks.length})
-                    </h3>
-                    {renderElementsList()}
+                    <h3><MdLayers className={styles.sectionIcon} /> العناصر ({blocks.length})</h3>
+
+                    <DragDropContext onDragEnd={onDragEnd}>
+                        <Droppable droppableId="blocks-list">
+                            {(provided) => (
+                                <div
+                                    {...provided.droppableProps}
+                                    ref={provided.innerRef}
+                                    className={styles.elementsList}
+                                >
+                                    {blocks.map((b, idx) => (
+                                        <Draggable key={b.id} draggableId={String(b.id)} index={idx}>
+                                            {(provided, snapshot) => (
+                                                <div
+                                                    ref={provided.innerRef}
+                                                    {...provided.draggableProps}
+                                                    className={`${styles.elementItem} ${selectedBlock?.id === b.id ? styles.selectedElement : ''} ${snapshot.isDragging ? styles.draggingElement : ''}`}
+                                                    onClick={() => { selectBlock(b); showProperties(b); }}
+                                                >
+                                                    <div
+                                                        {...provided.dragHandleProps}
+                                                        className={styles.elementDragHandle}
+                                                    >
+                                                        <MdDragHandle size={16} />
+                                                    </div>
+                                                    <div className={styles.elementIcon}>
+                                                        {b.type === 'title' && <MdTitle />}
+                                                        {b.type === 'text' && <MdTextFields />}
+                                                        {b.type === 'bullet_points' && <FaListUl />}
+                                                        {b.type === 'image' && <FaImage />}
+                                                        {b.type === 'video' && <FaVideo />}
+                                                        {b.type === 'quote' && <FaQuoteRight />}
+                                                        {b.type === 'code' && <FaCode />}
+                                                    </div>
+                                                    <div className={styles.elementInfo}>
+                                                        <span className={styles.elementName}>
+                                                            {b.type === 'title' ? 'عنوان' : b.type === 'text' ? 'نص' : b.type === 'bullet_points' ? 'قائمة' : b.type === 'image' ? 'صورة' : b.type === 'video' ? 'فيديو' : b.type === 'quote' ? 'اقتباس' : 'كود'}
+                                                        </span>
+                                                        <span className={styles.elementPreview}>
+                                                            {b.content ? b.content.substring(0, 20) + (b.content.length > 20 ? '...' : '') : 'لا يوجد محتوى'}
+                                                        </span>
+                                                    </div>
+                                                    <div className={styles.elementActions}>
+                                                        <button
+                                                            className={styles.blockSaveBtn}
+                                                            onClick={async (e) => {
+                                                                e.stopPropagation();
+                                                                const result = await saveBlock(b);
+                                                                if (result.success) alert(`تم ${result.action === 'created' ? 'إنشاء' : 'تحديث'} العنصر!`);
+                                                            }}
+                                                        >
+                                                            <FaSave size={12} />
+                                                        </button>
+                                                        <button
+                                                            className={styles.blockDeleteBtn}
+                                                            onClick={async (e) => {
+                                                                e.stopPropagation();
+                                                                if (window.confirm('حذف العنصر؟')) {
+                                                                    const res = await deleteBlockFromServer(b.id);
+                                                                    if (res.success) alert('تم الحذف');
+                                                                }
+                                                            }}
+                                                        >
+                                                            <MdClose size={12} />
+                                                        </button>
+                                                        <span className={styles.layerBadge}>{b.zIndex}</span>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </Draggable>
+                                    ))}
+                                    {provided.placeholder}
+                                </div>
+                            )}
+                        </Droppable>
+                    </DragDropContext>
+
+                    <div style={{ marginTop: '16px' }}>
+                        <button
+                            className={styles.saveAllButton}
+                            onClick={async () => {
+                                const results = await saveAllBlocks();
+                                const success = results.filter(r => r.success).length;
+                                const fail = results.length - success;
+                                alert(fail === 0 ? `تم حفظ ${success} عنصر!` : `نجح: ${success}، فشل: ${fail}`);
+                            }}
+                            disabled={!hasUnsavedChanges}
+                        >
+                            <FaSave /> حفظ الجميع
+                        </button>
+                    </div>
                 </div>
             </div>
 
-            {/* Main workspace */}
+            {/* WORKSPACE */}
             <div className={styles.workspace}>
                 <div className={styles.workspaceHeader}>
                     <div className={styles.workspaceTitle}>
                         <FaFont className={styles.titleIcon} />
-                        {slide?.title || 'New Slide'}
+                        {slide?.title || 'شريحة جديدة'}
+                        {hasUnsavedChanges && <span className={styles.unsavedBadge}>غير محفوظة</span>}
                     </div>
                     <div className={styles.workspaceActions}>
                         <button
                             className={styles.controlButton}
-                            onClick={handleSave}
+                            onClick={savePreviewOnly}
                             disabled={isGeneratingPreview}
                         >
-                            {isGeneratingPreview ? (
-                                <>
-                                    <FaCamera className={styles.buttonIcon} />
-                                    Generating Preview...
-                                </>
-                            ) : (
-                                <>
-                                    <FaSave className={styles.buttonIcon} />
-                                    Save
-                                </>
-                            )}
+                            {isGeneratingPreview ? 'جاري الحفظ...' : 'حفظ المعاينة'}
                         </button>
-                        <button
-                            className={`${styles.controlButton} ${styles.secondary}`}
-                            onClick={onCancel}
-                            disabled={isGeneratingPreview}
-                        >
-                            <FaTimes className={styles.buttonIcon} />
-                            Cancel
-                        </button>
+                        <button className={`${styles.controlButton} ${styles.danger}`} onClick={handleCancel}>إلغاء</button>
                     </div>
                 </div>
 
-                {/* Enhanced formatting toolbar */}
                 {selectedBlock && (
                     <div className={styles.formattingToolbar}>
-                        {/* Text tools */}
                         {['title', 'text', 'bullet_points', 'quote'].includes(selectedBlock.type) && (
                             <>
                                 <div className={styles.formatSection}>
-                                    <span className={styles.formatLabel}>Font Size:</span>
-                                    <button
-                                        className={styles.formatButton}
-                                        onClick={() => changeFontSize(selectedBlock.id, -10)}
-                                        title="Decrease Font Size"
-                                    >
-                                        <FaMinus />
-                                    </button>
-                                    <input
-                                        type="number"
-                                        value={parseInt(selectedBlock.style?.fontSize) || 18}
-                                        onChange={(e) => {
-                                            const newSize = Math.max(1, parseInt(e.target.value) || 18);
-                                            updateBlockStyle(selectedBlock.id, { fontSize: `${newSize}px` });
-                                        }}
-                                        className={styles.fontSizeInput}
-                                        min="1"
-                                    />
-                                    <button
-                                        className={styles.formatButton}
-                                        onClick={() => changeFontSize(selectedBlock.id, 10)}
-                                        title="Increase Font Size"
-                                    >
-                                        <FaPlus />
-                                    </button>
+                                    <button className={styles.sizeButton} onClick={() => changeFontSize(selectedBlock.id, -2)}><FaMinus /></button>
+                                    <input type="number" value={parseInt(selectedBlock.style.fontSize) || 18}
+                                        onChange={e => updateBlockStyle(selectedBlock.id, { fontSize: `${Math.max(1, e.target.value)}px` })}
+                                        className={styles.fontSizeInput} />
+                                    <button className={styles.sizeButton} onClick={() => changeFontSize(selectedBlock.id, 2)}><FaPlus /></button>
                                 </div>
-
                                 <div className={styles.formatSection}>
-                                    <button
-                                        className={`${styles.formatButton} ${selectedBlock.style?.fontWeight === 'bold' ? styles.active : ''}`}
-                                        onClick={() => toggleStyle(selectedBlock.id, 'fontWeight', 'bold', 'normal')}
-                                        title="Bold"
-                                    >
-                                        <FaBold />
-                                    </button>
-                                    <button
-                                        className={`${styles.formatButton} ${selectedBlock.style?.fontStyle === 'italic' ? styles.active : ''}`}
-                                        onClick={() => toggleStyle(selectedBlock.id, 'fontStyle', 'italic', 'normal')}
-                                        title="Italic"
-                                    >
-                                        <FaItalic />
-                                    </button>
-                                    <button
-                                        className={`${styles.formatButton} ${selectedBlock.style?.textDecoration === 'underline' ? styles.active : ''}`}
-                                        onClick={() => toggleStyle(selectedBlock.id, 'textDecoration', 'underline', 'none')}
-                                        title="Underline"
-                                    >
-                                        <FaUnderline />
-                                    </button>
+                                    <button className={`${styles.formatButton} ${selectedBlock.style?.fontWeight === 'bold' ? styles.active : ''}`} onClick={() => toggleStyle(selectedBlock.id, 'fontWeight', 'bold')}><FaBold /></button>
+                                    <button className={`${styles.formatButton} ${selectedBlock.style?.fontStyle === 'italic' ? styles.active : ''}`} onClick={() => toggleStyle(selectedBlock.id, 'fontStyle', 'italic')}><FaItalic /></button>
+                                    <button className={`${styles.formatButton} ${selectedBlock.style?.textDecoration === 'underline' ? styles.active : ''}`} onClick={() => toggleStyle(selectedBlock.id, 'textDecoration', 'underline')}><FaUnderline /></button>
                                 </div>
-
                                 <div className={styles.formatSection}>
-                                    <button
-                                        className={`${styles.formatButton} ${selectedBlock.style?.textAlign === 'right' ? styles.active : ''}`}
-                                        onClick={() => updateBlockStyle(selectedBlock.id, { textAlign: 'right' })}
-                                        title="Align Right"
-                                    >
-                                        <FaAlignRight />
-                                    </button>
-                                    <button
-                                        className={`${styles.formatButton} ${selectedBlock.style?.textAlign === 'center' ? styles.active : ''}`}
-                                        onClick={() => updateBlockStyle(selectedBlock.id, { textAlign: 'center' })}
-                                        title="Align Center"
-                                    >
-                                        <FaAlignCenter />
-                                    </button>
-                                    <button
-                                        className={`${styles.formatButton} ${selectedBlock.style?.textAlign === 'left' ? styles.active : ''}`}
-                                        onClick={() => updateBlockStyle(selectedBlock.id, { textAlign: 'left' })}
-                                        title="Align Left"
-                                    >
-                                        <FaAlignLeft />
-                                    </button>
+                                    <button className={`${styles.formatButton} ${selectedBlock.style?.textAlign === 'right' ? styles.active : ''}`} onClick={() => updateBlockStyle(selectedBlock.id, { textAlign: 'right' })}><FaAlignRight /></button>
+                                    <button className={`${styles.formatButton} ${selectedBlock.style?.textAlign === 'center' ? styles.active : ''}`} onClick={() => updateBlockStyle(selectedBlock.id, { textAlign: 'center' })}><FaAlignCenter /></button>
+                                    <button className={`${styles.formatButton} ${selectedBlock.style?.textAlign === 'left' ? styles.active : ''}`} onClick={() => updateBlockStyle(selectedBlock.id, { textAlign: 'left' })}><FaAlignLeft /></button>
                                 </div>
-
                                 <div className={styles.formatSection}>
-                                    <span className={styles.formatLabel}>Text Opacity:</span>
-                                    <div className={styles.opacityControl}>
-                                        <input
-                                            type="range"
-                                            min="0"
-                                            max="1"
-                                            step="0.01"
-                                            value={selectedBlock.opacity || 1}
-                                            onChange={(e) => changeOpacity(selectedBlock.id, e.target.value)}
-                                            className={styles.opacitySlider}
-                                        />
-                                        <span className={styles.opacityValue}>
-                                            {Math.round((selectedBlock.opacity || 1) * 100)}%
-                                        </span>
-                                    </div>
+                                    <input type="range" min="0" max="1" step="0.01" value={selectedBlock.opacity || 1}
+                                        onChange={e => changeOpacity(selectedBlock.id, e.target.value)} className={styles.opacitySlider} />
+                                    <span>{Math.round((selectedBlock.opacity || 1) * 100)}%</span>
                                 </div>
                             </>
-                        )}
-
-                        {/* Background opacity for images and elements */}
-                        {['image', 'video', 'code', 'quote'].includes(selectedBlock.type) && (
-                            <div className={styles.formatSection}>
-                                <span className={styles.formatLabel}>Background Opacity:</span>
-                                <div className={styles.opacityControl}>
-                                    <input
-                                        type="range"
-                                        min="0"
-                                        max="1"
-                                        step="0.01"
-                                        value={selectedBlock.backgroundOpacity || 1}
-                                        onChange={(e) => changeBackgroundOpacity(selectedBlock.id, e.target.value)}
-                                        className={styles.opacitySlider}
-                                    />
-                                    <span className={styles.opacityValue}>
-                                        {Math.round((selectedBlock.backgroundOpacity || 1) * 100)}%
-                                    </span>
-                                </div>
-                            </div>
                         )}
                     </div>
                 )}
 
-                {/* Slide area */}
                 <div className={styles.slideArea}>
                     <div
                         ref={slideRef}
                         className={styles.slideContainer}
                         style={{
-                            backgroundColor: slideProperties.backgroundColor ?
-                                `rgba(${hexToRgb(slideProperties.backgroundColor)}, ${slideProperties.backgroundOpacity})`
-                                : '#FFFFFF',
-                            backgroundImage: slideProperties.backgroundImage ? `url(${slideProperties.backgroundImage})` : 'none',
-                            backgroundSize: 'cover',
-                            backgroundPosition: 'center',
-                            cursor: isDragging ? 'grabbing' : 'default'
+                            background: slideProperties.backgroundImage
+                                ? `rgba(${hexToRgb(slideProperties.backgroundColor)}, ${slideProperties.backgroundOpacity}) url(${slideProperties.backgroundImage}) center/cover no-repeat`
+                                : `rgba(${hexToRgb(slideProperties.backgroundColor)}, ${slideProperties.backgroundOpacity})`,
+                            cursor: isDragging ? 'grabbing' : (editingBlockId ? 'default' : 'pointer')
                         }}
-                        onClick={() => setSelectedBlock(null)}
+                        onClick={() => { setSelectedBlock(null); setEditingBlockId(null); }}
                     >
                         {blocks.map(renderBlock)}
                     </div>
                 </div>
             </div>
 
-            {/* Properties panel */}
+            {/* PROPERTIES PANEL */}
             {selectedBlock && (
                 <div className={styles.propertiesPanel}>
-                    <div className={styles.propertiesHeader}>
-                        <FaArrowsAlt className={styles.headerIcon} />
-                        Element Properties
-                    </div>
+                    <div className={styles.propertiesHeader}>خصائص العنصر</div>
                     <div className={styles.propertiesContent}>
                         <BlockProperties
                             block={selectedBlock}
@@ -1227,348 +929,129 @@ const SlideDesigner = ({ slide, onSave, onCancel }) => {
                 </div>
             )}
 
-            {/* Media Library Modal */}
             <MediaLibraryModal
                 isOpen={showMediaLibrary}
-                onClose={() => {
-                    setShowMediaLibrary(false);
-                    setMediaSelectionFor(null);
-                }}
+                onClose={() => { setShowMediaLibrary(false); setMediaSelectionFor(null); }}
                 onSelect={handleMediaSelect}
-                mediaType={mediaSelectionFor === 'background' ? 'image' :
-                    selectedBlock?.type === 'image' ? 'image' :
-                        selectedBlock?.type === 'video' ? 'video' : ''}
+                mediaType={mediaSelectionFor === 'background' ? 'image' : selectedBlock?.type === 'image' ? 'image' : 'video'}
             />
         </div>
     );
 };
 
-// Enhanced Block Properties Component
-const BlockProperties = ({
+// ====================== EditableContent ======================
+const EditableContent = ({
     block,
     onUpdate,
-    onUpdateStyle,
-    onDelete,
-    onChangeFontSize,
-    onToggleStyle,
-    onChangeOpacity,
-    onChangeBackgroundOpacity,
-    onBringToFront,
-    onSendToBack,
-    onOpenMediaLibrary,
-    onRemoveMedia
+    isEditing,
+    onToggleEdit,
+    onSelectBlock,
+    onShowProperties,
+    selectedBlock
 }) => {
-    const handleContentChange = (e) => {
-        onUpdate(block.id, { content: e.target.value });
+    const [localContent, setLocalContent] = useState(block.content || '');
+    const textareaRef = useRef(null);
+
+    useEffect(() => {
+        setLocalContent(block.content || '');
+    }, [block.content]);
+
+    useEffect(() => {
+        if (isEditing && textareaRef.current) {
+            textareaRef.current.focus();
+            textareaRef.current.select();
+            onShowProperties(block);
+        }
+    }, [isEditing, block, onShowProperties]);
+
+    const handleSave = () => {
+        if (localContent !== block.content) {
+            onUpdate(block.id, localContent);
+        }
+        onToggleEdit();
+        onShowProperties(block);
     };
 
-    const handleStyleChange = (property, value) => {
-        onUpdateStyle(block.id, { [property]: value });
+    const handleCancel = () => {
+        setLocalContent(block.content || '');
+        onToggleEdit();
     };
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                onUpdate(block.id, {
-                    media: event.target.result,
-                    mediaLibraryId: null
-                });
-            };
-            reader.readAsDataURL(file);
+    const handleKeyDown = (e) => {
+        if (e.key === 'Enter' && e.ctrlKey) {
+            e.preventDefault();
+            handleSave();
+        }
+        if (e.key === 'Escape') {
+            handleCancel();
         }
     };
 
+    const handleChange = (e) => {
+        setLocalContent(e.target.value);
+        if (!selectedBlock || selectedBlock.id !== block.id) {
+            onShowProperties(block);
+        }
+    };
+
+    if (isEditing) {
+        return (
+            <div className={styles.editingContainer}>
+                <textarea
+                    ref={textareaRef}
+                    value={localContent}
+                    onChange={handleChange}
+                    onKeyDown={handleKeyDown}
+                    className={styles.contentTextarea}
+                    style={{
+                        fontFamily: block.style?.fontFamily || 'inherit',
+                        fontSize: block.style?.fontSize || '16px',
+                        color: block.style?.color || '#000',
+                        fontWeight: block.style?.fontWeight || 'normal',
+                        fontStyle: block.style?.fontStyle || 'normal',
+                        textDecoration: block.style?.textDecoration || 'none',
+                        textAlign: block.style?.textAlign || 'right',
+                        width: '100%',
+                        height: '100%',
+                        border: '2px solid #4299e1',
+                        borderRadius: '6px',
+                        padding: '10px',
+                        background: 'white',
+                        resize: 'none',
+                        outline: 'none',
+                        lineHeight: '1.6',
+                        boxShadow: '0 0 10px rgba(66, 153, 225, 0.3)'
+                    }}
+                />
+                <div className={styles.editingControls}>
+                    <button className={styles.saveButton} onClick={handleSave}>حفظ</button>
+                    <button className={styles.cancelButton} onClick={handleCancel}>إلغاء</button>
+                </div>
+            </div>
+        );
+    }
+
     return (
-        <div>
-            {/* Block content */}
-            {['title', 'text', 'bullet_points', 'quote', 'code'].includes(block.type) && (
-                <div className={styles.inputGroup}>
-                    <label>
-                        <MdTextFields className={styles.inputIcon} />
-                        Content
-                    </label>
-                    <textarea
-                        value={block.content || ''}
-                        onChange={handleContentChange}
-                        rows={4}
-                    />
-                </div>
-            )}
-
-            {/* Media management */}
-            {['image', 'video'].includes(block.type) && (
-                <div className={styles.inputGroup}>
-                    <label>
-                        {block.type === 'image' ? <FaImage className={styles.inputIcon} /> : <FaVideo className={styles.inputIcon} />}
-                        {block.type === 'image' ? 'Image' : 'Video'} Source
-                    </label>
-                    <div className={styles.mediaButtons}>
-                        <button
-                            type="button"
-                            onClick={() => onOpenMediaLibrary(block.id)}
-                            className={styles.mediaLibraryButton}
-                        >
-                            <FaFolderOpen />
-                            Choose from Library
-                        </button>
-                        <input
-                            type="file"
-                            onChange={handleFileChange}
-                            accept={block.type === 'image' ? 'image/*' : 'video/*'}
-                            className={styles.fileInput}
-                        />
-                    </div>
-                    {block.media && (
-                        <div className={styles.mediaPreview}>
-                            {block.type === 'image' ? (
-                                <img src={block.media} alt="Block media" className={styles.previewImage} />
-                            ) : (
-                                <video controls className={styles.previewVideo}>
-                                    <source src={block.media} type="video/mp4" />
-                                </video>
-                            )}
-                            <button
-                                onClick={() => onRemoveMedia(block.id)}
-                                className={styles.removeMediaButton}
-                            >
-                                <FaTimes />
-                                Remove
-                            </button>
-                        </div>
-                    )}
-                </div>
-            )}
-
-            {/* Text formatting tools */}
-            {['title', 'text', 'bullet_points', 'quote'].includes(block.type) && (
-                <>
-                    <div className={styles.inputGroup}>
-                        <label>
-                            <FaFont className={styles.inputIcon} />
-                            Font Family
-                        </label>
-                        <select
-                            value={block.style?.fontFamily || 'Arial'}
-                            onChange={(e) => handleStyleChange('fontFamily', e.target.value)}
-                            className={styles.fontSelector}
-                        >
-                            <optgroup label="Arabic Fonts">
-                                {FONT_OPTIONS.filter(font => font.type === 'arabic').map(font => (
-                                    <option key={font.value} value={font.value}>
-                                        {font.label}
-                                    </option>
-                                ))}
-                            </optgroup>
-                            <optgroup label="English Fonts">
-                                {FONT_OPTIONS.filter(font => font.type === 'english').map(font => (
-                                    <option key={font.value} value={font.value}>
-                                        {font.label}
-                                    </option>
-                                ))}
-                            </optgroup>
-                        </select>
-                    </div>
-
-                    <div className={styles.inputGroup}>
-                        <label>
-                            <FaTextHeight className={styles.inputIcon} />
-                            Font Size
-                        </label>
-                        <div className={styles.fontSizeControls}>
-                            <button
-                                className={styles.sizeButton}
-                                onClick={() => onChangeFontSize(block.id, -10)}
-                            >
-                                <FaMinus />
-                            </button>
-                            <input
-                                type="number"
-                                value={parseInt(block.style?.fontSize) || 18}
-                                onChange={(e) => {
-                                    const newSize = Math.max(1, parseInt(e.target.value) || 18);
-                                    onUpdateStyle(block.id, { fontSize: `${newSize}px` });
-                                }}
-                                className={styles.fontSizeInput}
-                                min="1"
-                            />
-                            <button
-                                className={styles.sizeButton}
-                                onClick={() => onChangeFontSize(block.id, 10)}
-                            >
-                                <FaPlus />
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className={styles.inputGroup}>
-                        <label>
-                            <FaPalette className={styles.inputIcon} />
-                            Text Color
-                        </label>
-                        <input
-                            type="color"
-                            value={block.style?.color || '#000000'}
-                            onChange={(e) => handleStyleChange('color', e.target.value)}
-                            className={styles.colorPicker}
-                        />
-                    </div>
-
-                    <div className={styles.inputGroup}>
-                        <label>Text Formatting</label>
-                        <div className={styles.formattingTools}>
-                            <button
-                                className={`${styles.formatButton} ${block.style?.fontWeight === 'bold' ? styles.active : ''}`}
-                                onClick={() => onToggleStyle(block.id, 'fontWeight', 'bold', 'normal')}
-                            >
-                                <strong>B</strong>
-                            </button>
-                            <button
-                                className={`${styles.formatButton} ${block.style?.fontStyle === 'italic' ? styles.active : ''}`}
-                                onClick={() => onToggleStyle(block.id, 'fontStyle', 'italic', 'normal')}
-                            >
-                                <em>I</em>
-                            </button>
-                            <button
-                                className={`${styles.formatButton} ${block.style?.textDecoration === 'underline' ? styles.active : ''}`}
-                                onClick={() => onToggleStyle(block.id, 'textDecoration', 'underline', 'none')}
-                            >
-                                <u>U</u>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className={styles.inputGroup}>
-                        <label>Text Alignment</label>
-                        <div className={styles.formattingTools}>
-                            <button
-                                className={`${styles.formatButton} ${block.style?.textAlign === 'right' ? styles.active : ''}`}
-                                onClick={() => handleStyleChange('textAlign', 'right')}
-                            >
-                                <FaAlignRight />
-                            </button>
-                            <button
-                                className={`${styles.formatButton} ${block.style?.textAlign === 'center' ? styles.active : ''}`}
-                                onClick={() => handleStyleChange('textAlign', 'center')}
-                            >
-                                <FaAlignCenter />
-                            </button>
-                            <button
-                                className={`${styles.formatButton} ${block.style?.textAlign === 'left' ? styles.active : ''}`}
-                                onClick={() => handleStyleChange('textAlign', 'left')}
-                            >
-                                <FaAlignLeft />
-                            </button>
-                        </div>
-                    </div>
-
-                    {/* Text opacity */}
-                    <div className={styles.inputGroup}>
-                        <label>
-                            <FaEye className={styles.inputIcon} />
-                            Text Opacity
-                        </label>
-                        <div className={styles.opacityControl}>
-                            <input
-                                type="range"
-                                min="0"
-                                max="1"
-                                step="0.01"
-                                value={block.opacity || 1}
-                                onChange={(e) => onChangeOpacity(block.id, e.target.value)}
-                                className={styles.opacitySlider}
-                            />
-                            <span className={styles.opacityValue}>
-                                {Math.round((block.opacity || 1) * 100)}%
-                            </span>
-                        </div>
-                    </div>
-                </>
-            )}
-
-            {/* Background opacity for images and elements */}
-            {['image', 'video', 'code', 'quote'].includes(block.type) && (
-                <div className={styles.inputGroup}>
-                    <label>
-                        <FaEyeSlash className={styles.inputIcon} />
-                        Background Opacity
-                    </label>
-                    <div className={styles.opacityControl}>
-                        <input
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.01"
-                            value={block.backgroundOpacity || 1}
-                            onChange={(e) => onChangeBackgroundOpacity(block.id, e.target.value)}
-                            className={styles.opacitySlider}
-                        />
-                        <span className={styles.opacityValue}>
-                            {Math.round((block.backgroundOpacity || 1) * 100)}%
-                        </span>
-                    </div>
-                </div>
-            )}
-
-            {/* Layer management */}
-            <div className={styles.inputGroup}>
-                <label>
-                    <FaLayerGroup className={styles.inputIcon} />
-                    Layer Management
-                </label>
-                <div className={styles.layerControls}>
-                    <button
-                        className={styles.controlButton}
-                        onClick={() => onBringToFront(block.id)}
-                    >
-                        <FaArrowUp className={styles.buttonIcon} />
-                        Bring to Front
-                    </button>
-                    <button
-                        className={styles.controlButton}
-                        onClick={() => onSendToBack(block.id)}
-                    >
-                        <FaArrowDown className={styles.buttonIcon} />
-                        Send to Back
-                    </button>
-                </div>
-            </div>
-
-            {/* Dimensions info */}
-            <div className={styles.dimensionsInfo}>
-                <div className={styles.dimensionItem}>
-                    <span>Width:</span>
-                    <span>{block.size?.width}px</span>
-                </div>
-                <div className={styles.dimensionItem}>
-                    <span>Height:</span>
-                    <span>{block.size?.height}px</span>
-                </div>
-                <div className={styles.dimensionItem}>
-                    <span>Position X:</span>
-                    <span>{block.position?.x}px</span>
-                </div>
-                <div className={styles.dimensionItem}>
-                    <span>Position Y:</span>
-                    <span>{block.position?.y}px</span>
-                </div>
-                <div className={styles.dimensionItem}>
-                    <span>Layer:</span>
-                    <span>{block.zIndex}</span>
-                </div>
-            </div>
-
-            {/* Delete block */}
-            <div className={styles.inputGroup}>
-                <button
-                    className={`${styles.controlButton} ${styles.danger}`}
-                    onClick={() => onDelete(block.id)}
-                >
-                    <FaTrash className={styles.buttonIcon} />
-                    Delete Element
-                </button>
-            </div>
+        <div
+            className={styles.contentDisplay}
+            onClick={(e) => {
+                e.stopPropagation();
+                onSelectBlock(block);
+                onToggleEdit();
+                onShowProperties(block);
+            }}
+            style={{
+                cursor: 'text',
+                width: '100%',
+                height: '100%',
+                padding: '8px',
+                overflow: 'hidden',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: block.style?.textAlign === 'right' ? 'flex-end' : block.style?.textAlign === 'center' ? 'center' : 'flex-start'
+            }}
+        >
+            {block.content || 'انقر للكتابة...'}
         </div>
     );
 };

@@ -1,0 +1,53 @@
+.screen {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.content {
+    text-align: center;
+    color: white;
+    max-width: 400px;
+    padding: 40px;
+}
+
+.icon {
+    font-size: 64px;
+    margin-bottom: 24px;
+    opacity: 0.9;
+}
+
+.content h1 {
+    font-size: 28px;
+    margin-bottom: 16px;
+    font-weight: 600;
+}
+
+.content p {
+    font-size: 16px;
+    margin-bottom: 32px;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+
+.btn {
+    padding: 12px 24px;
+    background: white;
+    color: #667eea;
+    border: none;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 auto;
+}
+
+.btn:hover {
+    background: #f8f9fa;
+    transform: translateY(-1px);
+}

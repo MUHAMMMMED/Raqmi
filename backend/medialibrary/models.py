@@ -62,8 +62,8 @@ class MediaLibrary(models.Model):
         """Return full absolute URL for file."""
         if self.file and hasattr(self.file, 'url'):
             # base_url = getattr(settings, "BASE_URL", "")
-            base_url = 'http://127.0.0.1:8000/media/'
-            # يرجع الرابط الكامل مثل http://127.0.0.1:8000/media/....
+            base_url = 'http://127.0.0.1:8000'
+  
             return f"{base_url}{self.file.url}" if base_url else self.file.url
         return None
 

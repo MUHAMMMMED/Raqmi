@@ -99,7 +99,7 @@ class BookSerializer(serializers.ModelSerializer):
     class Meta:
         model = Book
         fields = "__all__"
-        exclude = ['embedding_vector']  
+        # exclude = ['embedding_vector']  
 
  
     
