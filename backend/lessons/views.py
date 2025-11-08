@@ -1,11 +1,11 @@
- 
+from books.utils.mixins import DebugViewSetMixin
 
 from rest_framework import viewsets
 from .models import *
 from .serializers import*
 
 
-class LessonViewSet(viewsets.ModelViewSet):
+class LessonViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
 

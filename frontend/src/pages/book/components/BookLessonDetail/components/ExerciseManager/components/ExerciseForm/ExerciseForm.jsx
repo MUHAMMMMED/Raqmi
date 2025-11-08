@@ -1,6 +1,5 @@
-
 import React, { useEffect, useState } from 'react';
-import { FaCheck, FaPlus, FaTimes, FaTrash } from 'react-icons/fa';
+import { FaCheck, FaImage, FaPlus, FaTimes, FaTimesCircle, FaTrash } from 'react-icons/fa';
 import styles from './ExerciseForm.module.css';
 
 const ExerciseForm = ({ exercise, onSubmit, onCancel, blockId, lessonId, partId }) => {
@@ -15,11 +14,13 @@ const ExerciseForm = ({ exercise, onSubmit, onCancel, blockId, lessonId, partId 
         block: blockId ?? null,
         lesson: lessonId ?? null,
         part: partId ?? null,
+        question_image: null, // تم الإضافة
     });
 
     const [optionInput, setOptionInput] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [errors, setErrors] = useState({});
+    const [imagePreview, setImagePreview] = useState(null); // تم الإضافة
 
     useEffect(() => {
         if (exercise) {
@@ -44,7 +45,13 @@ const ExerciseForm = ({ exercise, onSubmit, onCancel, blockId, lessonId, partId 
                     label,
                     message,
                 })),
+                question_image: exercise.question_image || null, // تم الإضافة
             });
+
+            // عرض الصورة الحالية إذا كانت موجودة
+            if (exercise.question_image) {
+                setImagePreview(exercise.question_image);
+            }
         } else {
             setFormData(prev => ({
                 ...prev,
@@ -57,14 +64,60 @@ const ExerciseForm = ({ exercise, onSubmit, onCancel, blockId, lessonId, partId 
                 block: blockId ?? null,
                 lesson: lessonId ?? null,
                 part: partId ?? null,
+                question_image: null, // تم الإضافة
             }));
             setOptionInput('');
+            setImagePreview(null); // تم الإضافة
         }
     }, [exercise, blockId, lessonId, partId]);
 
+    // دالة التعامل مع رفع الصورة - تم الإضافة
+    const handleImageUpload = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            // التحقق من نوع الملف
+            if (!file.type.startsWith('image/')) {
+                setErrors(prev => ({ ...prev, question_image: 'يرجى اختيار ملف صورة فقط' }));
+                return;
+            }
+
+            // التحقق من حجم الملف (5MB كحد أقصى)
+            if (file.size > 5 * 1024 * 1024) {
+                setErrors(prev => ({ ...prev, question_image: 'حجم الصورة يجب أن يكون أقل من 5MB' }));
+                return;
+            }
+
+            setFormData(prev => ({
+                ...prev,
+                question_image: file
+            }));
+
+            // إنشاء معاينة للصورة
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                setImagePreview(e.target.result);
+            };
+            reader.readAsDataURL(file);
+
+            setErrors(prev => ({ ...prev, question_image: '' }));
+        }
+    };
+
+    // دالة حذف الصورة - تم الإضافة
+    const handleRemoveImage = () => {
+        setFormData(prev => ({
+            ...prev,
+            question_image: null
+        }));
+        setImagePreview(null);
+        setErrors(prev => ({ ...prev, question_image: '' }));
+    };
+
     const validateForm = () => {
         const newErrors = {};
-        if (!formData.question_text.trim()) newErrors.question_text = 'نص السؤال مطلوب';
+        if (!formData.question_text.trim() && !formData.question_image) {
+            newErrors.question_text = 'نص السؤال أو صورة السؤال مطلوبة';
+        }
         if (!formData.correct_answer && ['mcq', 'true_false', 'short_answer', 'essay'].includes(formData.question_type))
             newErrors.correct_answer = 'الإجابة الصحيحة مطلوبة';
         if (['mcq', 'true_false'].includes(formData.question_type) && formData.options.length === 0)
@@ -86,6 +139,67 @@ const ExerciseForm = ({ exercise, onSubmit, onCancel, blockId, lessonId, partId 
         if (errors[name]) setErrors(prev => ({ ...prev, [name]: '' }));
     };
 
+    const prepareFormData = () => {
+        const data = {
+            question_text: formData.question_text.trim(),
+            question_type: formData.question_type,
+            order: formData.order ?? 0,
+            correct_answer: formData.correct_answer,
+            explanation: formData.explanation || '',
+            page_number: formData.page_number ?? null,
+            block: blockId !== undefined ? blockId : null,
+            lesson: lessonId !== undefined ? lessonId : null,
+            part: partId !== undefined ? partId : null,
+        };
+
+        data.options = Object.fromEntries(
+            (formData.options || []).map(opt => [opt.label, opt.message])
+        );
+
+        return data;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!validateForm()) {
+            alert('يرجى ملء جميع الحقول المطلوبة بشكل صحيح');
+            return;
+        }
+        setIsSubmitting(true);
+        try {
+            const submitData = prepareFormData();
+
+            // إذا كانت هناك صورة جديدة، نستخدم FormData - تم الإضافة
+            if (formData.question_image instanceof File) {
+                const formDataToSend = new FormData();
+                Object.keys(submitData).forEach(key => {
+                    if (key === 'options') {
+                        formDataToSend.append(key, JSON.stringify(submitData[key]));
+                    } else {
+                        formDataToSend.append(key, submitData[key]);
+                    }
+                });
+                formDataToSend.append('question_image', formData.question_image);
+                console.log('جاري إرسال البيانات مع الصورة:', formDataToSend);
+                await onSubmit(formDataToSend);
+            } else {
+                console.log('جاري إرسال البيانات:', submitData);
+                await onSubmit(submitData);
+            }
+        } catch (err) {
+            console.error('خطأ مفصل في الإرسال:', err);
+            const errorMessage =
+                err.response?.data?.message ||
+                err.response?.data?.error ||
+                err.message ||
+                'حدث خطأ أثناء الحفظ';
+            alert(errorMessage);
+        } finally {
+            setIsSubmitting(false);
+        }
+    };
+
+    // باقي الدوال تبقى كما هي (addOption, removeOption, toggleCorrect)
     const addOption = () => {
         if (!optionInput.trim()) {
             setErrors(prev => ({ ...prev, options: 'نص الخيار مطلوب' }));
@@ -118,50 +232,6 @@ const ExerciseForm = ({ exercise, onSubmit, onCancel, blockId, lessonId, partId 
             correct_answer: prev.correct_answer === label ? '' : label,
         }));
         setErrors(prev => ({ ...prev, correct_answer: '' }));
-    };
-
-    const prepareFormData = () => {
-        const data = {
-            question_text: formData.question_text.trim(),
-            question_type: formData.question_type,
-            order: formData.order ?? 0,
-            correct_answer: formData.correct_answer,
-            explanation: formData.explanation || '',
-            page_number: formData.page_number ?? null,
-            block: blockId !== undefined ? blockId : null,
-            lesson: lessonId !== undefined ? lessonId : null,
-            part: partId !== undefined ? partId : null,
-        };
-
-        data.options = Object.fromEntries(
-            (formData.options || []).map(opt => [opt.label, opt.message])
-        );
-
-        return data;
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!validateForm()) {
-            alert('يرجى ملء جميع الحقول المطلوبة بشكل صحيح');
-            return;
-        }
-        setIsSubmitting(true);
-        try {
-            const submitData = prepareFormData();
-            console.log('جاري إرسال البيانات:', submitData);
-            await onSubmit(submitData);
-        } catch (err) {
-            console.error('خطأ مفصل في الإرسال:', err);
-            const errorMessage =
-                err.response?.data?.message ||
-                err.response?.data?.error ||
-                err.message ||
-                'حدث خطأ أثناء الحفظ';
-            alert(errorMessage);
-        } finally {
-            setIsSubmitting(false);
-        }
     };
 
     useEffect(() => {
@@ -212,8 +282,51 @@ const ExerciseForm = ({ exercise, onSubmit, onCancel, blockId, lessonId, partId 
                             </select>
                         </div>
 
+                        {/* حقل رفع الصورة - تم الإضافة */}
                         <div className={styles.formGroup}>
-                            <label>نص السؤال</label>
+                            <label>صورة السؤال (اختياري)</label>
+                            <div className={styles.imageUploadContainer}>
+                                {!imagePreview ? (
+                                    <div className={styles.uploadArea}>
+                                        <input
+                                            type="file"
+                                            accept="image/*"
+                                            onChange={handleImageUpload}
+                                            className={styles.fileInput}
+                                            id="question_image"
+                                        />
+                                        <label htmlFor="question_image" className={styles.uploadLabel}>
+                                            <FaImage />
+                                            <span>اختر صورة للسؤال</span>
+                                        </label>
+                                    </div>
+                                ) : (
+                                    <div className={styles.imagePreviewContainer}>
+                                        <img
+                                            src={imagePreview}
+                                            alt="معاينة صورة السؤال"
+                                            className={styles.imagePreview}
+                                        />
+                                        <div className={styles.imageActions}>
+                                            <button
+                                                type="button"
+                                                onClick={handleRemoveImage}
+                                                className={styles.removeImageButton}
+                                            >
+                                                <FaTimesCircle />
+                                                حذف الصورة
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                                {errors.question_image && (
+                                    <span className={styles.errorText}>{errors.question_image}</span>
+                                )}
+                            </div>
+                        </div>
+
+                        <div className={styles.formGroup}>
+                            <label>نص السؤال {!imagePreview && <span className={styles.required}>*</span>}</label>
                             <textarea
                                 name="question_text"
                                 value={formData.question_text}
@@ -223,9 +336,16 @@ const ExerciseForm = ({ exercise, onSubmit, onCancel, blockId, lessonId, partId 
                                 placeholder="أدخل نص السؤال هنا..."
                             />
                             {errors.question_text && <span className={styles.errorText}>{errors.question_text}</span>}
+                            <p className={styles.helpText}>
+                                {imagePreview
+                                    ? 'يمكنك استخدام نص السؤال أو الصورة أو كلاهما'
+                                    : 'نص السؤال مطلوب إذا لم تقم برفع صورة'
+                                }
+                            </p>
                         </div>
                     </div>
 
+                    {/* باقي المكونات تبقى كما هي */}
                     {/* === الخيارات === */}
                     {['mcq', 'true_false'].includes(formData.question_type) && (
                         <div className={styles.formSection}>
@@ -258,8 +378,6 @@ const ExerciseForm = ({ exercise, onSubmit, onCancel, blockId, lessonId, partId 
                                         key={i}
                                         className={`${styles.optionItem} ${formData.correct_answer === opt.label ? styles.correct : ''}`}
                                     >
-
-                                        {/* الأزرار في أقصى الشمال */}
                                         <div className={styles.optionActions}>
                                             <button
                                                 type="button"
@@ -279,7 +397,6 @@ const ExerciseForm = ({ exercise, onSubmit, onCancel, blockId, lessonId, partId 
                                             </button>
                                         </div>
 
-                                        {/* المحتوى في أقصى اليمين */}
                                         <div className={styles.optionContent}>
                                             <span className={styles.optionLabel}>{opt.label}</span>
                                             <span className={styles.optionText}>{opt.message}</span>

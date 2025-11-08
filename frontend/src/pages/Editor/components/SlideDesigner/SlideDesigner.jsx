@@ -1,7 +1,3 @@
-
-
-
-
 import html2canvas from 'html2canvas';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import {
@@ -82,7 +78,7 @@ const SlideDesigner = () => {
             type: b.type,
             content: b.content || '',
             media: b.image_url || null,
-            mediaLibraryId: b.media_library_id || null,
+            mediaLibraryId: b?.media_library_id || null,
 
             position: { x: b.position_x, y: b.position_y },
             size: { width: b.width, height: b.height },
@@ -111,7 +107,6 @@ const SlideDesigner = () => {
         setSlideProperties({
             backgroundColor: slide.background_color || '#FFFFFF',
             backgroundImage: slide.background_image_url || null,
-            backgroundImageLibraryId: slide.background_image || null,
             layoutStyle: slide.layout_style || 'default',
             backgroundOpacity: slide.background_opacity || 1,
         });
@@ -490,6 +485,7 @@ const SlideDesigner = () => {
             // 1. حفظ خصائص الشريحة
             await AxiosInstance.patch(`slides/slides/${slide.id}/`, {
                 background_color: slideProperties.backgroundColor,
+                // background_image: slideProperties.backgroundImageLibraryId ?? null,
                 background_image: slideProperties.backgroundImageLibraryId ?? null,
                 background_opacity: slideProperties.backgroundOpacity,
                 layout_style: slideProperties.layoutStyle,
@@ -545,14 +541,16 @@ const SlideDesigner = () => {
 
             const formData = new FormData();
             formData.append('slide_viewer', blob, `slide_preview_${slide.id}.png`);
-
+            if (slideProperties.backgroundImageLibraryId) {
+                formData.append('background_image', slideProperties.backgroundImageLibraryId);
+            }
             await AxiosInstance.patch(`slides/slides/${slide.id}/`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                 },
             });
 
-            alert('تم حفظ صورة المعاينة بنجاح!');
+            // alert('تم حفظ صورة المعاينة بنجاح!');
             setHasUnsavedChanges(false);
         } catch (e) {
             console.error('Error saving preview:', e);
@@ -809,7 +807,7 @@ const SlideDesigner = () => {
                                                         >
                                                             <MdClose size={12} />
                                                         </button>
-                                                        <span className={styles.layerBadge}>{b.zIndex}</span>
+
                                                     </div>
                                                 </div>
                                             )}
@@ -1057,3 +1055,5 @@ const EditableContent = ({
 };
 
 export default SlideDesigner;
+
+

@@ -1,0 +1,523 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modalContent {
+    background: white;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 800px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 30px;
+    border-bottom: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 20px 20px 0 0;
+}
+
+.titleSection {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.headerIcon {
+    font-size: 24px;
+}
+
+.modalHeader h2 {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 700;
+}
+
+.closeButton {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+.closeButton:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.form {
+    padding: 30px;
+}
+
+.formGrid {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.formSection {
+    background: #f8fafc;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.sectionTitle {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 20px 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #667eea;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.formRow {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #374151;
+}
+
+.input,
+.select,
+.textarea {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: 'Tajawal', sans-serif;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+/* الأهداف التعليمية */
+.objectivesInput {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.objectivesInput .input {
+    flex: 1;
+}
+
+.addButton {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: background 0.3s ease;
+}
+
+.addButton:hover {
+    background: #5a6fd8;
+}
+
+.objectivesList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.objectiveItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.removeButton {
+    background: #ef4444;
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.removeButton:hover {
+    background: #dc2626;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.cancelButton,
+.saveButton {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cancelButton {
+    background: #6b7280;
+    color: white;
+}
+
+.cancelButton:hover {
+    background: #4b5563;
+}
+
+.saveButton {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.saveButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.saveButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+/* التجاوب */
+@media (max-width: 768px) {
+    .modalContent {
+        width: 95%;
+        margin: 20px;
+    }
+
+    .modalHeader {
+        padding: 20px;
+    }
+
+    .form {
+        padding: 20px;
+    }
+
+    .formRow {
+        grid-template-columns: 1fr;
+    }
+
+    .objectivesInput {
+        flex-direction: column;
+    }
+
+    .modalActions {
+        flex-direction: column;
+    }
+
+    .cancelButton,
+    .saveButton {
+        justify-content: center;
+    }
+}
+
+
+/* أيقونات الأقسام */
+.sectionIcon {
+    color: #667eea;
+    font-size: 18px;
+}
+
+/* محدد حالة المراجعة */
+.statusSelector {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.statusOption {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+}
+
+.statusRadio {
+    display: none;
+}
+
+.statusLabel {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    font-weight: 500;
+    flex: 1;
+}
+
+.statusRadio:checked+.statusLabel {
+    border-color: #667eea;
+    background: #f0f4ff;
+}
+
+.statusLabel.pending {
+    color: #d97706;
+}
+
+.statusLabel.approved {
+    color: #059669;
+}
+
+.statusLabel.rejected {
+    color: #dc2626;
+}
+
+/* أيقونات الحالة */
+.statusIconpending {
+    color: #d97706;
+}
+
+.statusIconapproved {
+    color: #059669;
+}
+
+.statusIconrejected {
+    color: #dc2626;
+}
+
+/* تحسينات للعرض على الشاشات الصغيرة */
+@media (max-width: 768px) {
+    .statusSelector {
+        gap: 8px;
+    }
+
+    .statusLabel {
+        padding: 8px 12px;
+        font-size: 0.9rem;
+    }
+
+    .formSection {
+        padding: 20px;
+    }
+
+    .sectionTitle {
+        font-size: 1.1rem;
+    }
+}
+
+/* تحسينات عامة للشكل */
+.formSection {
+    background: #f8fafc;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.formSection:hover {
+    border-color: #cbd5e1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.sectionTitle {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin: 0 0 20px 0;
+    padding-bottom: 12px;
+    border-bottom: 2px solid #667eea;
+}
+
+/* تحسينات للأهداف التعليمية */
+.objectivesList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    max-height: 200px;
+    overflow-y: auto;
+}
+
+.objectiveItem {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: white;
+    padding: 12px 16px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    transition: all 0.3s ease;
+}
+
+.objectiveItem:hover {
+    border-color: #667eea;
+    transform: translateX(5px);
+}
+
+.removeButton {
+    background: #ef4444;
+    color: white;
+    border: none;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s ease;
+}
+
+.removeButton:hover {
+    background: #dc2626;
+    transform: scale(1.1);
+}
+
+/* تحسينات للإدخال */
+.input:focus,
+.select:focus,
+.textarea:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    transform: translateY(-1px);
+}
+
+/* زر الإضافة */
+.addButton {
+    background: #667eea;
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+}
+
+.addButton:hover {
+    background: #5a6fd8;
+    transform: translateY(-1px);
+}
+
+/* أزرار المودال */
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid #e2e8f0;
+}
+
+.cancelButton,
+.saveButton {
+    padding: 12px 30px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.cancelButton {
+    background: #6b7280;
+    color: white;
+}
+
+.cancelButton:hover {
+    background: #4b5563;
+    transform: translateY(-1px);
+}
+
+.saveButton {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: white;
+}
+
+.saveButton:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.saveButton:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}

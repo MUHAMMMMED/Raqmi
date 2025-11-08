@@ -1,4 +1,5 @@
 from django.db import models
+from django.conf import settings
 from lessons.models import Lesson
 from medialibrary.models import MediaLibrary
  
@@ -91,23 +92,52 @@ class Slide(models.Model):
     @property
     def blocks_count(self):
         return self.blocks.count()
-    
-    # def duplicate(self):
-    #     new_slide = Slide.objects.create(
-    #         lesson=self.lesson,
-    #         title=f"{self.title} (Copy)" if self.title else None,
-    #         order=self.order + 1,
-    #         background_color=self.background_color,
-    #         background_image=self.background_image,
-    #         background_opacity=self.background_opacity,
-    #         layout_style=self.layout_style
-    #     )
-        
-        # for block in self.blocks.all():
-        #     block.duplicate(new_slide)
-        
-        # return new_slide
+     
+ 
+    def duplicate(self):
+        # إنشاء نسخة من الشريحة
+        new_slide = Slide.objects.create(
+            content=self.content,
+            title=f"{self.title} (نسخة)" if self.title else None,
+            order=Slide.objects.filter(content=self.content).count(),
+            background_color=self.background_color,
+            background_image=self.background_image,
+            background_opacity=self.background_opacity,
+            layout_style=self.layout_style,
+        )
 
+        # نسخ كل البلوكات المرتبطة
+        for block in self.blocks.all():
+            SlideBlock.objects.create(
+                slide=new_slide,
+                type=block.type,
+                order=block.order,
+                content=block.content,
+                media=block.media,
+                voice_script=block.voice_script,
+                speech_duration=block.speech_duration,
+                position_x=block.position_x,
+                position_y=block.position_y,
+                width=block.width,
+                height=block.height,
+                z_index=block.z_index,
+                opacity=block.opacity,
+                background_opacity=block.background_opacity,
+                font_family=block.font_family,
+                font_size=block.font_size,
+                font_color=block.font_color,
+                font_weight=block.font_weight,
+                font_style=block.font_style,
+                text_align=block.text_align,
+                text_decoration=block.text_decoration,
+                background_color=block.background_color,
+                border_radius=block.border_radius,
+                border_color=block.border_color,
+                border_width=block.border_width,
+                extra_data=block.extra_data,
+            )
+
+        return new_slide
  
  
 
@@ -199,13 +229,10 @@ class SlideBlock(models.Model):
     def size(self):
         return {"width": self.width, "height": self.height}
 
- 
-
     @property
     def media_url(self):
      if self.media and self.media.file:
-        # base_url = getattr(settings, "BASE_URL", "")
-        base_url = "http://127.0.0.1:8000"
+        base_url = getattr(settings, "BASE_URL", "")
         if base_url:
             return f"{base_url}{self.media.file.url}"
         return self.media.file.url

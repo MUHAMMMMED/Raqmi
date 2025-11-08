@@ -155,3 +155,30 @@
          transform: translateY(0);
      }
  }
+
+
+
+
+
+ .mathContent {
+     margin: 1rem 0;
+     line-height: 1.7;
+ }
+
+ .mathLine {
+     margin: 0.5rem 0;
+     text-align: right;
+     /* For Arabic */
+     direction: rtl;
+     unicode-bidi: embed;
+ }
+
+ .mathLine>span {
+     margin: 0 0.2em;
+ }
+
+ /* Optional: Better spacing for block equations */
+ .katex-display {
+     margin: 1rem 0 !important;
+     text-align: center;
+ }

@@ -1,4 +1,4 @@
-import { FaCheckCircle, FaEdit, FaQuestionCircle, FaTrash } from 'react-icons/fa';
+import { FaCheckCircle, FaEdit, FaImage, FaQuestionCircle, FaTrash } from 'react-icons/fa';
 import styles from './ExerciseCard.module.css';
 
 const label = type => ({
@@ -20,6 +20,31 @@ const ExerciseCard = ({ exercise, onEdit, onDelete, IsManager }) => {
             </header>
 
             <div className={styles.blockTitle}>{exercise.block_title}</div>
+
+            {/* عرض صورة السؤال إذا كانت موجودة */}
+            {exercise.question_image && (
+                <section className={styles.questionImage}>
+                    <h4>
+                        <FaImage className={styles.imageIcon} />
+                        صورة السؤال:
+                    </h4>
+                    <div className={styles.imageContainer}>
+                        <img
+                            src={exercise.question_image}
+                            alt="صورة السؤال"
+                            className={styles.image}
+                            onError={(e) => {
+                                e.target.style.display = 'none';
+                                e.target.nextSibling.style.display = 'block';
+                            }}
+                        />
+                        <div className={styles.imageError} style={{ display: 'none' }}>
+                            <FaImage className={styles.errorIcon} />
+                            <span>تعذر تحميل الصورة</span>
+                        </div>
+                    </div>
+                </section>
+            )}
 
             <section className={styles.question}>
                 <h4>السؤال:</h4>
@@ -51,8 +76,8 @@ const ExerciseCard = ({ exercise, onEdit, onDelete, IsManager }) => {
                     <p>{exercise.explanation}</p>
                 </section>
             )}
-            {IsManager &&
 
+            {IsManager && (
                 <div className={styles.actions}>
                     <button onClick={() => onEdit(exercise)} title="تعديل">
                         <FaEdit /> تعديل
@@ -60,7 +85,8 @@ const ExerciseCard = ({ exercise, onEdit, onDelete, IsManager }) => {
                     <button onClick={() => onDelete(exercise)} title="حذف">
                         <FaTrash /> حذف
                     </button>
-                </div>}
+                </div>
+            )}
         </article>
     );
 };

@@ -1,0 +1,229 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modalContent {
+    background: white;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.modalHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    border-bottom: 1px solid #e5e5e5;
+}
+
+.modalHeader h2 {
+    margin: 0;
+    color: #333;
+    font-size: 1.5rem;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+}
+
+.form {
+    padding: 20px;
+}
+
+.formGroup {
+    margin-bottom: 20px;
+}
+
+.label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #333;
+}
+
+.input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 14px;
+    background-color: white;
+}
+
+.previewSection {
+    margin: 30px 0;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+}
+
+.previewSection h3 {
+    margin: 0 0 15px 0;
+    color: #333;
+    font-size: 1.1rem;
+}
+
+.layoutPreview {
+    border: 2px dashed #ccc;
+    border-radius: 6px;
+    padding: 15px;
+    min-height: 150px;
+    background: white;
+}
+
+.previewTitle {
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+/* أنماط المعاينة للتخطيطات المختلفة */
+.default {
+    display: flex;
+    flex-direction: column;
+}
+
+.title_content {
+    display: flex;
+    flex-direction: column;
+}
+
+.image_left,
+.image_right {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.image_left {
+    flex-direction: row;
+}
+
+.image_right {
+    flex-direction: row-reverse;
+}
+
+.split_screen {
+    display: flex;
+    gap: 10px;
+}
+
+.full_image {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* عناصر المعاينة */
+.previewTitleArea {
+    background: #e3f2fd;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.previewContentArea {
+    background: #f3e5f5;
+    padding: 20px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.previewImageArea {
+    background: #e8f5e8;
+    padding: 30px;
+    border-radius: 4px;
+    text-align: center;
+    flex: 1;
+}
+
+.previewTextArea {
+    background: #fff3e0;
+    padding: 20px;
+    border-radius: 4px;
+    flex: 1;
+}
+
+.previewSplitLeft,
+.previewSplitRight {
+    background: #fce4ec;
+    padding: 20px;
+    border-radius: 4px;
+    flex: 1;
+    text-align: center;
+}
+
+.previewFullImage {
+    background: #e0f2f1;
+    padding: 40px;
+    border-radius: 4px;
+    text-align: center;
+    width: 100%;
+}
+
+.previewDefault {
+    background: #f5f5f5;
+    padding: 30px;
+    border-radius: 4px;
+    text-align: center;
+}
+
+.modalActions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.cancelButton,
+.saveButton {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.cancelButton {
+    background: #6c757d;
+    color: white;
+}
+
+.saveButton {
+    background: #007bff;
+    color: white;
+}
+
+.cancelButton:hover {
+    background: #5a6268;
+}
+
+.saveButton:hover {
+    background: #0056b3;
+}

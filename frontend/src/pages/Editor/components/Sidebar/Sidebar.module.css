@@ -14,11 +14,44 @@
     color: white;
 }
 
-.headerInfo {
+.headerTop {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-bottom: 16px;
+}
+
+/* زر العودة الفعال */
+.backButton {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+    backdrop-filter: blur(10px);
+}
+
+.backButton:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(-3px);
+}
+
+.backIcon {
+    font-size: 16px;
+}
+
+.headerInfo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
 }
 
 .icon {
@@ -66,4 +99,52 @@
     gap: 12px;
     display: flex;
     flex-direction: column;
+}
+
+/* تحسينات للعرض على الشاشات الصغيرة */
+@media (max-width: 768px) {
+    .sidebar {
+        width: 280px;
+    }
+
+    .headerTop {
+        gap: 10px;
+    }
+
+    .backButton {
+        width: 36px;
+        height: 36px;
+    }
+
+    .backIcon {
+        font-size: 14px;
+    }
+
+    .icon {
+        font-size: 20px;
+    }
+
+    .headerInfo h2 {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        width: 100%;
+    }
+
+    .headerTop {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .backButton {
+        width: 32px;
+        height: 32px;
+    }
+
+    .backIcon {
+        font-size: 12px;
+    }
 }

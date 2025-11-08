@@ -1,6 +1,10 @@
+
+
 import React, { useEffect, useState } from "react";
 import { DiWindows } from "react-icons/di";
 import {
+    FaArrowRight,
+
     FaBook,
     FaBullseye,
     FaChartBar,
@@ -8,6 +12,7 @@ import {
     FaChevronDown,
     FaChevronUp,
     FaClock,
+    FaCodeBranch,
     FaEdit,
     FaGraduationCap,
     FaHourglassHalf,
@@ -15,22 +20,32 @@ import {
     FaSearch,
     FaTasks,
     FaTimesCircle,
+    FaTrash,
+    FaUser,
     FaUserGraduate,
     FaVideo
 } from 'react-icons/fa';
 import { useNavigate, useParams } from "react-router-dom";
+
 import { getCourse } from "../../api/courses";
-import { getLessonsByCourse } from "../../api/lessons";
-import styles from './LessonList.module.css'; // تأكد من هذا الاستيراد
+import { createLesson, deleteLesson, getLessonsByCourse, updateLesson } from "../../api/lessons";
+import ConfirmationModal from "./components/ConfirmationModal/ConfirmationModal";
+import LessonModal from "./components/LessonModal/LessonModal";
+import styles from './LessonList.module.css';
 
 const LessonList = () => {
     const { courseId } = useParams();
+    const navigate = useNavigate();
     const [lessons, setLessons] = useState([]);
     const [course, setCourse] = useState(null);
     const [loading, setLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState("");
     const [expandedLessons, setExpandedLessons] = useState({});
-    const navigate = useNavigate();
+    const [isLessonModalOpen, setIsLessonModalOpen] = useState(false);
+    const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+    const [selectedLesson, setSelectedLesson] = useState(null);
+    const [modalMode, setModalMode] = useState('create');
+    const [lessonToDelete, setLessonToDelete] = useState(null);
 
     useEffect(() => {
         loadData();
@@ -52,6 +67,11 @@ const LessonList = () => {
         }
     };
 
+    // دالة العودة للصفحة السابقة
+    const handleGoBack = () => {
+        navigate(-1);
+    };
+
     const toggleLessonExpansion = (lessonId) => {
         setExpandedLessons(prev => ({
             ...prev,
@@ -59,10 +79,64 @@ const LessonList = () => {
         }));
     };
 
+    // Create Lesson
+    const handleCreateLesson = () => {
+        setSelectedLesson(null);
+        setModalMode('create');
+        setIsLessonModalOpen(true);
+    };
+
+    // Edit Lesson
+    const handleEditLesson = (lesson) => {
+        setSelectedLesson(lesson);
+        setModalMode('edit');
+        setIsLessonModalOpen(true);
+    };
+
+    // Save Lesson (Create or Update)
+    const handleSaveLesson = async (lessonData) => {
+        try {
+            // إعداد البيانات للإرسال مع تضمين حقل course في كلتا الحالتين
+            const dataToSend = {
+                ...lessonData,
+                course: parseInt(courseId)
+            };
+
+            if (modalMode === 'create') {
+                await createLesson(dataToSend);
+            } else {
+                await updateLesson(selectedLesson.id, dataToSend);
+            }
+            await loadData();
+            setIsLessonModalOpen(false);
+        } catch (error) {
+            console.error('Error saving lesson:', error);
+            throw error;
+        }
+    };
+
+    // Delete Lesson
+    const handleDeleteLesson = (lesson) => {
+        setLessonToDelete(lesson);
+        setIsDeleteModalOpen(true);
+    };
+
+    const confirmDeleteLesson = async () => {
+        try {
+            await deleteLesson(lessonToDelete.id);
+            await loadData();
+            setIsDeleteModalOpen(false);
+            setLessonToDelete(null);
+        } catch (error) {
+            console.error('Error deleting lesson:', error);
+        }
+    };
+
     const filteredLessons = lessons.filter(lesson =>
         lesson.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         lesson.summary?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        lesson.info?.نوع_الدرس?.toLowerCase().includes(searchTerm.toLowerCase())
+        lesson.info?.نوع_الدرس?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        lesson.ai_model?.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
     const getReviewStatusIcon = (status) => {
@@ -89,6 +163,17 @@ const LessonList = () => {
             default:
                 return 'قيد المراجعة';
         }
+    };
+
+    const formatDate = (dateString) => {
+        const date = new Date(dateString);
+        return date.toLocaleDateString('ar-SA', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
     };
 
     const LessonItem = ({ lesson, index }) => {
@@ -152,6 +237,18 @@ const LessonList = () => {
                                     <FaTasks className={styles.metaIcon} />
                                     {difficulty}
                                 </span>
+                                {lesson.ai_model && (
+                                    <span className={styles.metaItem}>
+                                        <FaCodeBranch className={styles.metaIcon} />
+                                        {lesson.ai_model}
+                                    </span>
+                                )}
+                                {lesson.reviewed_by && (
+                                    <span className={styles.metaItem}>
+                                        <FaUser className={styles.metaIcon} />
+                                        {lesson.reviewed_by}
+                                    </span>
+                                )}
                             </div>
                         </div>
 
@@ -167,17 +264,34 @@ const LessonList = () => {
                                     {difficulty === 'صعبة' ? 'صعبة' :
                                         difficulty === 'متوسطة' ? 'متوسطة' : 'سهلة'}
                                 </span>
+                                {lesson.version && lesson.version > 1 && (
+                                    <span className={`${styles.statBadge} ${styles.version}`}>
+                                        v{lesson.version}
+                                    </span>
+                                )}
                             </div>
                             <div className={styles.lessonActions}>
                                 <button
                                     className={styles.actionBtn}
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        navigate(`/lessons/${lesson.id}/editor`);
+                                        handleEditLesson(lesson);
                                     }}
+                                    title="تعديل الدرس"
                                 >
                                     <FaEdit />
-                                    محرر
+                                    تعديل
+                                </button>
+                                <button
+                                    className={`${styles.actionBtn} ${styles.danger}`}
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        handleDeleteLesson(lesson);
+                                    }}
+                                    title="حذف الدرس"
+                                >
+                                    <FaTrash />
+                                    حذف
                                 </button>
                                 <button
                                     className={`${styles.actionBtn} ${styles.primary}`}
@@ -213,6 +327,75 @@ const LessonList = () => {
                             </div>
                         )}
 
+                        {/* معلومات المراجعة */}
+                        {(lesson.reviewed_by || lesson.review_notes) && (
+                            <div className={styles.reviewSection}>
+                                <h4 className={styles.sectionTitle}>
+                                    <FaCheckCircle className={styles.sectionIcon} />
+                                    معلومات المراجعة
+                                </h4>
+                                <div className={styles.reviewInfo}>
+                                    {lesson.reviewed_by && (
+                                        <div className={styles.reviewItem}>
+                                            <strong>تمت المراجعة بواسطة:</strong>
+                                            <span>{lesson.reviewed_by}</span>
+                                        </div>
+                                    )}
+                                    {lesson.review_notes && (
+                                        <div className={styles.reviewItem}>
+                                            <strong>ملاحظات المراجعة:</strong>
+                                            <span>{lesson.review_notes}</span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        )}
+
+                        {/* معلومات الذكاء الاصطناعي والإصدار */}
+                        <div className={styles.techInfo}>
+                            <div className={styles.techInfoGrid}>
+                                {lesson.ai_model && (
+                                    <div className={styles.techItem}>
+                                        <FaCodeBranch className={styles.techIcon} />
+                                        <div>
+                                            <strong>نموذج الذكاء الاصطناعي</strong>
+                                            <span>{lesson.ai_model}</span>
+                                        </div>
+                                    </div>
+                                )}
+                                {lesson.prompt_version && (
+                                    <div className={styles.techItem}>
+                                        <FaCodeBranch className={styles.techIcon} />
+                                        <div>
+                                            <strong>إصدار النموذج</strong>
+                                            <span>{lesson.prompt_version}</span>
+                                        </div>
+                                    </div>
+                                )}
+                                <div className={styles.techItem}>
+                                    <FaCodeBranch className={styles.techIcon} />
+                                    <div>
+                                        <strong>إصدار الدرس</strong>
+                                        <span>v{lesson.version || 1}</span>
+                                    </div>
+                                </div>
+                                <div className={styles.techItem}>
+                                    <FaClock className={styles.techIcon} />
+                                    <div>
+                                        <strong>تم الإنشاء</strong>
+                                        <span>{formatDate(lesson.created_at)}</span>
+                                    </div>
+                                </div>
+                                <div className={styles.techItem}>
+                                    <FaClock className={styles.techIcon} />
+                                    <div>
+                                        <strong>آخر تحديث</strong>
+                                        <span>{formatDate(lesson.updated_at)}</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
                         {/* الإجراءات السريعة */}
                         <div className={styles.quickActionsGrid}>
                             <div
@@ -247,24 +430,16 @@ const LessonList = () => {
                                 <h4>التقارير</h4>
                                 <p>عرض إحصائيات وتقارير الدرس</p>
                             </div>
-                        </div>
 
-                        {/* معلومات الذكاء الاصطناعي */}
-                        {lesson.ai_model && (
-                            <div className={styles.aiInfo}>
-                                <div className={styles.aiInfoContent}>
-                                    <span className={styles.aiModel}>
-                                        <FaTasks />
-                                        تم إنشاؤه بواسطة: {lesson.ai_model}
-                                    </span>
-                                    {lesson.prompt_version && (
-                                        <span className={styles.promptVersion}>
-                                            إصدار النموذج: {lesson.prompt_version}
-                                        </span>
-                                    )}
-                                </div>
+                            <div
+                                className={styles.quickAction}
+                                onClick={() => navigate(`/content/${lesson.id}/`)}
+                            >
+                                <FaEdit className={styles.quickActionIcon} />
+                                <h4>محرر متقدم</h4>
+                                <p>الوصول إلى المحرر المتقدم للدرس</p>
                             </div>
-                        )}
+                        </div>
                     </div>
                 )}
             </div>
@@ -284,7 +459,7 @@ const LessonList = () => {
                     '--primary-color': designSettings.primaryColor,
                     '--secondary-color': designSettings.secondaryColor,
                 }}
-                onClick={() => navigate(`/courses/${courseId}/lessons/create`)}
+                onClick={handleCreateLesson}
             >
                 <FaPlus />
                 إنشاء درس جديد
@@ -307,6 +482,13 @@ const LessonList = () => {
             <div className={styles.headerSection}>
                 <div className={styles.headerContent}>
                     <div className={styles.titleSection}>
+                        <button
+                            className={styles.backButton}
+                            onClick={handleGoBack}
+                            title="العودة للصفحة السابقة"
+                        >
+                            <FaArrowRight className={styles.backIcon} />
+                        </button>
                         <FaBook className={styles.headerIcon} />
                         <div>
                             <h1 className={styles.mainTitle}>
@@ -356,7 +538,7 @@ const LessonList = () => {
                     <FaSearch className={styles.searchIcon} />
                     <input
                         type="text"
-                        placeholder="ابحث في الدروس حسب العنوان، الملخص، أو النوع..."
+                        placeholder="ابحث في الدروس حسب العنوان، الملخص، النوع، أو نموذج الذكاء الاصطناعي..."
                         value={searchTerm}
                         onChange={(e) => setSearchTerm(e.target.value)}
                         className={styles.searchInput}
@@ -448,8 +630,57 @@ const LessonList = () => {
                             </div>
                         </div>
                     </div>
+
+                    <div className={styles.techAnalytics}>
+                        <h4>إحصائيات تقنية:</h4>
+                        <div className={styles.techStats}>
+                            <div className={styles.techStat}>
+                                <span className={styles.techCount}>
+                                    {[...new Set(lessons.map(lesson => lesson.ai_model).filter(Boolean))].length}
+                                </span>
+                                <span className={styles.techLabel}>نموذج ذكاء اصطناعي مختلف</span>
+                            </div>
+                            <div className={styles.techStat}>
+                                <span className={styles.techCount}>
+                                    {Math.max(...lessons.map(lesson => lesson.version || 1))}
+                                </span>
+                                <span className={styles.techLabel}>أعلى إصدار</span>
+                            </div>
+                            <div className={styles.techStat}>
+                                <span className={styles.techCount}>
+                                    {lessons.filter(lesson => lesson.reviewed_by).length}
+                                </span>
+                                <span className={styles.techLabel}>تمت مراجعته</span>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
+
+            {/* مودال إنشاء/تعديل الدرس */}
+            <LessonModal
+                isOpen={isLessonModalOpen}
+                onClose={() => setIsLessonModalOpen(false)}
+                onSave={handleSaveLesson}
+                lesson={selectedLesson}
+                mode={modalMode}
+                course={course}
+            />
+
+            {/* مودال تأكيد الحذف */}
+            <ConfirmationModal
+                isOpen={isDeleteModalOpen}
+                onClose={() => {
+                    setIsDeleteModalOpen(false);
+                    setLessonToDelete(null);
+                }}
+                onConfirm={confirmDeleteLesson}
+                title="تأكيد الحذف"
+                message={`هل أنت متأكد من رغبتك في حذف الدرس "${lessonToDelete?.title}"؟ هذا الإجراء لا يمكن التراجع عنه.`}
+                confirmText="حذف"
+                cancelText="إلغاء"
+                type="danger"
+            />
         </div>
     );
 };

@@ -8,7 +8,7 @@ class Book(models.Model):
     program = models.ForeignKey(Program, on_delete=models.SET_NULL, null=True, blank=True)
     subject = models.ForeignKey(Subject, on_delete=models.SET_NULL, null=True, blank=True)
     title = models.CharField(max_length=255)
-    pdf = models.FileField(upload_to="books/")
+    pdf = models.FileField(upload_to="books/",null=True, blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     description = models.TextField(blank=True, null=True)
 
@@ -86,7 +86,7 @@ class BlockExercise(models.Model):
     part = models.ForeignKey(BookPart, on_delete=models.CASCADE, related_name="exercises", null=True, blank=True)
     lesson = models.ForeignKey(BookLesson, on_delete=models.CASCADE, related_name="exercises", null=True, blank=True)
     block = models.ForeignKey(BookBlock, on_delete=models.CASCADE, related_name="exercises", null=True, blank=True)
-
+    question_image = models.ImageField(upload_to="block_exercises/", null=True, blank=True)
     question_text = models.TextField()
     question_type = models.CharField(
         max_length=50,

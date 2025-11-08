@@ -2,30 +2,28 @@ import React, { useEffect, useState } from "react";
 import { FaEdit, FaEye, FaLayerGroup, FaPalette } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { getSlideBlocks } from "../../api/slideBlocks";
-import { createSlide, deleteSlide, getSlides, updateSlideOrder } from "../../api/slides";
+import { createSlide, deleteSlide, duplicateSlide, getSlides, updateSlideOrder } from "../../api/slides";
 import Sidebar from "./components/Sidebar/Sidebar";
 import SlideViewer from "./components/SlideViewer/SlideViewer";
 import WelcomeScreen from "./components/WelcomeScreen/WelcomeScreen";
 import styles from "./EditorPage.module.css";
 
 export default function EditorPage() {
-    const { lessonId } = useParams();
+    const { Id } = useParams();
     const navigate = useNavigate();
-
     const [slides, setSlides] = useState([]);
     const [selectedSlide, setSelectedSlide] = useState(null);
     const [blocks, setBlocks] = useState([]);
     const [isDragging, setIsDragging] = useState(false);
     const [dragOverIndex, setDragOverIndex] = useState(null);
 
-    // تحميل الشرائح عند تحميل الصفحة
     useEffect(() => {
-        if (!lessonId) return;
+        if (!Id) return;
         loadSlides();
-    }, [lessonId]);
+    }, [Id]);
 
     const loadSlides = () => {
-        getSlides(lessonId).then((res) => {
+        getSlides(Id).then((res) => {
             const sortedSlides = Array.isArray(res.data)
                 ? res.data.sort((a, b) => a.order - b.order)
                 : [];
@@ -46,7 +44,7 @@ export default function EditorPage() {
     const handleCreateSlide = async () => {
         try {
             const newSlide = {
-                lesson: lessonId,
+                content: Id,
                 title: `شريحة جديدة ${slides.length + 1}`,
                 order: slides.length,
                 background_color: "#FFFFFF",
@@ -56,6 +54,8 @@ export default function EditorPage() {
             if (response.data) {
                 loadSlides();
                 setSelectedSlide(response.data);
+                navigate(`/slide/${response.data.id}/editor/`);
+
             }
         } catch (error) {
             console.error("Error creating slide:", error);
@@ -74,22 +74,19 @@ export default function EditorPage() {
         }
     };
 
-    // نسخ شريحة
+
+
+
     const handleDuplicateSlide = async (slide) => {
         try {
-            const duplicatedSlide = {
-                ...slide,
-                title: `${slide.title} (نسخة)`,
-                order: slides.length,
-                id: undefined,
-            };
-            const response = await createSlide(duplicatedSlide);
+            const response = await duplicateSlide(slide.id);
             if (response.data) {
                 loadSlides();
                 setSelectedSlide(response.data);
+                navigate(`/slide/${response.data.id}/editor/`);
             }
         } catch (error) {
-            console.error("Error duplicating slide:", error);
+            console.error(error);
         }
     };
 
@@ -154,6 +151,7 @@ export default function EditorPage() {
                 onDeleteSlide={handleDeleteSlide}
                 onDuplicateSlide={handleDuplicateSlide}
                 onEditSlide={openDesigner}
+                loadSlides={loadSlides}
                 dragHandlers={{
                     handleDragStart,
                     handleDragOver,
@@ -163,6 +161,7 @@ export default function EditorPage() {
                     dragOverIndex,
                     isDragging,
                 }}
+
             />
 
             {/* المحتوى الرئيسي */}

@@ -1,0 +1,174 @@
+.modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    padding: 20px;
+}
+
+.modalContent {
+    background: white;
+    border-radius: 16px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease;
+    overflow: hidden;
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modalHeader {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 25px 25px 0 25px;
+}
+
+.modalTitle {
+    margin: 0;
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1e293b;
+    flex: 1;
+}
+
+.closeButton {
+    background: none;
+    border: none;
+    font-size: 18px;
+    color: #64748b;
+    cursor: pointer;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background 0.3s ease;
+}
+
+.closeButton:hover {
+    background: #f1f5f9;
+}
+
+.iconWarning {
+    color: #f59e0b;
+    font-size: 24px;
+}
+
+.iconDanger {
+    color: #ef4444;
+    font-size: 24px;
+}
+
+.iconSuccess {
+    color: #10b981;
+    font-size: 24px;
+}
+
+.modalBody {
+    padding: 25px;
+}
+
+.message {
+    margin: 0;
+    color: #475569;
+    font-size: 1rem;
+    line-height: 1.6;
+}
+
+.modalActions {
+    display: flex;
+    gap: 12px;
+    padding: 0 25px 25px 25px;
+    justify-content: flex-end;
+}
+
+.cancelButton {
+    padding: 12px 24px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: white;
+    color: #374151;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cancelButton:hover {
+    background: #f9fafb;
+    border-color: #9ca3af;
+}
+
+.confirmButton {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    color: white;
+}
+
+.confirmButtonWarning {
+    background: #f59e0b;
+}
+
+.confirmButtonWarning:hover {
+    background: #d97706;
+}
+
+.confirmButtonDanger {
+    background: #ef4444;
+}
+
+.confirmButtonDanger:hover {
+    background: #dc2626;
+}
+
+.confirmButtonSuccess {
+    background: #10b981;
+}
+
+.confirmButtonSuccess:hover {
+    background: #059669;
+}
+
+/* التجاوب */
+@media (max-width: 768px) {
+    .modalContent {
+        width: 95%;
+    }
+
+    .modalHeader {
+        padding: 20px 20px 0 20px;
+    }
+
+    .modalBody {
+        padding: 20px;
+    }
+
+    .modalActions {
+        padding: 0 20px 20px 20px;
+        flex-direction: column;
+    }
+
+    .cancelButton,
+    .confirmButton {
+        width: 100%;
+        justify-content: center;
+    }
+}

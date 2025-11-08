@@ -20,7 +20,7 @@ export const createLesson = async (lessonData) => {
 };
 
 export const updateLesson = async (id, lessonData) => {
-    const response = await AxiosInstance.put(`/lessons/${id}/`, lessonData);
+    const response = await AxiosInstance.put(`/lessons/lessons/${id}/`, lessonData);
     return response.data;
 };
 
