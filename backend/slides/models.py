@@ -36,6 +36,112 @@ class Content(models.Model):
 
 
 
+# class Slide(models.Model):
+#     LAYOUT_CHOICES = [
+#         ('default', 'Default'),
+#         ('title_content', 'Title and Content'),
+#         ('image_left', 'Image Left'),
+#         ('image_right', 'Image Right'),
+#         ('split_screen', 'Split Screen'),
+#         ('full_image', 'Full Image'),
+#     ]
+#     slide_viewer = models.ImageField(upload_to="slides/", null=True, blank=True)
+     
+#     content = models.ForeignKey(
+#         Content,
+#         related_name="slides",
+#         on_delete=models.CASCADE,
+#         blank=True, null=True,
+#     )
+#     title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Slide Title")
+#     order = models.IntegerField(default=0, verbose_name="Order")
+#     background_color = models.CharField(max_length=20, default="#FFFFFF", verbose_name="Background Color")
+#     background_image = models.ForeignKey(
+#         MediaLibrary,
+#         on_delete=models.SET_NULL,
+#         null=True,
+#         blank=True,
+#         related_name='slide_backgrounds',
+#         verbose_name="Background Image"
+#     )
+#     background_opacity = models.FloatField(default=1.0, verbose_name="Background Opacity")
+#     layout_style = models.CharField(
+#         max_length=50, 
+#         choices=LAYOUT_CHOICES, 
+#         default='default',
+#         verbose_name="Layout Style"
+#     )
+#     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
+#     updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated At")
+    
+#     class Meta:
+#         verbose_name = "Slide"
+#         verbose_name_plural = "Slides"
+#         ordering = ['order', 'created_at']
+    
+#     def __str__(self):
+#         return f"  - {self.title or 'Slide ' + str(self.order)}"
+    
+#     @property
+#     def background_image_url(self):
+#         if self.background_image and self.background_image.file_url:
+#             self.background_image.increment_usage()
+#             return self.background_image.file_url
+#         return None
+    
+#     @property
+#     def blocks_count(self):
+#         return self.blocks.count()
+     
+ 
+#     def duplicate(self):
+#         # إنشاء نسخة من الشريحة
+#         new_slide = Slide.objects.create(
+#             content=self.content,
+#             title=f"{self.title} (نسخة)" if self.title else None,
+#             order=Slide.objects.filter(content=self.content).count(),
+#             background_color=self.background_color,
+#             background_image=self.background_image,
+#             background_opacity=self.background_opacity,
+#             layout_style=self.layout_style,
+#         )
+
+#         # نسخ كل البلوكات المرتبطة
+#         for block in self.blocks.all():
+#             SlideBlock.objects.create(
+#                 slide=new_slide,
+#                 type=block.type,
+#                 order=block.order,
+#                 content=block.content,
+#                 media=block.media,
+#                 voice_script=block.voice_script,
+#                 speech_duration=block.speech_duration,
+#                 position_x=block.position_x,
+#                 position_y=block.position_y,
+#                 width=block.width,
+#                 height=block.height,
+#                 z_index=block.z_index,
+#                 opacity=block.opacity,
+#                 background_opacity=block.background_opacity,
+#                 font_family=block.font_family,
+#                 font_size=block.font_size,
+#                 font_color=block.font_color,
+#                 font_weight=block.font_weight,
+#                 font_style=block.font_style,
+#                 text_align=block.text_align,
+#                 text_decoration=block.text_decoration,
+#                 background_color=block.background_color,
+#                 border_radius=block.border_radius,
+#                 border_color=block.border_color,
+#                 border_width=block.border_width,
+#                 extra_data=block.extra_data,
+#             )
+
+#         return new_slide
+ 
+ 
+
+
 class Slide(models.Model):
     LAYOUT_CHOICES = [
         ('default', 'Default'),
@@ -45,17 +151,23 @@ class Slide(models.Model):
         ('split_screen', 'Split Screen'),
         ('full_image', 'Full Image'),
     ]
+
     slide_viewer = models.ImageField(upload_to="slides/", null=True, blank=True)
-    # lesson = models.ForeignKey(Lesson, related_name="slides", on_delete=models.CASCADE)
+
     content = models.ForeignKey(
         Content,
         related_name="slides",
         on_delete=models.CASCADE,
-        blank=True, null=True,
+        null=True,
+        blank=False,
+        default=None,
     )
+
     title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Slide Title")
     order = models.IntegerField(default=0, verbose_name="Order")
+
     background_color = models.CharField(max_length=20, default="#FFFFFF", verbose_name="Background Color")
+
     background_image = models.ForeignKey(
         MediaLibrary,
         on_delete=models.SET_NULL,
@@ -64,38 +176,44 @@ class Slide(models.Model):
         related_name='slide_backgrounds',
         verbose_name="Background Image"
     )
+
     background_opacity = models.FloatField(default=1.0, verbose_name="Background Opacity")
+
     layout_style = models.CharField(
-        max_length=50, 
-        choices=LAYOUT_CHOICES, 
+        max_length=50,
+        choices=LAYOUT_CHOICES,
         default='default',
         verbose_name="Layout Style"
     )
+
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created At")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated At")
-    
+
     class Meta:
         verbose_name = "Slide"
         verbose_name_plural = "Slides"
         ordering = ['order', 'created_at']
-    
+
     def __str__(self):
         return f"  - {self.title or 'Slide ' + str(self.order)}"
-    
+
     @property
     def background_image_url(self):
         if self.background_image and self.background_image.file_url:
             self.background_image.increment_usage()
             return self.background_image.file_url
         return None
-    
+
     @property
     def blocks_count(self):
         return self.blocks.count()
-     
- 
+
+    def clean(self):
+        from django.core.exceptions import ValidationError
+        if self.content is None:
+            raise ValidationError("Content is required to create a slide.")
+
     def duplicate(self):
-        # إنشاء نسخة من الشريحة
         new_slide = Slide.objects.create(
             content=self.content,
             title=f"{self.title} (نسخة)" if self.title else None,
@@ -106,7 +224,6 @@ class Slide(models.Model):
             layout_style=self.layout_style,
         )
 
-        # نسخ كل البلوكات المرتبطة
         for block in self.blocks.all():
             SlideBlock.objects.create(
                 slide=new_slide,
@@ -136,10 +253,8 @@ class Slide(models.Model):
                 border_width=block.border_width,
                 extra_data=block.extra_data,
             )
-
         return new_slide
- 
- 
+
 
 class SlideBlock(models.Model):
     BLOCK_TYPES = [

@@ -1,5 +1,5 @@
 from django.db import models
-from books.models import  BookBlock
+from books.models import  BookBlock,BlockExercise
 from django.db import models
 from medialibrary.models import MediaLibrary  
 from courses.models import Course 
@@ -62,12 +62,12 @@ class Block(models.Model):
         default="text",
     )
     embedding_vector = models.JSONField(null=True, blank=True)
-    linked_blocks = models.ManyToManyField(BookBlock, related_name="course_linked_blocks")  
+    linked_blocks = models.ManyToManyField(BookBlock, related_name="course_linked_blocks", blank=True )  
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    cards = models.ManyToManyField(Card,related_name="cards_lesson"  )
+    cards = models.ManyToManyField(Card,related_name="cards_lesson" , blank=True  )
+    exercise= models.ManyToManyField(BlockExercise,related_name="exercise_lesson", blank=True  )
     order = models.IntegerField(default=0)
-
     class Meta:
         ordering = ['order', 'created_at']
 
@@ -84,28 +84,28 @@ class Block(models.Model):
  
 
 
-class LessonBlockExercise(models.Model):
-    """التدريبات أو الأسئلة في نهاية الدروس أو الفصول"""
+# class LessonBlockExercise(models.Model):
+#     """التدريبات أو الأسئلة في نهاية الدروس أو الفصول"""
 
-    block = models.ForeignKey(Block, on_delete=models.CASCADE, related_name="course_block_exercises", null=True, blank=True)
-    question_text = models.TextField()
-    question_type = models.CharField(
-        max_length=50,
-        choices=[
-            ("mcq", "اختيار من متعدد"),
-            ("true_false", "صح أو خطأ"),
-            ("short_answer", "إجابة قصيرة"),
-            ("essay", "مقال"),
-        ],
-        default="mcq",
-    )
-    options = models.JSONField(null=True, blank=True)  # {"A": "نص", "B": "نص", ...}
-    correct_answer = models.CharField(max_length=255, null=True, blank=True)
-    explanation = models.TextField(null=True, blank=True)
-    order = models.PositiveIntegerField(default=0)
-    page_number = models.PositiveIntegerField(null=True, blank=True)
-    # def __str__(self):
-    #     return f"سؤال {self.order} - {self.lesson or self.part}"
+#     block = models.ForeignKey(Block, on_delete=models.CASCADE, related_name="course_block_exercises", null=True, blank=True)
+#     question_text = models.TextField()
+#     question_type = models.CharField(
+#         max_length=50,
+#         choices=[
+#             ("mcq", "اختيار من متعدد"),
+#             ("true_false", "صح أو خطأ"),
+#             ("short_answer", "إجابة قصيرة"),
+#             ("essay", "مقال"),
+#         ],
+#         default="mcq",
+#     )
+#     options = models.JSONField(null=True, blank=True)  # {"A": "نص", "B": "نص", ...}
+#     correct_answer = models.CharField(max_length=255, null=True, blank=True)
+#     explanation = models.TextField(null=True, blank=True)
+#     order = models.PositiveIntegerField(default=0)
+#     page_number = models.PositiveIntegerField(null=True, blank=True)
+#     # def __str__(self):
+#     #     return f"سؤال {self.order} - {self.lesson or self.part}"
     
 
 
@@ -113,6 +113,10 @@ class BlockLearningObjective(models.Model):
     block = models.ForeignKey(Block, on_delete=models.CASCADE, related_name="course_block_objective",)
     title = models.CharField(max_length=255)      
     description = models.TextField()        
+
+
+
+
 
 
 class BlockReel(models.Model):

@@ -14,4 +14,6 @@ router.register(r'lesson-index', LessonIndexViewSet)
 
 urlpatterns = [
     path('similar-blocks/', SimilarBlockView.as_view(), name='similar-blocks'),
+    path('index-list/<int:id>/', LessonIndexView.as_view(), name='index-list'),
+ 
 ] + router.urls

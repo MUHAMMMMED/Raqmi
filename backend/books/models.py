@@ -28,7 +28,6 @@ class BookPart(models.Model):
         return f"{self.book.title} - {self.title}"
 
  
-
 class BookLesson(models.Model):
     """الدرس داخل الفصل"""
     part = models.ForeignKey(BookPart, on_delete=models.CASCADE, related_name="lessons")

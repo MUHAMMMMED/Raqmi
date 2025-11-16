@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Lesson, Block, LessonBlockExercise, BlockLearningObjective, BlockReel, PromptTemplate, Artifact
+from .models import Lesson, Block,  BlockLearningObjective, BlockReel, PromptTemplate, Artifact
 
 
 @admin.register(Lesson)
@@ -19,12 +19,12 @@ class BlockAdmin(admin.ModelAdmin):
     autocomplete_fields = ("lesson", "linked_blocks", "cards")
 
 
-@admin.register(LessonBlockExercise)
-class LessonBlockExerciseAdmin(admin.ModelAdmin):
-    list_display = ("id", "block", "question_type", "order", "page_number")
-    list_filter = ("question_type",)
-    search_fields = ("question_text",)
-    autocomplete_fields = ("block",)
+# @admin.register(LessonBlockExercise)
+# class LessonBlockExerciseAdmin(admin.ModelAdmin):
+#     list_display = ("id", "block", "question_type", "order", "page_number")
+#     list_filter = ("question_type",)
+#     search_fields = ("question_text",)
+#     autocomplete_fields = ("block",)
 
 
 @admin.register(BlockLearningObjective)

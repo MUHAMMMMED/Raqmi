@@ -4,16 +4,18 @@ from .utils.permissions import IsOwnerOrReadOnly
 from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
 import torch
 from sentence_transformers import SentenceTransformer, util
 from books.utils.service import increment_counter, double_value  
+
 from .models import *
 from .serializers import *
+from lessons.models import Lesson, Course
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
-
  
-
 class BookViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
 
     # permission_classes = [IsAuthenticated],IsOwnerOrReadOnly
@@ -60,9 +62,13 @@ class BookBlockViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
     queryset = BookBlock.objects.all().order_by('order')
     serializer_class = BookBlockSerializer
 
-class BookExerciseViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
+
+class BookExerciseViewSet(viewsets.ModelViewSet):
     queryset = BlockExercise.objects.all().order_by('order')
     serializer_class = BlockExerciseSerializer
+
+   
+
 
 class BlockObjectiveViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
     queryset = BlockLearningObjective.objects.all()
@@ -73,8 +79,8 @@ class BlockReelViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
     queryset = BlockReel.objects.all()
     serializer_class = BlockReelSerializer
 
-  
-class LessonIndexViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
+#   DebugViewSetMixin,
+class LessonIndexViewSet(viewsets.ModelViewSet):
     queryset = LessonIndex.objects.all()
     serializer_class = LessonIndexSerializer
   
@@ -122,3 +128,37 @@ class SimilarBlockView(APIView):
             return Response({"message": "No similar blocks above threshold"}, status=200)
 
         return Response(response_data)
+    
+
+
+
+ 
+class LessonIndexView(APIView):
+    def get(self, request, id):
+        index = get_object_or_404(LessonIndex, pk=id)
+
+        filters = dict(
+            stage=index.stage,
+            grade=index.grade,
+            program=index.program,
+            subject=index.subject,
+        )
+
+        courses = Course.objects.filter(**filters)
+        lessons = Lesson.objects.filter(course__in=courses)
+        books = Book.objects.filter(**filters)
+        parts = BookPart.objects.filter(book__in=books)
+        book_lessons = BookLesson.objects.filter(part__in=parts)
+
+        lesson_serializer = LessonMiniSerializer(lessons, many=True)
+        book_lessons_serializer = BookLessonMiniSerializer(book_lessons, many=True)
+
+        data = {
+            "lessons": lesson_serializer.data,
+            "book_lessons": book_lessons_serializer.data,
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
+    
+
+  

@@ -1,9 +1,11 @@
  
 from rest_framework import viewsets, decorators, response
+from books.utils.mixins import DebugViewSetMixin
+
 from .models import *
 from .serializers import *
 
-class StageViewSet(viewsets.ModelViewSet):
+class StageViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
     queryset = Stage.objects.all()
     serializer_class = StageSerializer
 
@@ -15,7 +17,7 @@ class StageViewSet(viewsets.ModelViewSet):
         return response.Response(serializer.data)
 
 
-class GradeViewSet(viewsets.ModelViewSet):
+class GradeViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
     queryset = Grade.objects.all()
     serializer_class = GradeSerializer
 
@@ -27,7 +29,7 @@ class GradeViewSet(viewsets.ModelViewSet):
         return response.Response(serializer.data)
 
 
-class ProgramViewSet(viewsets.ModelViewSet):
+class ProgramViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
     queryset = Program.objects.all()
     serializer_class = ProgramSerializer
 
@@ -39,6 +41,6 @@ class ProgramViewSet(viewsets.ModelViewSet):
         return response.Response(serializer.data)
 
 
-class SubjectViewSet(viewsets.ModelViewSet):
+class SubjectViewSet(DebugViewSetMixin,viewsets.ModelViewSet):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer

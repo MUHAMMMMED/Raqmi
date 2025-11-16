@@ -11,6 +11,5 @@ router.register(r'history-logs', views.HistoryLogViewSet, basename='historylog')
 
  
 urlpatterns = [
- 
     path('', include(router.urls)),
 ]
